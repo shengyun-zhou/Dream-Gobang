@@ -1,3 +1,4 @@
+#pragma once
 namespace Gobang
 {
 	const int WINDOW_WIDTH = 1280;
