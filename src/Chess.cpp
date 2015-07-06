@@ -111,5 +111,5 @@ int Chess::judge(int x, int y, Direction dire)
 				result2 = 0;
 		}
 	}
-  return result1+result2+1;
+  return result1 + result2 + 1;
 }
