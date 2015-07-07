@@ -17,3 +17,9 @@ endif()
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 add_executable (Simple-Gobang ${PROJECT_SOURCE_FILE})
+
+set(TERMINAL_TEST_SOURCE_FILE
+		Chess.h
+		Chess.cpp)
+add_executable (Gobang-Terminal-Test ${TERMINAL_TEST_SOURCE_FILE})
+		

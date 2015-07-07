@@ -5,43 +5,44 @@ Chess::Chess()
 	for(i = 0;i < SIZE;i++)
   {
 		for(j = 0;j < SIZE;j++)
-			chess_array[i][j] = EMPTY;
+			chess_array_[i][j] = EMPTY;
 	}
 }
+
 void Chess::set_point(int x, int y, PieceType value)
 {
-	chess_array[x][y] = value;
+	chess_array_[x][y] = value;
 }
 
 Chess::PieceType Chess::get_point(int x, int y)
 {
-	return chess_array[x][y];
+	return chess_array_[x][y];
 }
 
-//1代表左右，2代表上下，3代表左上到右下，4代表右上到左下
+//1代表上下，2代表左右，3代表左上到右下，4代表右上到左下
 int Chess::judge(int x, int y, Direction dire)
 {
-  PieceType temp = chess_array[x][y];
-	int result1, result2;
+  PieceType temp = chess_array_[x][y];
+  int result1, result2;
 	result1 = 0;
 	result2 = 0;
 	int x_min, y_min, x_max, y_max;
 	x_min = (x - 4 > 0) ? x - 4 : 0;
 	y_min = (y - 4 > 0) ? y - 4 : 0;
-	x_max = (x + 4 < SIZE) ? x + 4 : SIZE;
-	y_max = (y + 4 < SIZE) ? y + 4 : SIZE;
+	x_max = (x + 4 < SIZE) ? x + 4 : SIZE - 1;
+	y_max = (y + 4 < SIZE) ? y + 4 : SIZE - 1;
 	switch(dire){
 	case 1:
 		for(; x_min < x; x_min++)
 		{
-			if(chess_array[x_min][y] == temp)
+			if(chess_array_[x_min][y] == temp)
 				result1++;
 			else
 				result1 = 0;
 		}
 		for(; x_max > x; x_max--)
 		{
-			if(chess_array[x_max][y] == temp)
+			if(chess_array_[x_max][y] == temp)
 				result2++;
 			else
 				result2 = 0;
@@ -50,14 +51,14 @@ int Chess::judge(int x, int y, Direction dire)
 	case 2:
 		for(; y_min < y; y_min++)
 		{
-			if(chess_array[x][y_min] == temp)
+			if(chess_array_[x][y_min] == temp)
 				result1++;
 			else
 				result1 = 0;
 		}
     for(; y_max > y; y_max--)
 		{
-			if(chess_array[x][y_max] == temp)
+			if(chess_array_[x][y_max] == temp)
 				result2++;
 			else
 				result2 = 0;
@@ -70,7 +71,7 @@ int Chess::judge(int x, int y, Direction dire)
 		y_min = y-t1;
 		for(; x_min < x; x_min++, y_min++)
 		{
-			if(chess_array[x_min][y_min] == temp)
+			if(chess_array_[x_min][y_min] == temp)
 				result1++;
 			else
 				result1 = 0;
@@ -81,7 +82,7 @@ int Chess::judge(int x, int y, Direction dire)
 		y_max = y + t2;
 		for(; x_max>x; x_max--, y_max--)
 		{
-			if(chess_array[x_max][y_max] == temp)
+			if(chess_array_[x_max][y_max] == temp)
 				result2++;
 			else
 				result2 = 0;
@@ -94,7 +95,7 @@ int Chess::judge(int x, int y, Direction dire)
 		x_min = x - t3;
 		for(; x_min < x; x_min++, y_max--)
 		{
-			if(chess_array[x_min][y_max] == temp)
+			if(chess_array_[x_min][y_max] == temp)
 				result1++;
 			else
 				result1 = 0;
@@ -105,7 +106,7 @@ int Chess::judge(int x, int y, Direction dire)
 		y_min = y - t4;
 		for(; y_min < y; y_min++, x_max--)
 		{
-			if(chess_array[x_max][y_min] == temp)
+			if(chess_array_[x_max][y_min] == temp)
 				result2++;
 			else
 				result2 = 0;
