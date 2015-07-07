@@ -4,10 +4,10 @@ project (Simple-Gobang)
 
 set(PROJECT_SOURCE_FILE
     GameMain.cpp
-	Gobang.h
-	Chess.h
-	Chess.cpp
-	#Please put the new source files and header files here
+    Gobang.h
+    Chess.h
+    Chess.cpp
+    #Please put the new source files and header files here
     )
 
 if(MINGW)
@@ -18,8 +18,12 @@ endif()
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 add_executable (Simple-Gobang ${PROJECT_SOURCE_FILE})
 
+if(MINGW)
+	set(CMAKE_EXE_LINKER_FLAGS "")
+endif()
 set(TERMINAL_TEST_SOURCE_FILE
 		Chess.h
-		Chess.cpp)
+		Chess.cpp
+		TerminalTestMain.cpp)
 add_executable (Gobang-Terminal-Test ${TERMINAL_TEST_SOURCE_FILE})
-		
+
