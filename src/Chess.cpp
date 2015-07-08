@@ -114,3 +114,37 @@ int Chess::judge(int x, int y, Direction dire)
 	}
   return result1 + result2 + 1;
 }
+
+bool Chess::is_chess_full()
+{
+  int i, j;
+  for(i = 0; i < SIZE; i++)
+  {
+    for(j = 0; j < SIZE; j++)
+    {
+      if(chess_array_[i][j] == EMPTY)
+        return false;
+    }
+  }
+  return true;
+}
+
+Chess::PieceType Chess::judge_win()
+{
+  int i, j, dire;
+  for(i = 0; i < SIZE; i++)
+  {
+    for(j = 0; j < SIZE; j++)
+    {
+      if(chess_array_[i][j] != EMPTY)
+      {
+        for(dire = COL; dire <= RIGHT_LEFT; dire++)
+        {
+          if(judge(i, j, (Direction)dire) >= 5)
+            return chess_array_[i][j];
+        }
+      }
+    }
+  }
+  return EMPTY;
+}

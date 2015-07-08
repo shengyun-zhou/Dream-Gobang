@@ -1,21 +1,59 @@
 #include "Chess.h"
+#include "ComputerPlayer.h"
 #include <stdio.h>
+
+void draw_chess(Chess& chess)
+{
+  int i,j;
+  printf(" %2s", " ");
+  for(i = 0; i < Chess::SIZE; i++)
+    printf(" %2d", i);
+  printf("\n\n");
+  for(i = 0; i < Chess::SIZE; i++)
+  {
+    printf(" %2d", i);
+    for(j = 0; j < Chess::SIZE; j++)
+    {
+      if(chess.get_point(i, j) == Chess::EMPTY)
+        printf(" %2s", "*");
+      else if(chess.get_point(i, j) == Chess::WHITE)
+        printf(" %2s", "W");
+      else if(chess.get_point(i, j) == Chess::BLACK)
+        printf(" %2s", "B");
+    }
+    printf("\n\n");
+  }
+}
+
 int main()
 {
 	Chess chess;
-	int i;
-	for (i = Chess::SIZE - 1; i >= 0; i--)
-	{
-		chess.set_point(0, i, Chess::BLACK);
-		chess.set_point(1, i, Chess::BLACK);
-	}
-	for (i = 0; i < Chess::SIZE; i++)
-	{
-		printf("Num of Max Linked Chess(%d,%d):%d(Row)\n", 0, i, chess.judge(0, i, Chess::ROW));
-		printf("Num of Max Linked Chess(%d,%d):%d(Col)\n", 0, i, chess.judge(0, i, Chess::COL));
-		printf("Num of Max Linked Chess(%d,%d):%d(Left-Right)\n", 0, i, chess.judge(0, i, Chess::LEFT_RIGHT));
-		printf("Num of Max Linked Chess(%d,%d):%d(Right-Left)\n", 0, i, chess.judge(0, i, Chess::RIGHT_LEFT));
-		printf("\n");
-	}
-	return 0;
+	chess.set_point(Chess::SIZE / 2, Chess::SIZE / 2, Chess::WHITE);
+	chess.set_point(Chess::SIZE / 2, Chess::SIZE / 2 + 1, Chess::BLACK);
+	chess.set_point(Chess::SIZE / 2 + 1, Chess::SIZE / 2, Chess::BLACK);
+	chess.set_point(Chess::SIZE / 2 + 1, Chess::SIZE / 2 + 1, Chess::WHITE);
+	draw_chess(chess);
+	const Chess::PieceType player_type = Chess::BLACK;
+	const Chess::PieceType computer_type = Chess::WHITE;
+  ComputerPlayer computer(computer_type, &chess);
+  int row, col;
+	while(!chess.is_chess_full() && chess.judge_win() == Chess::EMPTY)
+  {
+    printf("The player holds Black piece.\n");
+    printf("Input the position of the next step (row,col):");
+    scanf("%d%d", &row, &col);
+    if(chess.get_point(row, col) != Chess::EMPTY)
+      continue;
+    chess.set_point(row, col, player_type);
+    computer.calc_next_step(row, col);
+    chess.set_point(row, col, computer_type);
+    draw_chess(chess);
+  }
+  if(chess.judge_win() == Chess::BLACK)
+    printf("The player win!\n");
+  else if(chess.judge_win() == Chess::WHITE)
+    printf("The computer win!\n");
+  else
+    printf("Tie!\n");
+  return 0;
 }

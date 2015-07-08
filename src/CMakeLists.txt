@@ -24,6 +24,8 @@ endif()
 set(TERMINAL_TEST_SOURCE_FILE
 		Chess.h
 		Chess.cpp
+		ComputerPlayer.h
+		ComputerPlayer.cpp
 		TerminalTestMain.cpp)
 add_executable (Gobang-Terminal-Test ${TERMINAL_TEST_SOURCE_FILE})
 
