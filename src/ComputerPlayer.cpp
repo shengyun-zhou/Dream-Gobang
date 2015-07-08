@@ -304,11 +304,14 @@ void ComputerPlayer::quicksort(int left, int right, GridScore* array)
 
 void ComputerPlayer::attack(int& target_row, int& target_col)
 {
-  int max_computer_score = computer_score_[0].sum_score;
-  int max_person_score = 0;
+  double max_computer_score = computer_score_[0].sum_score;
+  double max_person_score = 0;
+  printf("computer_max_score:%.0lf\n", max_computer_score);
   int i;
   for(i = 0; i < Chess::SIZE * Chess::SIZE && computer_score_[i].sum_score == max_computer_score; i++)
   {
+    if(chess_ -> get_point(computer_score_[i].row, computer_score_[i].col) != Chess::EMPTY)
+      continue;
     if(person_score_table_[computer_score_[i].row][computer_score_[i].col].sum_score > max_person_score)
     {
       max_person_score = person_score_table_[computer_score_[i].row][computer_score_[i].col].sum_score;
@@ -320,11 +323,14 @@ void ComputerPlayer::attack(int& target_row, int& target_col)
 
 void ComputerPlayer::defend(int& target_row, int& target_col)
 {
-  int max_computer_score = 0;
-  int max_person_score = person_score_[0].sum_score;
+  double max_computer_score = 0;
+  double max_person_score = person_score_[0].sum_score;
+  printf("person_max_score:%.0lf\n", max_person_score);
   int i;
   for(i = 0; i < Chess::SIZE * Chess::SIZE && person_score_[i].sum_score == max_person_score; i++)
   {
+    if(chess_ -> get_point(person_score_[i].row, person_score_[i].col) != Chess::EMPTY)
+      continue;
     if(computer_score_table_[person_score_[i].row][person_score_[i].col].sum_score > max_computer_score)
     {
       max_computer_score = computer_score_table_[person_score_[i].row][person_score_[i].col].sum_score;
@@ -334,9 +340,18 @@ void ComputerPlayer::defend(int& target_row, int& target_col)
   }
 }
 
+double abs(double a, double b)
+{
+  if(a - b < 0.0)
+    return b - a;
+  return a - b;
+}
+
 void ComputerPlayer::calc_next_step(int& target_row, int& target_col)
 {
+  //memset(computer_score_table_, 0, sizeof(computer_score_table_));
   memset(computer_score_, 0, sizeof(computer_score_));
+  //memset(person_score_table_, 0, sizeof(person_score_));
   memset(person_score_, 0, sizeof(person_score_));
   int i, j, count = 0;
   for(i = 0; i < Chess::SIZE; i++)
@@ -356,11 +371,29 @@ void ComputerPlayer::calc_next_step(int& target_row, int& target_col)
     }
   }
 
+  //printf("Computer Score:\n");
+  //show_score_tabel(computer_score_table_);
+  //printf("Person Score:\n");
+  //show_score_tabel(person_score_table_);
+
   quicksort(0, Chess::SIZE * Chess::SIZE - 1, computer_score_);
   quicksort(0, Chess::SIZE * Chess::SIZE - 1, person_score_);
 
-  if(computer_score_[0].sum_score >= person_score_[0].sum_score)
+  if(computer_score_[0].sum_score > person_score_[0].sum_score || abs(computer_score_[0].sum_score, person_score_[0].sum_score) < 0.1)
     attack(target_row, target_col);
   else
     defend(target_row, target_col);
+}
+
+void ComputerPlayer::show_score_tabel(GridScore score[][Chess::SIZE])
+{
+  int i, j;
+  for(i = 0; i < Chess::SIZE; i++)
+  {
+    for(j = 0; j < Chess::SIZE; j++)
+    {
+      printf("%4.0f ", score[i][j].sum_score);
+    }
+    printf("\n");
+  }
 }

@@ -48,6 +48,7 @@ int main()
     computer.calc_next_step(row, col);
     chess.set_point(row, col, computer_type);
     draw_chess(chess);
+    printf("computer step:(%d,%d)\n",row, col);
   }
   if(chess.judge_win() == Chess::BLACK)
     printf("The player win!\n");

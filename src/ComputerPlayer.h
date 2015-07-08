@@ -37,6 +37,7 @@ private:
   void attack(int& target_row, int& target_col);
   void defend(int& target_row, int& target_col);
 
+  void show_score_tabel(GridScore score[][Chess::SIZE]);
 public:
   ComputerPlayer(Chess::PieceType computer_type, Chess* c);
   void calc_next_step(int& target_row, int& target_col);
