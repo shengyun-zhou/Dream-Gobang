@@ -7,11 +7,16 @@ set(PROJECT_SOURCE_FILE
     Gobang.h
     Chess.h
     Chess.cpp
+	ComputerPlayer.h
+	ComputerPlayer.cpp
+	Image.h
+	Image.cpp
     #Please put the new source files and header files here
     )
-
+	
 if(MINGW)
-	link_libraries(graphics gdi32 imm32 msimg32 ole32 oleaut32 winmm uuid)
+	ADD_DEFINITIONS(${GTK3_CFLAGS_OTHER})
+	link_libraries(graphics gdi32 imm32 msimg32 ole32 oleaut32 winmm uuid cairo)
 	set(CMAKE_EXE_LINKER_FLAGS "-mwindows")
 endif()
 
