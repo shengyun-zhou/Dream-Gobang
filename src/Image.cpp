@@ -18,5 +18,5 @@ void Image::show_image(int x, int y)
 
 void Image::show_image_with_alpha(int x, int y, double alaph)
 {
-	putimage_withalpha(NULL, image_, alaph, x, y);
+	putimage_alpha(NULL, image_, alaph, x, y);
 }

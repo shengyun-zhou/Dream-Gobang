@@ -1,4 +1,5 @@
 #pragma once
+#define SHOW_CONSOLE
 #include "graphics.h"
 class Image
 {
@@ -24,7 +25,7 @@ class Image
 		 * @param x 图像显示的目标区域的左上角x坐标
 		 * @param y 图像显示的目标区域的左上角y坐标
 		 * @param alpha 透明度，范围为0.0 - 1.0，0.0为完全透明，1.0为完全不透明
-		 * @attention 非PNG格式的图片请勿使用此函数
+		 * @attention 非PNG格式的图片请勿使用此函数,PNG图片若要正常显示请使用此函数
 		 */
 		void show_image_with_alpha(int x, int y, double alpha);
 };

@@ -11,6 +11,10 @@ set(PROJECT_SOURCE_FILE
 	ComputerPlayer.cpp
 	Image.h
 	Image.cpp
+	Save.h
+	Save.cpp
+	Settings.h
+	Settings.cpp
     #Please put the new source files and header files here
     )
 	
