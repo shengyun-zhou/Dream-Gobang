@@ -15,6 +15,8 @@ set(PROJECT_SOURCE_FILE
 	Save.cpp
 	Settings.h
 	Settings.cpp
+	Music.h
+	Music.cpp
     #Please put the new source files and header files here
     )
 	
