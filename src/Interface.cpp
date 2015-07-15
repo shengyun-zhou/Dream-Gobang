@@ -74,19 +74,28 @@ void Interface::welcome()
 }
 
 
-void Interface::set_welcome()
+void Interface::set_welcome(Settings* settings)
 {
+	setfillcolor(WHITE);
+	static Image object_select("res/object-select.png");
+
 	static Image game_welcom_bg("res/game-welcom-bg.jpg");
 	game_welcom_bg.show_image(0, 0);
 
 	static Image settings_select_black("res/game-settings-select-black.png");
 	settings_select_black.show_image_with_alpha(30, 350, 0.9);
+	if (settings->get_piece_color() == Chess::BLACK)
+		object_select.show_image_with_alpha(90, 480, 1.0);
 
 	static Image settings_select_white("res/game-settings-select-white.png");
 	settings_select_white.show_image_with_alpha(260, 350, 0.9);
+	if (settings->get_piece_color() == Chess::WHITE)
+		object_select.show_image_with_alpha(320, 480, 1.0);
 
 	static Image settings_audio("res/game-settings-audio.png");
 	settings_audio.show_image_with_alpha(30, 520, 0.9);
+	if (settings->is_audio_on())
+		object_select.show_image_with_alpha(90, 630, 1.0);
 
 	static Image settings_back("res/game-settings-back.png");
 	settings_back.show_image_with_alpha(260, 500, 0.9);

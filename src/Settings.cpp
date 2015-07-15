@@ -1,61 +1,85 @@
 #include "Settings.h"
 
-static string fill_name = "name.txt";
-enum color{BLACK = 1, WHITE = -1};
+const char* Settings::file_name = "game-settings.ini";
 
 Settings::Settings()
 {
-	color_ = BLACK;
+	color_ = Chess::BLACK;
+	is_audio_on_ = true;
 }
 
 
-Settings::Settings(color color_)
-{
-	this -> color_ = color_;
-}
-
-
-Settings::color Settings::getter()
+Chess::PieceType Settings::get_piece_color()
 {
 	return color_;
 }
 
-
-void Settings::setter(color color_)
+void Settings::set_piece_color(Chess::PieceType color_)
 {
 	this -> color_ = color_;
 }
 
+bool Settings::is_audio_on()
+{
+	return is_audio_on_;
+}
 
-bool Settings::readfine()
+void Settings::set_audio(bool is_on)
+{
+	this->is_audio_on_ = is_on;
+}
+bool Settings::read_settings()
 {
 	ifstream input;
-	input.open("name.txt");
-	int temp;
-	if(input.eof() != 1)
-	{
-		input >> temp;
-		if(temp == BLACK)
-			color_ = BLACK;
-		else if(temp == WHITE)
-			color_ = WHITE;
-		else
-			return 0;
-		input.close();
-		return 1;
-	}
+	input.open(file_name, ios_base::in);
+	if (input.fail())
+		return false;
+
+	bool read_success_flag = true;
+	string temp;
+	input >> temp;
+	if (temp == "piece-type=black")
+		color_ = Chess::BLACK;
+	else if (temp == "piece-type=white")
+		color_ = Chess::WHITE;
 	else
 	{
-		input.close();
-		return 0;
+		color_ = Chess::BLACK;
+		read_success_flag = false;
 	}
+
+	input >> temp;
+	if (temp == "audio=on")
+		is_audio_on_ = true;
+	else if (temp == "audio=off")
+		is_audio_on_ = false;
+	else
+	{
+		is_audio_on_ = true;
+		read_success_flag = false;
+	}
+
+	input.close();
+	return read_success_flag;
 }
 
 
-void Settings::writefine(color color_)
+void Settings::write_settings()
 {
 	ofstream output;
-	output.open("name.txt");
-	output << color_ << " ";
+	output.open(file_name, ios_base::out);
+	if (output.fail())
+		return;
+
+	if (color_ == Chess::BLACK)
+		output << "piece-type=black" << endl;
+	else
+		output << "piece-type=white" << endl;
+
+	if (is_audio_on_)
+		output << "audio=on" << endl;
+	else
+		output << "audio=off" << endl;
+
 	output.close();
 }

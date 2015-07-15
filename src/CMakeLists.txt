@@ -32,8 +32,12 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 add_executable (Simple-Gobang ${PROJECT_SOURCE_FILE})
 
 if(MINGW)
-	set(CMAKE_EXE_LINKER_FLAGS "")
+	file (COPY ${CMAKE_CURRENT_SOURCE_DIR}/res  DESTINATION ${CMAKE_BINARY_DIR}/bin)
+elseif(MSVC)
+	file (COPY ${CMAKE_CURRENT_SOURCE_DIR}/res  DESTINATION ${CMAKE_BINARY_DIR}/bin/Release)
+	file (COPY ${CMAKE_CURRENT_SOURCE_DIR}/res  DESTINATION ${CMAKE_BINARY_DIR}/bin/Debug)
 endif()
+
 set(TERMINAL_TEST_SOURCE_FILE
 		Gobang.h
 		Chess.h
@@ -41,5 +45,8 @@ set(TERMINAL_TEST_SOURCE_FILE
 		ComputerPlayer.h
 		ComputerPlayer.cpp
 		TerminalTestMain.cpp)
+if(MINGW)
+	set(CMAKE_EXE_LINKER_FLAGS "")
+endif()
 add_executable (Gobang-Terminal-Test ${TERMINAL_TEST_SOURCE_FILE})
 

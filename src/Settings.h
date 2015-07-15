@@ -1,23 +1,22 @@
 #pragma once
 #include <string>
 #include <fstream>
+#include "Chess.h"
 using namespace std;
 
 class Settings
 {
 public:
-	enum color
-	{
-		BLACK = 1,
-		WHITE = -1
-	};//黑子为1，白子为-1；
 	Settings();
-	Settings(color color_);
-	color getter();
-	void setter(color color_);
-	bool readfine();
-	void writefine(color color_);
-	static const string fill_name;
+	Chess::PieceType get_piece_color();
+	void set_piece_color(Chess::PieceType color);
+	bool is_audio_on();
+	void set_audio(bool is_on);
+
+	bool read_settings();
+	void write_settings();
 private:
-	color color_;
+	static const char* file_name;
+	Chess::PieceType color_;
+	bool is_audio_on_;
 };

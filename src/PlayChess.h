@@ -1,8 +1,6 @@
 #pragma once
-#define SHOW_CONSOLE
 #include "Chess.h"
 #include "Save.h"
-#define SHOW_CONSOLE
 #include "graphics.h"
 
 class PlayChess
