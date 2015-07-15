@@ -1,5 +1,4 @@
 #pragma once
-#define SHOW_CONSOLE
 #include "graphics.h"
 #include <windef.h>
 #include <windows.h>

@@ -1,5 +1,4 @@
 #pragma once
-#define SHOW_CONSOLE
 #include "Save.h"
 #include "PlayChess.h"
 #include "ComputerPlayer.h"

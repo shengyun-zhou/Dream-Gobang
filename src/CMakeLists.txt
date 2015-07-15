@@ -28,6 +28,18 @@ if(MINGW)
 	set(CMAKE_EXE_LINKER_FLAGS "-mwindows")
 endif()
 
+# Add resource files
+if(WIN32)
+    if(MINGW)
+        set(CMAKE_RC_COMPILER_INIT windres)
+        enable_language(RC)
+        set(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> -O coff -i <SOURCE> -o <OBJECT>")
+		list(APPEND PROJECT_SOURCE_FILE res/Simple-Gobang.rc)
+	elseif(MSVC)
+		list(APPEND PROJECT_SOURCE_FILE res/Simple-Gobang-vs.rc)
+	endif()
+endif()
+
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 add_executable (Simple-Gobang ${PROJECT_SOURCE_FILE})
 
@@ -38,15 +50,15 @@ elseif(MSVC)
 	file (COPY ${CMAKE_CURRENT_SOURCE_DIR}/res  DESTINATION ${CMAKE_BINARY_DIR}/bin/Debug)
 endif()
 
-set(TERMINAL_TEST_SOURCE_FILE
-		Gobang.h
-		Chess.h
-		Chess.cpp
-		ComputerPlayer.h
-		ComputerPlayer.cpp
-		TerminalTestMain.cpp)
-if(MINGW)
-	set(CMAKE_EXE_LINKER_FLAGS "")
-endif()
-add_executable (Gobang-Terminal-Test ${TERMINAL_TEST_SOURCE_FILE})
+#set(TERMINAL_TEST_SOURCE_FILE
+#		Gobang.h
+#		Chess.h
+#		Chess.cpp
+#		ComputerPlayer.h
+#		ComputerPlayer.cpp
+#		TerminalTestMain.cpp)
+#if(MINGW)
+#	set(CMAKE_EXE_LINKER_FLAGS "")
+#endif()
+#add_executable (Gobang-Terminal-Test ${TERMINAL_TEST_SOURCE_FILE})
 

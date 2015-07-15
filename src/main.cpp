@@ -1,4 +1,3 @@
-#define SHOW_CONSOLE
 #include "Interface.h"
 #include "Music.h"
 #include "Settings.h"
