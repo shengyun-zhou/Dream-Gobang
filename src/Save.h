@@ -1,8 +1,13 @@
-#include"Chess.h"
-class Save{
+#pragma once
+#include "Chess.h"
+#include <fstream>
+using namespace std;
+
+class Save
+{
 public:
 	void Record(Chess &chess_);
-	enum object{PLAYER,COMPUTER};
+	enum object{PLAYER, COMPUTER};
 	void set_first_object(object object_);
 	Chess::PieceType get_next_piece_color();
 	object get_next_object();

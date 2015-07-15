@@ -69,7 +69,7 @@ DWORD WINAPI Music::on_player_running(LPVOID data)
 				music_data->stop_mission_ = false;
 				return 0;
 			}
-			Sleep(250);
+			api_sleep(250);
 		}
 		if (num_play > 0)
 			num_play--;
@@ -77,7 +77,7 @@ DWORD WINAPI Music::on_player_running(LPVOID data)
 			break;
 		start_time = clock();
 		while ((clock() - start_time) / CLOCKS_PER_SEC < music_data->interval_time_)
-			Sleep(250);
+			api_sleep(250);
 	}
 	music_data->is_running_ = false;
 	return 0;
@@ -108,7 +108,7 @@ void Music::stop()
 	{
 		stop_mission_ = true;
 		while (stop_mission_)
-			Sleep(50);
+			api_sleep(50);
 		CloseHandle(thread_handle_);
 	}
 }
@@ -119,7 +119,7 @@ void Music::pause()
 	{
 		pause_mission_ = true;
 		while (pause_mission_)
-			Sleep(50);
+			api_sleep(50);
 		SuspendThread(thread_handle_);
 	}
 }
@@ -131,7 +131,7 @@ void Music::resume()
 		resume_mission_ = true;
 		ResumeThread(thread_handle_);
 		while (resume_mission_)
-			Sleep(50);
+			api_sleep(50);
 	}
 }
 

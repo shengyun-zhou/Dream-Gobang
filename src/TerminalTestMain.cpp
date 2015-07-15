@@ -45,6 +45,7 @@ int main()
     if(chess.get_point(row, col) != Chess::EMPTY)
       continue;
     chess.set_point(row, col, player_type);
+    draw_chess(chess);
     computer.calc_next_step(row, col);
     chess.set_point(row, col, computer_type);
     draw_chess(chess);

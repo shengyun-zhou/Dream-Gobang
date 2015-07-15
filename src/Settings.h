@@ -1,11 +1,15 @@
-#include"string"
+#pragma once
+#include <string>
+#include <fstream>
 using namespace std;
-class Settings{
+
+class Settings
+{
 public:
 	enum color
 	{
-		BLACK=1,
-		WHITE=-1
+		BLACK = 1,
+		WHITE = -1
 	};//黑子为1，白子为-1；
 	Settings();
 	Settings(color color_);
@@ -16,4 +20,4 @@ public:
 	static const string fill_name;
 private:
 	color color_;
-	};
+};

@@ -5,6 +5,8 @@
 const double ComputerPlayer::linked_grid_score_[] = {0.0, 1.0, 5.0, 21.0, 85.0, 341.0, 1365.0, 5461.0, 21845.0, 87381.0};
 const double ComputerPlayer::empty_grid_discount_weight_[] = {1.0, 0.8, 0.512, 0.21, 0.044, 0.0016};
 const double ComputerPlayer::linked_grid_weight_[] = {0.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0};
+int ComputerPlayer::max_search_step = 5;
+const double ComputerPlayer::INFINITY_MAX = 10000000.0;
 
 ComputerPlayer::ComputerPlayer(Chess::PieceType computer_type, Chess* c)
 {
@@ -99,6 +101,8 @@ void ComputerPlayer::calc_grid_score_direction(int row, int col, Chess::Directio
   double discount_weight = 1.0;
   double extra_score = 0;
   int max_linked_piece_num;
+  bool link_grid_invalid_flag = false;
+  bool empty_grid_flag = false;
 
   row_max = (row + 4 < Chess::SIZE) ? row + 4 : Chess::SIZE - 1;
   row_min = (row - 4 >= 0) ? row - 4 : 0;
@@ -130,7 +134,15 @@ void ComputerPlayer::calc_grid_score_direction(int row, int col, Chess::Directio
         if(chess_ -> get_point(row, col_pos) == Chess::EMPTY)
           empty_grid_num++;
         else if(chess_ -> get_point(row, col_pos) == oposite_type)
+        {
+          if(empty_grid_num == 0 && max_linked_piece_num < 5 && link_grid_invalid_flag == false)
+          {
+            link_grid_invalid_flag = true;
+            extra_score = 0.0;
+            result--;
+          }
           break;
+        }
         else if(chess_ -> get_point(row, col_pos) == self_type)
         {
           result++;
@@ -144,7 +156,15 @@ void ComputerPlayer::calc_grid_score_direction(int row, int col, Chess::Directio
         if(chess_ -> get_point(row, col_pos) == Chess::EMPTY)
           empty_grid_num++;
         else if(chess_ -> get_point(row, col_pos) == oposite_type)
+        {
+          if(empty_grid_num == 0 && max_linked_piece_num < 5 && link_grid_invalid_flag == false)
+          {
+            link_grid_invalid_flag = true;
+            extra_score = 0.0;
+            result--;
+          }
           break;
+        }
         else if(chess_ -> get_point(row, col_pos) == self_type)
         {
           result++;
@@ -152,7 +172,10 @@ void ComputerPlayer::calc_grid_score_direction(int row, int col, Chess::Directio
           empty_grid_num = 0;
         }
       }
-      grid_score.row_score = linked_grid_score_[result] * discount_weight + extra_score;
+      if(link_grid_invalid_flag == false)
+        grid_score.row_score = linked_grid_score_[result] * discount_weight + extra_score;
+      else
+        grid_score.row_score = linked_grid_score_[result];
       return;
     case Chess::COL:
       grid_score.col_score = 0;
@@ -166,7 +189,15 @@ void ComputerPlayer::calc_grid_score_direction(int row, int col, Chess::Directio
         if(chess_ -> get_point(row_pos, col) == Chess::EMPTY)
           empty_grid_num++;
         else if(chess_ -> get_point(row_pos, col) == oposite_type)
+        {
+          if(empty_grid_num == 0 && max_linked_piece_num < 5 && link_grid_invalid_flag == false)
+          {
+            link_grid_invalid_flag = true;
+            extra_score = 0.0;
+            result--;
+          }
           break;
+        }
         else if(chess_ -> get_point(row_pos, col) == self_type)
         {
           result++;
@@ -180,7 +211,15 @@ void ComputerPlayer::calc_grid_score_direction(int row, int col, Chess::Directio
         if(chess_ -> get_point(row_pos, col) == Chess::EMPTY)
           empty_grid_num++;
         else if(chess_ -> get_point(row_pos, col) == oposite_type)
+        {
+          if(empty_grid_num == 0 && max_linked_piece_num < 5 && link_grid_invalid_flag == false)
+          {
+            link_grid_invalid_flag = true;
+            extra_score = 0.0;
+            result--;
+          }
           break;
+        }
         else if(chess_ -> get_point(row_pos, col) == self_type)
         {
           result++;
@@ -188,7 +227,10 @@ void ComputerPlayer::calc_grid_score_direction(int row, int col, Chess::Directio
           empty_grid_num = 0;
         }
       }
-      grid_score.col_score = linked_grid_score_[result] * discount_weight + extra_score;
+      if(link_grid_invalid_flag == false)
+        grid_score.col_score = linked_grid_score_[result] * discount_weight + extra_score;
+      else
+        grid_score.col_score = linked_grid_score_[result];
       return;
     case Chess::LEFT_RIGHT:
       grid_score.left_right_score = 0;
@@ -201,9 +243,17 @@ void ComputerPlayer::calc_grid_score_direction(int row, int col, Chess::Directio
       {
         if(chess_ -> get_point(row_pos, col_pos) == Chess::EMPTY)
           empty_grid_num++;
-        if(chess_ -> get_point(row_pos, col_pos) == oposite_type)
+        else if(chess_ -> get_point(row_pos, col_pos) == oposite_type)
+        {
+          if(empty_grid_num == 0 && max_linked_piece_num < 5 && link_grid_invalid_flag == false)
+          {
+            link_grid_invalid_flag = true;
+            extra_score = 0.0;
+            result--;
+          }
           break;
-        if(chess_ -> get_point(row_pos, col_pos) == self_type)
+        }
+        else if(chess_ -> get_point(row_pos, col_pos) == self_type)
         {
           result++;
           discount_weight *= empty_grid_discount_weight_[empty_grid_num];
@@ -215,16 +265,27 @@ void ComputerPlayer::calc_grid_score_direction(int row, int col, Chess::Directio
       {
         if(chess_ -> get_point(row_pos, col_pos) == Chess::EMPTY)
           empty_grid_num++;
-        if(chess_ -> get_point(row_pos, col_pos) == oposite_type)
+        else if(chess_ -> get_point(row_pos, col_pos) == oposite_type)
+        {
+          if(empty_grid_num == 0 && max_linked_piece_num < 5 && link_grid_invalid_flag == false)
+          {
+            link_grid_invalid_flag = true;
+            extra_score = 0.0;
+            result--;
+          }
           break;
-        if(chess_ -> get_point(row_pos, col_pos) == self_type)
+        }
+        else if(chess_ -> get_point(row_pos, col_pos) == self_type)
         {
           result++;
           discount_weight *= empty_grid_discount_weight_[empty_grid_num];
           empty_grid_num = 0;
         }
       }
-      grid_score.left_right_score = linked_grid_score_[result] * discount_weight + extra_score;
+      if(link_grid_invalid_flag == false)
+        grid_score.left_right_score = linked_grid_score_[result] * discount_weight + extra_score;
+      else
+        grid_score.left_right_score = linked_grid_score_[result];
       return;
     case Chess::RIGHT_LEFT:
       grid_score.right_left_score = 0;
@@ -237,9 +298,17 @@ void ComputerPlayer::calc_grid_score_direction(int row, int col, Chess::Directio
       {
         if(chess_ -> get_point(row_pos, col_pos) == Chess::EMPTY)
           empty_grid_num++;
-        if(chess_ -> get_point(row_pos, col_pos) == oposite_type)
+        else if(chess_ -> get_point(row_pos, col_pos) == oposite_type)
+        {
+          if(empty_grid_num == 0 && max_linked_piece_num < 5 && link_grid_invalid_flag == false)
+          {
+            link_grid_invalid_flag = true;
+            extra_score = 0.0;
+            result--;
+          }
           break;
-        if(chess_ -> get_point(row_pos, col_pos) == self_type)
+        }
+        else if(chess_ -> get_point(row_pos, col_pos) == self_type)
         {
           result++;
           discount_weight *= empty_grid_discount_weight_[empty_grid_num];
@@ -251,16 +320,27 @@ void ComputerPlayer::calc_grid_score_direction(int row, int col, Chess::Directio
       {
         if(chess_ -> get_point(row_pos, col_pos) == Chess::EMPTY)
           empty_grid_num++;
-        if(chess_ -> get_point(row_pos, col_pos) == oposite_type)
+        else if(chess_ -> get_point(row_pos, col_pos) == oposite_type)
+        {
+          if(empty_grid_num == 0 && max_linked_piece_num < 5 && link_grid_invalid_flag == false)
+          {
+            link_grid_invalid_flag = true;
+            extra_score = 0.0;
+            result--;
+          }
           break;
-        if(chess_ -> get_point(row_pos, col_pos) == self_type)
+        }
+        else if(chess_ -> get_point(row_pos, col_pos) == self_type)
         {
           result++;
           discount_weight *= empty_grid_discount_weight_[empty_grid_num];
           empty_grid_num = 0;
         }
       }
-      grid_score.right_left_score = linked_grid_score_[result] * discount_weight + extra_score;
+      if(link_grid_invalid_flag == false)
+        grid_score.right_left_score = linked_grid_score_[result] * discount_weight + extra_score;
+      else
+        grid_score.right_left_score = linked_grid_score_[result];
       return;
   }
 }
@@ -277,7 +357,6 @@ void ComputerPlayer::calc_grid_score(GridScore& grid_score, Chess::PieceType sel
 
 int ComputerPlayer::quicksort_division(int left, int right, GridScore* array)
 {
-  //printf("left == %d, right == %d\n", left, right);
   GridScore base = array[left];
   while(left < right)
   {
@@ -347,11 +426,9 @@ double abs(double a, double b)
   return a - b;
 }
 
-void ComputerPlayer::calc_next_step(int& target_row, int& target_col)
+void ComputerPlayer::calc_score_table()
 {
-  //memset(computer_score_table_, 0, sizeof(computer_score_table_));
   memset(computer_score_, 0, sizeof(computer_score_));
-  //memset(person_score_table_, 0, sizeof(person_score_));
   memset(person_score_, 0, sizeof(person_score_));
   int i, j, count = 0;
   for(i = 0; i < Chess::SIZE; i++)
@@ -378,11 +455,318 @@ void ComputerPlayer::calc_next_step(int& target_row, int& target_col)
 
   quicksort(0, Chess::SIZE * Chess::SIZE - 1, computer_score_);
   quicksort(0, Chess::SIZE * Chess::SIZE - 1, person_score_);
+}
+
+double ComputerPlayer::calc_chess_score(Chess::PieceType self_type, int min_max_flag)
+{
+  Chess::PieceType oposite_type;
+  if(self_type == Chess::BLACK)
+    oposite_type = Chess::WHITE;
+  else
+    oposite_type = Chess::BLACK;
+  double self_score = 0.0;
+  GridScore self_grid_score_temp;
+  double oposite_score = 0.0;
+  GridScore oposite_grid_score_temp;
+  int i, j;
+  for(i = 0; i < Chess::SIZE; i++)
+  {
+    for(j = 0; j < Chess::SIZE; j++)
+    {
+      if(chess_->get_point(i, j) == self_type)
+      {
+        self_grid_score_temp.row = i;
+        self_grid_score_temp.col = j;
+        calc_grid_score(self_grid_score_temp, self_type);
+        if(self_grid_score_temp.sum_score > self_score)
+          self_score = self_grid_score_temp.sum_score;
+        chess_->set_point(i, j, self_type);
+      }
+      else if(chess_->get_point(i, j) == oposite_type)
+      {
+        oposite_grid_score_temp.row = i;
+        oposite_grid_score_temp.col = j;
+        calc_grid_score(oposite_grid_score_temp, oposite_type);
+        if(oposite_grid_score_temp.sum_score > oposite_score)
+          oposite_score  = oposite_grid_score_temp.sum_score;
+        chess_->set_point(i, j, oposite_type);
+      }
+    }
+  }
+  self_score *= min_max_flag;
+  oposite_score *= min_max_flag;
+  return self_score - oposite_score;
+}
+
+double ComputerPlayer::DFS(int nth_step, double ex_value, int min_max_flag, int& target_row, int& target_col)
+{
+  calc_score_table();
+  int c, i = 0, j = 0;
+  double current_ex_value;
+  double next_step_value;
+  double temp_value;
+  if(min_max_flag == MAX_FLAG)
+    current_ex_value = -1.0 * INFINITY_MAX - 1.0;
+  else
+    current_ex_value = INFINITY_MAX + 1.0;
+  for(c = 0; c < max_select_grid; c++)
+  {
+    while(chess_->get_point(computer_score_[i].row, computer_score_[i].col) != Chess::EMPTY)
+    {
+      i++;
+      if(i >= Chess::SIZE * Chess::SIZE)
+        return current_ex_value;
+    }
+    while(chess_->get_point(person_score_[j].row, person_score_[j].col) != Chess::EMPTY)
+    {
+      j++;
+      if(j >= Chess::SIZE * Chess::SIZE)
+        return current_ex_value;
+    }
+
+    if(computer_score_[i].sum_score > person_score_[j].sum_score)     //attack
+    {
+      chess_->set_point(computer_score_[i].row, computer_score_[i].col, computer_piece_type_);
+      if(chess_->judge_win() == computer_piece_type_)
+      {
+        if(nth_step == 1)
+        {
+          target_row = computer_score_[i].row;
+          target_col = computer_score_[i].col;
+        }
+        chess_->set_point(computer_score_[i].row, computer_score_[i].col, Chess::EMPTY);
+        return INFINITY_MAX * min_max_flag;
+      }
+
+      if(nth_step == max_search_step)
+      {
+        if(min_max_flag == MAX_FLAG)
+        {
+          temp_value = calc_chess_score(computer_piece_type_, min_max_flag);
+          if(temp_value > current_ex_value)
+          {
+            current_ex_value = temp_value;
+            //printf("step:%d,current_ex_value:%.2lf\n",nth_step, current_ex_value);
+            if(nth_step == 1)
+            {
+              target_row = computer_score_[i].row;
+              target_col = computer_score_[i].col;
+            }
+          }
+          if(current_ex_value > ex_value)      //当前最大值大于上一层已知的最小值
+          {
+            chess_->set_point(computer_score_[i].row, computer_score_[i].col, Chess::EMPTY);
+            return current_ex_value;
+          }
+        }
+        else
+        {
+          temp_value = calc_chess_score(computer_piece_type_, min_max_flag);
+          if(temp_value < current_ex_value)
+          {
+            current_ex_value = temp_value;
+            //printf("step:%d,current_ex_value:%.2lf\n",nth_step, current_ex_value);
+            if(nth_step == 1)
+            {
+              target_row = computer_score_[i].row;
+              target_col = computer_score_[i].col;
+            }
+          }
+          if(current_ex_value < ex_value)      //当前最小值小于上一层已知的最大值
+          {
+            chess_->set_point(computer_score_[i].row, computer_score_[i].col, Chess::EMPTY);
+            return current_ex_value;
+          }
+        }
+      }
+      else
+      {
+        ComputerPlayer next_com(person_piece_type_, chess_);
+        next_step_value = next_com.DFS(nth_step + 1, current_ex_value, min_max_flag * -1, target_row, target_col);
+        if(min_max_flag == MAX_FLAG)
+        {
+          if(next_step_value > current_ex_value)
+          {
+            current_ex_value = next_step_value;
+            //printf("step:%d,current_ex_value:%.2lf\n",nth_step, current_ex_value);
+            if(nth_step == 1)
+            {
+              target_row = computer_score_[i].row;
+              target_col = computer_score_[i].col;
+            }
+            if(current_ex_value > ex_value)      //当前最大值大于上一层已知的最小值
+            {
+              chess_->set_point(computer_score_[i].row, computer_score_[i].col, Chess::EMPTY);
+              return current_ex_value;
+            }
+          }
+        }
+        else
+        {
+          if(next_step_value < current_ex_value)
+          {
+            current_ex_value = next_step_value;
+            //printf("step:%d,current_ex_value:%.2lf\n",nth_step, current_ex_value);
+            if(nth_step == 1)
+            {
+              target_row = computer_score_[i].row;
+              target_col = computer_score_[i].col;
+            }
+            if(current_ex_value < ex_value)      //当前最小值小于上一层已知的最大值
+            {
+              chess_->set_point(computer_score_[i].row, computer_score_[i].col, Chess::EMPTY);
+              return current_ex_value;
+            }
+          }
+        }
+      }
+      chess_->set_point(computer_score_[i].row, computer_score_[i].col, Chess::EMPTY);
+      i++;
+    }
+    else                                                              //defend
+    {
+      //printf("Current pos:(%d,%d)\n", person_score_[j].row, person_score_[j].col);
+      //getchar();
+      chess_->set_point(person_score_[j].row, person_score_[j].col, computer_piece_type_);
+      if(chess_->judge_win() == computer_piece_type_)
+      {
+        if(nth_step == 1)
+        {
+          target_row = person_score_[j].row;
+          target_col = person_score_[j].col;
+        }
+        chess_->set_point(person_score_[j].row, person_score_[j].col, Chess::EMPTY);
+        return INFINITY_MAX * min_max_flag;
+      }
+
+      if(nth_step == max_search_step)
+      {
+        if(min_max_flag == MAX_FLAG)
+        {
+          temp_value = calc_chess_score(computer_piece_type_, min_max_flag);
+          if(temp_value > current_ex_value)
+          {
+            current_ex_value = temp_value = calc_chess_score(computer_piece_type_, min_max_flag);;
+            //printf("step:%d,current_ex_value:%.2lf\n",nth_step, current_ex_value);
+            if(nth_step == 1)
+            {
+              target_row = person_score_[j].row;
+              target_col = person_score_[j].col;
+            }
+          }
+          if(current_ex_value > ex_value)      //当前最大值大于上一层已知的最小值
+          {
+            chess_->set_point(person_score_[j].row, person_score_[j].col, Chess::EMPTY);
+            return current_ex_value;
+          }
+        }
+        else
+        {
+          temp_value = calc_chess_score(computer_piece_type_, min_max_flag);
+          if(temp_value < current_ex_value)
+          {
+            current_ex_value = temp_value;
+            //printf("step:%d,current_ex_value:%.2lf\n",nth_step, current_ex_value);
+            if(nth_step == 1)
+            {
+              target_row = person_score_[j].row;
+              target_col = person_score_[j].col;
+            }
+          }
+          if(current_ex_value < ex_value)      //当前最小值小于上一层已知的最大值
+          {
+            chess_->set_point(person_score_[j].row, person_score_[j].col, Chess::EMPTY);
+            return current_ex_value;
+          }
+        }
+      }
+      else
+      {
+        ComputerPlayer next_com(person_piece_type_, chess_);
+        next_step_value = next_com.DFS(nth_step + 1, current_ex_value, min_max_flag * -1, target_row, target_col);
+        if(min_max_flag == MAX_FLAG)
+        {
+          if(next_step_value > current_ex_value)
+          {
+            current_ex_value = next_step_value;
+            //printf("step:%d,current_ex_value:%.2lf\n",nth_step, current_ex_value);
+            if(nth_step == 1)
+            {
+              target_row = person_score_[j].row;
+              target_col = person_score_[j].col;
+            }
+            if(current_ex_value > ex_value)      //当前最大值大于上一层已知的最小值
+            {
+              chess_->set_point(person_score_[j].row, person_score_[j].col, Chess::EMPTY);
+              return current_ex_value;
+            }
+          }
+        }
+        else
+        {
+          if(next_step_value < current_ex_value)
+          {
+            current_ex_value = next_step_value;
+            //printf("step:%d,current_ex_value:%.2lf\n",nth_step, current_ex_value);
+            if(nth_step == 1)
+            {
+              target_row = person_score_[j].row;
+              target_col = person_score_[j].col;
+            }
+            if(current_ex_value < ex_value)      //当前最小值小于上一层已知的最大值
+            {
+              chess_->set_point(person_score_[j].row, person_score_[j].col, Chess::EMPTY);
+              return current_ex_value;
+            }
+          }
+        }
+      }
+      chess_->set_point(person_score_[j].row, person_score_[j].col, Chess::EMPTY);
+      j++;
+    }
+  }
+  return current_ex_value;
+}
+
+void ComputerPlayer::calc_next_step(int& target_row, int& target_col)
+{
+  if(chess_->get_empty_grid_num() == Chess::SIZE * Chess::SIZE)
+  {
+    target_row = Chess::SIZE / 2;
+    target_col = Chess::SIZE / 2;
+    return;
+  }
+  /*memset(computer_score_, 0, sizeof(computer_score_));
+  memset(person_score_, 0, sizeof(person_score_));
+  int i, j, count = 0;
+  for(i = 0; i < Chess::SIZE; i++)
+  {
+    for(j = 0; j < Chess::SIZE; j++)
+    {
+      if(chess_ -> get_point(i, j) != Chess::EMPTY)
+        continue;
+      computer_score_table_[i][j].row = i;
+      computer_score_table_[i][j].col = j;
+      person_score_table_[i][j].row = i;
+      person_score_table_[i][j].col = j;
+      calc_grid_score(computer_score_table_[i][j], computer_piece_type_);
+      calc_grid_score(person_score_table_[i][j], person_piece_type_);
+      computer_score_[count] = computer_score_table_[i][j];
+      person_score_[count++] = person_score_table_[i][j];
+    }
+  }
 
   if(computer_score_[0].sum_score > person_score_[0].sum_score || abs(computer_score_[0].sum_score, person_score_[0].sum_score) < 0.1)
     attack(target_row, target_col);
   else
-    defend(target_row, target_col);
+    defend(target_row, target_col);*/
+  if(chess_->get_empty_grid_num() < max_search_step)
+  {
+    max_search_step = max_search_step / 2 * 2;
+    if(max_search_step < 1)
+      max_search_step = 1;
+  }
+  DFS(1, INFINITY_MAX, MAX_FLAG, target_row, target_col);
 }
 
 void ComputerPlayer::show_score_tabel(GridScore score[][Chess::SIZE])

@@ -1,5 +1,4 @@
 #pragma once
-#define SHOW_CONSOLE
 #include "graphics.h"
 class Image
 {
@@ -29,4 +28,3 @@ class Image
 		 */
 		void show_image_with_alpha(int x, int y, double alpha);
 };
-
