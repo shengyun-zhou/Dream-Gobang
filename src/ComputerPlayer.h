@@ -26,7 +26,7 @@ private:
   GridScore person_score_[Chess::SIZE * Chess::SIZE];
 
   static int max_search_step;
-  static const int max_select_grid = 10;
+  static const int max_select_grid = 15;
   static const double empty_grid_discount_weight_[10];
   static const double linked_grid_score_[10];
   static const double linked_grid_weight_[10];

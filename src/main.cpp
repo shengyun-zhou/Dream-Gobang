@@ -105,7 +105,7 @@ ag:
 					{
 						play_button_click_audio();
 						Save save;
-				    p -> save_last_game(save, c);
+				    //p -> save_last_game(save, c);
 						interphase.welcome();
 						goto ag;
 					}

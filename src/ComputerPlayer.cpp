@@ -5,7 +5,7 @@
 const double ComputerPlayer::linked_grid_score_[] = {0.0, 1.0, 5.0, 21.0, 85.0, 341.0, 1365.0, 5461.0, 21845.0, 87381.0};
 const double ComputerPlayer::empty_grid_discount_weight_[] = {1.0, 0.8, 0.512, 0.21, 0.044, 0.0016};
 const double ComputerPlayer::linked_grid_weight_[] = {0.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0};
-int ComputerPlayer::max_search_step = 5;
+int ComputerPlayer::max_search_step = 4;
 const double ComputerPlayer::INFINITY_MAX = 10000000.0;
 
 ComputerPlayer::ComputerPlayer(Chess::PieceType computer_type, Chess* c)
