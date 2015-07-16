@@ -22,6 +22,9 @@ set(PROJECT_SOURCE_FILE
 	main.cpp
     #Please put the new source files and header files here
     )
+
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
+LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/lib)
 	
 if(MINGW)
 	link_libraries(graphics gdi32 imm32 msimg32 ole32 oleaut32 winmm uuid)
