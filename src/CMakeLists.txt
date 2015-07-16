@@ -1,7 +1,66 @@
 cmake_minimum_required (VERSION 2.6)
 
-project (Simple-Gobang)
+project(ege)
 
+set(EGE_LIB_SOURCE_FILE
+	ege_lib_src/color.cpp
+	ege_lib_src/egecontrolbase.cpp
+	ege_lib_src/egegapi.cpp
+	ege_lib_src/image.cpp
+	ege_lib_src/lpng/adler32.c
+	ege_lib_src/lpng/compress.c
+    ege_lib_src/lpng/crc32.c
+	ege_lib_src/lpng/deflate.c
+    ege_lib_src/graphics.cpp
+	ege_lib_src/lpng/gzclose.c
+	ege_lib_src/lpng/gzlib.c
+    ege_lib_src/lpng/gzread.c
+	ege_lib_src/lpng/gzwrite.c
+	ege_lib_src/lpng/infback.c
+    ege_lib_src/lpng/inffast.c
+	ege_lib_src/lpng/inflate.c
+    ege_lib_src/lpng/inftrees.c
+    ege_lib_src/logo.cpp
+	ege_lib_src/lpng/png.c
+	ege_lib_src/lpng/pngerror.c
+    ege_lib_src/lpng/pngget.c
+	ege_lib_src/lpng/pngmem.c
+    ege_lib_src/lpng/pngpread.c
+	ege_lib_src/lpng/pngread.c
+    ege_lib_src/lpng/pngrio.c
+	ege_lib_src/lpng/pngrtran.c
+    ege_lib_src/lpng/pngrutil.c
+	ege_lib_src/lpng/pngset.c
+    ege_lib_src/lpng/pngtrans.c
+	ege_lib_src/lpng/pngwio.c
+	ege_lib_src/lpng/pngwrite.c
+    ege_lib_src/lpng/pngwtran.c
+    ege_lib_src/lpng/pngwutil.c
+	ege_lib_src/lpng/trees.c
+    ege_lib_src/lpng/uncompr.c
+	ege_lib_src/lpng/zutil.c
+    ege_lib_src/math.cpp
+    ege_lib_src/music.cpp
+    ege_lib_src/random.cpp
+    )
+
+set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
+if(MINGW)
+	link_libraries(gdiplus)
+endif()
+
+add_library(ege STATIC ${EGE_LIB_SOURCE_FILE})
+if(MSVC)
+	set_target_properties(ege PROPERTIES OUTPUT_NAME_DEBUG ege-debug)
+    set_target_properties(ege PROPERTIES OUTPUT_NAME_RELEASE ege)
+endif()
+
+if(WIN32)
+	install(TARGETS ege DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+endif()
+
+project (Simple-Gobang)
+	
 set(PROJECT_SOURCE_FILE
     Chess.h
     Chess.cpp
@@ -27,7 +86,7 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/lib)
 	
 if(MINGW)
-	link_libraries(graphics gdi32 imm32 msimg32 ole32 oleaut32 winmm uuid)
+	link_libraries(ege gdi32 imm32 msimg32 ole32 oleaut32 winmm uuid)
 	set(CMAKE_EXE_LINKER_FLAGS "-mwindows")
 endif()
 
@@ -47,11 +106,13 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 add_executable (Simple-Gobang ${PROJECT_SOURCE_FILE})
 
 if(MINGW)
-	file (COPY ${PROJECT_SOURCE_DIR}/res  DESTINATION ${CMAKE_BINARY_DIR}/bin)
+	install(DIRECTORY ${PROJECT_SOURCE_DIR}/res  DESTINATION ${EXECUTABLE_OUTPUT_PATH})
 elseif(MSVC)
-	file (COPY ${PROJECT_SOURCE_DIR}/res  DESTINATION ${CMAKE_BINARY_DIR}/bin/Release)
-	file (COPY ${PROJECT_SOURCE_DIR}/res  DESTINATION ${CMAKE_BINARY_DIR}/bin/Debug)
+	install(DIRECTORY ${PROJECT_SOURCE_DIR}/res  DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Release)
+	install(DIRECTORY ${PROJECT_SOURCE_DIR}/res  DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Debug)
 endif()
+
+#project(Gobang-Terminal-Test)
 
 #set(TERMINAL_TEST_SOURCE_FILE
 #		Gobang.h
