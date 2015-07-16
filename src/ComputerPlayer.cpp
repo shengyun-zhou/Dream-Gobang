@@ -527,7 +527,7 @@ double ComputerPlayer::DFS(int nth_step, double ex_value, int min_max_flag, int&
     if(computer_score_[i].sum_score > person_score_[j].sum_score)     //attack
     {
       chess_->set_point(computer_score_[i].row, computer_score_[i].col, computer_piece_type_);
-      if(chess_->judge_win() == computer_piece_type_)
+      if(chess_->judge_win_ex(computer_piece_type_))
       {
         if(nth_step == 1)
         {
@@ -628,7 +628,7 @@ double ComputerPlayer::DFS(int nth_step, double ex_value, int min_max_flag, int&
       //printf("Current pos:(%d,%d)\n", person_score_[j].row, person_score_[j].col);
       //getchar();
       chess_->set_point(person_score_[j].row, person_score_[j].col, computer_piece_type_);
-      if(chess_->judge_win() == computer_piece_type_)
+			if (chess_->judge_win_ex(computer_piece_type_))
       {
         if(nth_step == 1)
         {

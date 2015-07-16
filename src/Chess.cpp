@@ -219,3 +219,191 @@ Chess::PieceType Chess::get_computer_piecetype()
 	else
 		return BLACK;
 }
+
+int Chess::two_end(int x, int y, Direction dire)
+{
+	const int i = x;
+	const int j = y;
+	int k = i;
+	int v = j;
+	int temp = 0;
+	switch (dire)
+	{
+	case COL:
+		if (chess_array_[i][j] != EMPTY)
+		{
+			for (k = i; k >= 0; k--)
+			{
+				if (chess_array_[k][j] == EMPTY)
+				{
+					temp++;
+					break;
+				}
+			}
+			for (k = i; k<SIZE; k++)
+			{
+				if (chess_array_[k][j] == EMPTY)
+				{
+					temp++;
+					break;
+				}
+			}
+			return temp;
+		}
+		else
+			return 0;
+		break;
+	case ROW:
+		if (chess_array_[i][j] != EMPTY)
+		{
+			for (v = j; v >= 0; v--)
+			{
+				if (chess_array_[i][v] == EMPTY)
+				{
+					temp++;
+					break;
+				}
+			}
+			for (v = j; v<SIZE; v++)
+			{
+				if (chess_array_[i][v] == EMPTY)
+				{
+					temp++;
+					break;
+				}
+			}
+			return temp;
+		}
+		else
+			return 0;
+		break;
+	case LEFT_RIGHT:
+		if (chess_array_[i][j] != EMPTY)
+		{
+			for (k = i, v = j; k >= 0 && v >= 0; k--, v--)
+			{
+				if (chess_array_[k][v] == EMPTY)
+				{
+					temp++;
+					break;
+				}
+			}
+			for (k = i, v = j; k<SIZE&&v<SIZE; k++, v++)
+			{
+				if (chess_array_[k][v] == EMPTY)
+				{
+					temp++;
+					break;
+				}
+			}
+			return temp;
+		}
+		else
+			return 0;
+		break;
+	case RIGHT_LEFT:
+		if (chess_array_[i][j] != EMPTY)
+		{
+			for (k = i, v = j; k >= 0 && v<SIZE; k--, v++)
+			{
+				if (chess_array_[k][v] == EMPTY)
+				{
+					temp++;
+					break;
+				}
+			}
+			for (k = i, v = j; k<SIZE&&v >= 0; k++, v--)
+			{
+				if (chess_array_[k][v] == EMPTY)
+				{
+					temp++;
+					break;
+				}
+				return temp;
+			}
+		}
+		else
+			return 0;
+		break;
+	}
+}
+
+bool Chess::judge_win_ex(PieceType piece)
+{
+	PieceType self_type = piece;
+	PieceType oposite_type;
+	if (piece == WHITE)
+		oposite_type = BLACK;
+	else
+		oposite_type = WHITE;
+	if (self_type == judge_win())
+		return 1;
+	else if (oposite_type == judge_win())
+		return 0;
+	else
+	{
+		int i = 0;
+		int j = 0;
+		int temp1 = 0;
+		int temp2 = 0;
+		int temp_ = (int)COL;
+		for (; i<SIZE; i++)
+		{
+			for (; j<SIZE; j++)
+			{
+				if (chess_array_[i][j] == oposite_type)
+				{
+					for (temp_ = (int)COL; temp_ <= RIGHT_LEFT; temp_++)
+					{
+						temp1 = judge(i, j, (Direction)temp_);
+						temp2 = two_end(i, j, (Direction)temp_);
+						if (temp1 >= 4 && temp2 >= 1)
+							return 0;
+					}
+				}//检查黑子是否一步胜
+				if (chess_array_[i][j] == self_type)
+				{
+					for (temp_ = (int)COL; temp_ <= RIGHT_LEFT; temp_++)
+					{
+						temp1 = judge(i, j, (Direction)temp_);
+						temp2 = two_end(i, j, (Direction)temp_);
+						if (temp1 >= 4 && temp2 >= 1)
+							return 1;
+					}
+				}//检查白子是否一步胜
+			}
+		}
+		for (i = 0; i<SIZE; i++)
+		{
+			for (j = 0; j<SIZE; j++)
+			{
+				if (chess_array_[i][j] == oposite_type)
+				{
+					for (temp_ = (int)COL; temp_ <= RIGHT_LEFT; temp_++)
+					{
+						temp1 = judge(i, j, (Direction)temp_);
+						temp2 = two_end(i, j, (Direction)temp_);
+						if (temp1 >= 3 && temp2 >= 2)
+							return 0;
+					}//检查黑棋活3数是否大于等于1
+				}
+				if (chess_array_[i][j] == self_type)
+				{
+					for (temp_ = (int)COL; temp_ <= RIGHT_LEFT; temp_++)
+					{
+						int sum = 0;
+						temp1 = judge(i, j, (Direction)temp_);
+						temp2 = two_end(i, j, (Direction)temp_);
+						if (temp1 >= 3 && temp2 >= 2)
+						{
+							sum++;
+							if (sum >= 2)
+								return 1;
+						}
+					}
+				}//检查白子活3数是否大于等于2
+			}
+		}
+		return 0;
+	}
+}
