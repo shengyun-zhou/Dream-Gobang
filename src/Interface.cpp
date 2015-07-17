@@ -1,5 +1,59 @@
 #include "Interface.h"
 
+Image* Interface::button_enter_game = NULL;
+Image* Interface::button_hover_enter_game = NULL;
+Image* Interface::button_press_enter_game = NULL;
+Image* Interface::text_enter_game = NULL;
+Image* Interface::button_game_settings = NULL;
+Image* Interface::button_hover_game_settings = NULL;
+Image* Interface::button_press_game_settings = NULL;
+Image* Interface::text_game_settings = NULL;
+Image* Interface::button_exit_game = NULL;
+Image* Interface::button_hover_exit_game = NULL;
+Image* Interface::button_press_exit_game = NULL;
+Image* Interface::text_exit_game = NULL;
+Image* Interface::button_special_thanks = NULL;
+Image* Interface::game_welcome_bg = NULL;
+
+const double Interface::button_alpha = 1.0;
+
+Interface::Interface()
+{
+	if (!game_welcome_bg)
+		game_welcome_bg = new Image("res/game-welcom-bg.jpg");
+
+	if (!button_enter_game)
+		button_enter_game = new Image("res/button-enter-game.png");
+	if (!button_hover_enter_game)
+		button_hover_enter_game = new Image("res/button-hover-enter-game.png");
+	if (!button_press_enter_game)
+		button_press_enter_game = new Image("res/button-press-enter-game.png");
+	if (!text_enter_game)
+		text_enter_game = new Image("res/text-enter-game.png");
+
+	if (!button_game_settings)
+		button_game_settings = new Image("res/button-game-settings.png");
+	if (!button_hover_game_settings)
+		button_hover_game_settings = new Image("res/button-hover-game-settings.png");
+	if (!button_press_game_settings)
+		button_press_game_settings = new Image("res/button-press-game-settings.png");
+	if (!text_game_settings)
+		text_game_settings = new Image("res/text-game-settings.png");
+
+	if (!button_exit_game)
+		button_exit_game = new Image("res/button-exit-game.png");
+	if (!button_hover_exit_game)
+		button_hover_exit_game = new Image("res/button-hover-exit-game.png");
+	if (!button_press_exit_game)
+		button_press_exit_game = new Image("res/button-press-exit-game.png");
+	if (!text_exit_game)
+		text_exit_game = new Image("res/text-exit-game.png");
+	if (!button_special_thanks)
+		button_special_thanks = new Image("res/button-special-thanks.png");
+
+	button_enter_game_flag_ = button_game_settings_flag_ = button_exit_game_flag_ = false;
+}
+
 void Interface::animation()																	//显示开场动画
 {
 	//显示开场动画
@@ -39,48 +93,47 @@ void Interface::animation()																	//显示开场动画
 
 void Interface::welcome()						
 {
-	static Image game_welcom_bg("res/game-welcom-bg.jpg");
-	game_welcom_bg.show_image(0, 0);
-	static Image button_enter_game("res/button-enter-game.png");
-	static Image button_game_settings("res/button-game-settings.png");
-	static Image button_exit_game("res/button-exit-game.png");
-	static Image button_special_thanks("res/button-special-thanks.png");
+	game_welcome_bg->show_image(0, 0);
 
 	setrendermode(RENDER_MANUAL);
 
 	for(int x = 0; is_run() && x <= 80; delay_fps(60)) 
 	{
-		game_welcom_bg.show_image(0, 0);
-		button_enter_game.show_image_with_alpha(x, 350, 0.85);
+		game_welcome_bg->show_image(0, 0);
+		button_enter_game->show_image_with_alpha(x, 350, button_alpha);
+		text_enter_game->show_image_with_alpha(x + text_x_offset, 350 + text_y_offset, button_alpha);
 		x += 10;
 	}
 	for(int x = 0; is_run() && x <= 80; delay_fps(60)) 
 	{
-		game_welcom_bg.show_image(0, 0);
-		button_enter_game.show_image_with_alpha(80, 350, 0.85);
-		button_game_settings.show_image_with_alpha(x, 450, 0.85);
+		game_welcome_bg->show_image(0, 0);
+		button_enter_game->show_image_with_alpha(80, 350, button_alpha);
+		text_enter_game->show_image_with_alpha(80 + text_x_offset, 350 + text_y_offset, button_alpha);
+		button_game_settings->show_image_with_alpha(x, 450, button_alpha);
+		text_game_settings->show_image_with_alpha(x + text_x_offset, 450 + text_y_offset, button_alpha);
 		x += 10;
 	}
 	for(int x = 0; is_run() && x <= 80; delay_fps(60)) 
 	{
-		game_welcom_bg.show_image(0, 0);
-		button_enter_game.show_image_with_alpha(80, 350, 0.85);
-		button_game_settings.show_image_with_alpha(80, 450, 0.85);
-		button_exit_game.show_image_with_alpha(x, 550, 0.85);
+		game_welcome_bg->show_image(0, 0);
+		button_enter_game->show_image_with_alpha(80, 350, button_alpha);
+		text_enter_game->show_image_with_alpha(80 + text_x_offset, 350 + text_y_offset, button_alpha);
+		button_game_settings->show_image_with_alpha(80, 450, button_alpha);
+		text_game_settings->show_image_with_alpha(80 + text_x_offset, 450 + text_y_offset, button_alpha);
+		button_exit_game->show_image_with_alpha(x, 550, button_alpha);
+		text_exit_game->show_image_with_alpha(x + text_x_offset, 550 + text_y_offset, button_alpha);
 		x += 10;
 	}
 	
-	button_special_thanks.show_image_with_alpha(1000, 10, 1.0);
+	button_special_thanks->show_image_with_alpha(1000, 10, 1.0);
 }
 
 
 void Interface::set_welcome(Settings* settings)
 {
-	setfillcolor(WHITE);
 	static Image object_select("res/object-select.png");
 
-	static Image game_welcom_bg("res/game-welcom-bg.jpg");
-	game_welcom_bg.show_image(0, 0);
+	game_welcome_bg->show_image(0, 0);
 
 	static Image settings_select_black("res/game-settings-select-black.png");
 	settings_select_black.show_image_with_alpha(30, 350, 0.9);
@@ -138,5 +191,91 @@ void Interface::Curtain()
 
 }
 
+Interface::action_type Interface::action_judge(int x, int y)
+{
+	const int offset = 10;
+	if (x > 80 - offset && x < 320 + offset && y > 350 - offset && y < 410 + offset)
+		return ACTION_ENTER_GAME;
+	else if (x > 80 - offset && x < 320 + offset && y >450 - offset && y < 510 + offset)
+		return ACTION_GAME_SETTINGS;
+	else if (x  > 80 - offset && x < 320 + offset && y>550 - offset &&  y < 610 + offset)
+		return ACTION_EXIT_GAME;
+	else if (x > 1000 - offset && x < 1200 + offset && y > 30 - offset && y < 230 + offset)
+		return ACTION_SPECIAL_THANKS;
+	else
+		return ACTION_NONE;
+}
 
+void Interface::on_mouse_move(Interface::action_type action)
+{
+	switch (action)
+	{
+		case Interface::ACTION_NONE:
+			if (button_enter_game_flag_)
+			{
+				button_enter_game_flag_ = false;
+				button_enter_game->show_image_with_alpha(80, 350, button_alpha);
+				text_enter_game->show_image_with_alpha(80 + text_x_offset, 350 + text_y_offset, button_alpha);
+			}
+			if (button_game_settings_flag_)
+			{
+				button_game_settings_flag_ = false;
+				button_game_settings->show_image_with_alpha(80, 450, button_alpha);
+				text_game_settings->show_image_with_alpha(80 + text_x_offset, 450 + text_y_offset, button_alpha);
+			}
+			if (button_exit_game_flag_)
+			{
+				button_exit_game_flag_ = false;
+				button_exit_game->show_image_with_alpha(80, 550, button_alpha);
+				text_exit_game->show_image_with_alpha(80 + text_x_offset, 550 + text_y_offset, button_alpha);
+			}
+			break;
+		case Interface::ACTION_ENTER_GAME:
+			if (button_enter_game_flag_ == false)
+			{
+				button_enter_game_flag_ = true;
+				button_hover_enter_game->show_image_with_alpha(80, 350, button_alpha);
+				text_enter_game->show_image_with_alpha(80 + text_x_offset, 350 + text_y_offset, button_alpha);
+			}
+			break;
+		case Interface::ACTION_GAME_SETTINGS:
+			if (button_game_settings_flag_ == false)
+			{
+				button_game_settings_flag_ = true;
+				button_hover_game_settings->show_image_with_alpha(80, 450, button_alpha);
+				text_game_settings->show_image_with_alpha(80 + text_x_offset, 450 + text_y_offset, button_alpha);
+			}
+			break;
+		case Interface::ACTION_EXIT_GAME:
+			if (button_exit_game_flag_ == false)
+			{
+				button_exit_game_flag_ = true;
+				button_hover_exit_game->show_image_with_alpha(80, 550, button_alpha);
+				text_exit_game->show_image_with_alpha(80 + text_x_offset, 550 + text_y_offset, button_alpha);
+			}
+			break;
+		default:
+			break;
+	}
+}
 
+void Interface::on_mouse_click(Interface::action_type action)
+{
+	switch (action)
+	{
+		case Interface::ACTION_ENTER_GAME:
+			button_press_enter_game->show_image_with_alpha(80, 350, button_alpha);
+			text_enter_game->show_image_with_alpha(80 + text_x_offset, 350 + text_y_offset, button_alpha);
+			break;
+		case Interface::ACTION_GAME_SETTINGS:
+			button_press_game_settings->show_image_with_alpha(80, 450, button_alpha);
+			text_game_settings->show_image_with_alpha(80 + text_x_offset, 450 + text_y_offset, button_alpha);
+			break;
+		case Interface::ACTION_EXIT_GAME:
+			button_press_exit_game->show_image_with_alpha(80, 550, button_alpha);
+			text_exit_game->show_image_with_alpha(80 + text_x_offset, 550 + text_y_offset, button_alpha);
+			break;
+		default:
+			break;
+	}
+}
