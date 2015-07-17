@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.6)
 
-project(ege)
+project(Simple-Gobang)
 
 set(EGE_LIB_SOURCE_FILE
 	ege_lib_src/color.cpp
@@ -49,17 +49,12 @@ if(MINGW)
 	link_libraries(gdiplus)
 endif()
 
+
 add_library(ege STATIC ${EGE_LIB_SOURCE_FILE})
 if(MSVC)
 	set_target_properties(ege PROPERTIES OUTPUT_NAME_DEBUG ege-debug)
     set_target_properties(ege PROPERTIES OUTPUT_NAME_RELEASE ege)
 endif()
-
-if(WIN32)
-	install(TARGETS ege DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/lib)
-endif()
-
-project (Simple-Gobang)
 	
 set(PROJECT_SOURCE_FILE
     Chess.h
@@ -104,12 +99,15 @@ endif()
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 add_executable (Simple-Gobang ${PROJECT_SOURCE_FILE})
+target_link_libraries(Simple-Gobang ege)
 
 if(MINGW)
 	install(DIRECTORY ${PROJECT_SOURCE_DIR}/res  DESTINATION ${EXECUTABLE_OUTPUT_PATH})
 elseif(MSVC)
-	install(DIRECTORY ${PROJECT_SOURCE_DIR}/res  DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Release)
 	install(DIRECTORY ${PROJECT_SOURCE_DIR}/res  DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Debug)
+	install(DIRECTORY ${PROJECT_SOURCE_DIR}/res  DESTINATION ${EXECUTABLE_OUTPUT_PATH}/MinSizeRel)
+	install(DIRECTORY ${PROJECT_SOURCE_DIR}/res  DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Release)
+	install(DIRECTORY ${PROJECT_SOURCE_DIR}/res  DESTINATION ${EXECUTABLE_OUTPUT_PATH}/RelWithDebInfo)
 endif()
 
 #project(Gobang-Terminal-Test)
