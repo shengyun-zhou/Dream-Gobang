@@ -673,6 +673,7 @@ void EGEAPI setcaption(LPCSTR  caption);
 void EGEAPI setcaption(LPCWSTR caption);
 
 void EGEAPI setrendermode(rendermode_e mode);
+void EGEAPI setcursorstyle(LPCTSTR file_path);
 
 // ªÊÕºª∑æ≥…Ë÷√
 PIMAGE  gettarget();

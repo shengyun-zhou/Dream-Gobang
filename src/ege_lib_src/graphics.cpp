@@ -123,6 +123,7 @@ static int      g_windowpos_x = CW_USEDEFAULT;
 static int      g_windowpos_y = CW_USEDEFAULT;
 static int      g_initoption  = INIT_DEFAULT, g_initcall = 0;
 static HWND     g_attach_hwnd = 0;
+static HCURSOR  g_cursor = NULL;
 
 #ifdef __cplusplus
 extern "C" {
@@ -847,7 +848,10 @@ static
 void
 on_setcursor(struct _graph_setting * pg, HWND hwnd) {
 	if (pg->mouse_show) {
-		SetCursor(LoadCursor(NULL, IDC_ARROW));
+		if (g_cursor == NULL)
+			SetCursor(LoadCursor(NULL, IDC_ARROW));
+		else
+			SetCursor(g_cursor);
 	} else {
 		RECT rect;
 		POINT pt;
@@ -1324,6 +1328,10 @@ void
 closegraph() {
 	struct _graph_setting * pg = &graph_setting;
 	ShowWindow(pg->hwnd, SW_HIDE);
+}
+
+void setcursorstyle(LPCTSTR file_path) {
+	g_cursor = LoadCursorFromFile(file_path);
 }
 
 int attachHWND(HWND hWnd) {

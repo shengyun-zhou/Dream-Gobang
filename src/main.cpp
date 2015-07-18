@@ -2,6 +2,8 @@
 #include "Music.h"
 #include "Settings.h"
 #include <stdio.h>
+#include <winuser.h>
+
 
 const int WIDTH = 1280;
 const int HEIGHT = 720;
@@ -19,10 +21,14 @@ void play_button_click_audio()
 
 int main()
 {
+	//本函数为修改EGE库后新增的函数
+	//载入鼠标样式文件并设置鼠标样式，需要在窗口初始化前调用。
+	setcursorstyle("res/cursor.ani");
+
 	initgraph(WIDTH, HEIGHT);
 	setbkcolor(WHITE);
 	setcaption("梦幻五子棋");
-	
+
 	Interface interphase;
 	interphase.animation();
 
