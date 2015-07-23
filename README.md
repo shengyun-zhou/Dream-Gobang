@@ -23,6 +23,8 @@ Dream-Gobang Team 五人小组
 
 ### （2）打开CMake-GUI程序
 
+![](https://raw.githubusercontent.com/BUPTSSE-Zero/Dream-Gobang/master/tutorial-picture/cmake-gui.png "CMake-GUI")
+
 ①选择`Dream Gobang`源码所在目录。
 
 ②选择用于构建`Dream Gobang`的目录（也就是要生成的工程文件的目录）。（该目录以下称作`%BUILD%`）
@@ -32,7 +34,10 @@ Dream-Gobang Team 五人小组
 
 ### （3）开始构建
 #### 使用Visual Studio构建
+
 生成工程文件后，进入`%BUILD%`目录，打开`Dream-Gobang.sln`解决方案文件。
+
+![](https://raw.githubusercontent.com/BUPTSSE-Zero/Dream-Gobang/master/tutorial-picture/vs2013-enu.PNG "vs2013")
 
 ①根据需要选择生成方案。
 
