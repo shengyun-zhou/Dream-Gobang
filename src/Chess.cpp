@@ -1,7 +1,7 @@
 #include "Chess.h"
 #include <stdio.h>
 
-Chess::PieceType Chess::picetype_ = BLACK;
+Chess::PieceType Chess::picetype_ = Chess::BLACK;
 
 Chess::Chess()
 {
