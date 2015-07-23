@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.6)
 
-project(Simple-Gobang)
+project(Dream-Gobang)
 
 set(EGE_LIB_SOURCE_FILE
 	ege_lib_src/color.cpp
@@ -91,15 +91,15 @@ if(WIN32)
         set(CMAKE_RC_COMPILER_INIT windres)
         enable_language(RC)
         set(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> -O coff -i <SOURCE> -o <OBJECT>")
-		list(APPEND PROJECT_SOURCE_FILE res/Simple-Gobang.rc)
+		list(APPEND PROJECT_SOURCE_FILE res/Dream-Gobang.rc)
 	elseif(MSVC)
-		list(APPEND PROJECT_SOURCE_FILE res/Simple-Gobang-vs.rc)
+		list(APPEND PROJECT_SOURCE_FILE res/Dream-Gobang-vs.rc)
 	endif()
 endif()
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
-add_executable (Simple-Gobang ${PROJECT_SOURCE_FILE})
-target_link_libraries(Simple-Gobang ege)
+add_executable (Dream-Gobang ${PROJECT_SOURCE_FILE})
+target_link_libraries(Dream-Gobang ege)
 
 if(MINGW)
 	install(DIRECTORY ${PROJECT_SOURCE_DIR}/res  DESTINATION ${EXECUTABLE_OUTPUT_PATH})
