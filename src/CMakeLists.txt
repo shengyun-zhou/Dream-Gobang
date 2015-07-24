@@ -63,8 +63,10 @@ set(PROJECT_SOURCE_FILE
 	ComputerPlayer.cpp
 	Image.h
 	Image.cpp
-	Interface.h
-	Interface.cpp
+	WelcomeInterface.h
+	WelcomeInterface.cpp
+	SettingsInterface.h
+	SettingsInterface.cpp
 	Music.h
 	Music.cpp
 	PlayChess.h

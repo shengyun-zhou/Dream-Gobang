@@ -206,6 +206,7 @@ void game_settings_interface()
 					play_button_click_audio();
 					return;
 			}
+			settings_interface.update_interface();
 		}
 	}
 }

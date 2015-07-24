@@ -82,11 +82,13 @@ PlayChess::ACTION_TYPE PlayChess::action_judge(int x, int y)
 					int row = mouse_to_row(x, y);
 					int col = mouse_to_col(x, y);
 					printf("Row:%d, Col:%d\n", row, col);
-					if (p -> get_point(row, col) == Chess::EMPTY)
+					if (p->get_point(row, col) == Chess::EMPTY)
 						return ACTION_PLAY;
 					else
 						return ACTION_NONE;
 				}
+				else
+					return ACTION_NONE;
 			}
 		}
 	}
