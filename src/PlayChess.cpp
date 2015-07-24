@@ -87,8 +87,6 @@ PlayChess::ACTION_TYPE PlayChess::action_judge(int x, int y)
 					else
 						return ACTION_NONE;
 				}
-				else
-					return ACTION_NONE;
 			}
 		}
 	}
