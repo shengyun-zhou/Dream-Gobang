@@ -4,32 +4,19 @@
 #include "ComputerPlayer.h"
 #include "Settings.h"
 #include "Image.h"
+#include "ImageButton.h"
 
 class WelcomeInterface
 {
 private:
-	static const int text_x_offset = 65;
-	static const int text_y_offset = 12;
-	static const double button_alpha;
+	static const int text_x_offset_ = 65;
+	static const int text_y_offset_ = 12;
 
-	static Image* button_enter_game;
-	static Image* button_hover_enter_game;
-	static Image* button_press_enter_game;
-	static Image*	text_enter_game;
-	static Image* button_game_settings;
-	static Image* button_hover_game_settings;
-	static Image* button_press_game_settings;
-	static Image* text_game_settings;
-	static Image* button_exit_game;
-	static Image* button_hover_exit_game;
-	static Image* button_press_exit_game;
-	static Image* text_exit_game;
-	static Image* button_special_thanks;
-	static Image* game_welcome_bg;
-
-	bool button_enter_game_flag_;
-	bool button_game_settings_flag_;
-	bool button_exit_game_flag_;
+	static Image* game_welcome_bg_;
+	static ImageButton* button_enter_game_;
+	static ImageButton* button_game_settings_;
+	static ImageButton* button_exit_game_;
+	static ImageButton* button_special_thanks_;
 
 public:
 	enum action_type{

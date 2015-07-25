@@ -1067,7 +1067,8 @@ IMAGE::putimage_withalpha(
 					DWORD d=*pdp, s=*psp;
 					d = ((d&0xFF00FF)*da & 0xFF00FF00) | ((d&0xFF00)*da >> 16 << 16);
 					s = ((s&0xFF00FF)*sa & 0xFF00FF00) | ((s&0xFF00)*sa >> 16 << 16);
-					*pdp = (d + s) >> 8;
+					if (alpha > 0)
+						*pdp = (d + s) >> 8;
 				}
 			}
 			pdp += ddx;
@@ -1121,7 +1122,8 @@ IMAGE::putimage_alpha(
 					DWORD d = *pdp, s = *psp;
 					d = ((d & 0xFF00FF)*da & 0xFF00FF00) | ((d & 0xFF00)*da >> 16 << 16);
 					s = ((s & 0xFF00FF)*sa & 0xFF00FF00) | ((s & 0xFF00)*sa >> 16 << 16);
-					*pdp = (d + s) >> 8;
+					if (alpha2 > 0)
+						*pdp = (d + s) >> 8;
 				}
 				pdp += ddx;
 				psp += dsx;

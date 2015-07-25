@@ -132,7 +132,9 @@ void play_chess_interface()
 			msg = getmouse();
 			n = p->action_judge(msg.x, msg.y);
 			m = ((msg.is_up() && msg.is_left() == 1) ? 1 : 0);
-
+      p->on_mouse_move(n);
+      if(msg.is_down() && msg.is_left())
+        p->on_mouse_click(n);
 			if (n == PlayChess::ACTION_PLAY && m == 1 && (p->show_outcome(c) == false))								//下棋
 			{
 				play_button_click_audio();
@@ -146,14 +148,14 @@ void play_chess_interface()
 				p->show_outcome(c);
 				c.show_chess();																						//调试输出
 			}
-			else if (n == PlayChess::ACTION_REPLAY && m == 1)						//重新开始 
+			else if (n == PlayChess::ACTION_REPLAY && m == 1)						//重新开始
 			{
 				play_button_click_audio();
 				p->update_windows(c);
 				delete p;
 				break;
 			}
-			else if (n == PlayChess::ACTION_QUIT && m == 1)						//退出游戏 
+			else if (n == PlayChess::ACTION_QUIT && m == 1)						//退出游戏
 			{
 				play_button_click_audio();
 				//Save save;

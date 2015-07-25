@@ -76,6 +76,9 @@ set(PROJECT_SOURCE_FILE
 	Settings.h
 	Settings.cpp
 	main.cpp
+	BaseButton.h
+	ImageButton.h
+	ImageButton.cpp
     #Please put the new source files and header files here
     )
 

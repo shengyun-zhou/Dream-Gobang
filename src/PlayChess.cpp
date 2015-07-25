@@ -1,11 +1,34 @@
 #include "PlayChess.h"
-#include "Image.h"
 
 const int offset = 10;
+ImageButton* PlayChess::button_game_quit_ = NULL;
+ImageButton* PlayChess::button_game_replay_ = NULL;
 
 PlayChess::PlayChess(Chess *c)
 {
 	p = c;
+	if (!button_game_replay_)
+	{
+		button_game_replay_ = new ImageButton();
+		Image* text_game_replay = new Image("res/text-replay.png");
+		button_game_replay_->add_normal_image(new Image("res/button-replay.png"), 0, 0);
+		button_game_replay_->add_normal_image(text_game_replay, text_x_offset_, text_y_offset_);
+		button_game_replay_->add_hover_image(new Image("res/button-hover-replay.png"), 0, 0);
+		button_game_replay_->add_hover_image(text_game_replay, text_x_offset_, text_y_offset_);
+		button_game_replay_->add_press_image(new Image("res/button-press-replay.png"), 0, 0);
+		button_game_replay_->add_press_image(text_game_replay, text_x_offset_, text_y_offset_);
+	}
+	if (!button_game_quit_)
+	{
+		button_game_quit_ = new ImageButton();
+		Image* text_game_quit = new Image("res/text-quit.png");
+		button_game_quit_->add_normal_image(new Image("res/button-quit.png"), 0, 0);
+		button_game_quit_->add_normal_image(text_game_quit, text_x_offset_, text_y_offset_);
+		button_game_quit_->add_hover_image(new Image("res/button-hover-quit.png"), 0, 0);
+		button_game_quit_->add_hover_image(text_game_quit, text_x_offset_, text_y_offset_);
+		button_game_quit_->add_press_image(new Image("res/button-press-quit.png"), 0, 0);
+		button_game_quit_->add_press_image(text_game_quit, text_x_offset_, text_y_offset_);
+	}
 }
 
 
@@ -19,11 +42,11 @@ void PlayChess::show_chessboard()
 	setcolor(WHITE);
 	setbkcolor(WHITE);
 
-	//全局背景 
+	//全局背景
 	static Image game_main_bg = Image("res/game-main-bg.jpg");
 	game_main_bg.show_image(0, 0);
 
-	//棋盘 
+	//棋盘
 	setfillcolor(WHITE);
 	bar(395, 365, 405, 375);
 	bar(235, 205, 245, 215);
@@ -41,20 +64,22 @@ void PlayChess::show_chessboard()
 	for (int i = 0; i < 640; i += 40)
 		line(120 + i, 50, 120 + i, 690);
 
-	//重新游戏图标 
+	//重新游戏图标
 	static Image game_replay("res/button-replay.png");
-	game_replay.show_image_with_alpha(930, 100, 1.0);
+	button_game_replay_->set_position(930, 100);
+	button_game_replay_->show();
 
-	//退出游戏图标 
+	//退出游戏图标
 	static Image game_quit("res/button-quit.png");
-	game_quit.show_image_with_alpha(930, 200, 1.0);
+	button_game_quit_->set_position(930, 200);
+	button_game_quit_->show();
 }
 
 
 void PlayChess::update_windows(Chess &c)
 {
 	cleardevice();
-	
+
 	ofstream out;
 	out.open("recovery.txt", ios_base::out);
 	for(int i = 0; i < Chess::SIZE; i++)
@@ -102,7 +127,7 @@ PlayChess::ACTION_TYPE PlayChess::action_judge(int x, int y)
 void PlayChess::save_last_game(Save &save, Chess &chess_)
 {
 	//当没分出胜负且用户点退出时保存残局
-	if(p -> judge_win() == Chess::EMPTY) 
+	if(p -> judge_win() == Chess::EMPTY)
 	{
 		save.Record(chess_);
 	}
@@ -130,7 +155,7 @@ void PlayChess::show_last_game()
 		  		play_chess_by_computer(i + 1, j + 1, Chess::WHITE);
 		  	}
 		  }
-	  }	
+	  }
 	}
 	in.close();
 }
@@ -144,7 +169,7 @@ bool PlayChess::show_outcome(Chess &chess)
 	if(chess.judge_win() == Chess::BLACK)
 	{
 	  const int image_width = 454;
-	  const int image_height = 340;  
+	  const int image_height = 340;
 	  int i = 0, colorpos = 0, color = 0, deltaAlpha = 12, deltaColor = 4;
 		for (color = 0; color <= 255; color += deltaColor, delay_fps(60))
 		{
@@ -275,7 +300,6 @@ int PlayChess::mouse_to_col(int x, int y)
 	}
 }
 
-
 bool PlayChess::judge_zone(int x, int y)
 {
 	if (x >= 120 - offset && x <= 680 + offset && y >= 90 - offset && y <= 650 + offset)
@@ -284,3 +308,40 @@ bool PlayChess::judge_zone(int x, int y)
 		return false;
 }
 
+void PlayChess::on_mouse_move(PlayChess::ACTION_TYPE action)
+{
+  switch(action)
+  {
+    case PlayChess::ACTION_REPLAY:
+			button_game_replay_->on_mouse_hover();
+      break;
+    case PlayChess::ACTION_QUIT:
+			button_game_quit_->on_mouse_hover();
+      break;
+    case PlayChess::ACTION_NONE:
+			if (button_game_replay_->get_hover_status())
+				button_game_replay_->show();
+			if (button_game_quit_->get_hover_status())
+				button_game_quit_->show();
+      break;
+    default:
+      break;
+  }
+}
+
+void PlayChess::on_mouse_click(PlayChess::ACTION_TYPE action)
+{
+  static Image button_press_replay("res/button-press-replay.png");
+  static Image button_press_quit("res/button-press-quit.png");
+  switch(action)
+  {
+    case PlayChess::ACTION_REPLAY:
+			button_game_replay_->on_mouse_click();
+      break;
+    case PlayChess::ACTION_QUIT:
+			button_game_quit_->on_mouse_click();
+      break;
+    default:
+      break;
+  }
+}
