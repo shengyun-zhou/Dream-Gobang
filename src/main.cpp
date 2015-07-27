@@ -3,6 +3,7 @@
 #include "Music.h"
 #include "Settings.h"
 #include <stdlib.h>
+#include <direct.h>
 #include <winuser.h>
 
 
@@ -25,6 +26,11 @@ void play_button_click_audio()
 
 int main()
 {
+	char cwd[1024];
+	GetModuleFileName(NULL, cwd, sizeof(cwd));				//获取当前进程所在的完整路径
+	strrchr(cwd, '\\')[0] = '\0';											//去掉路径中的EXE进程文件名
+	chdir(cwd);																				//切换工作目录至进程文件所在目录
+
 	//本函数为修改EGE库后新增的函数
 	//载入鼠标样式文件并设置鼠标样式，需要在窗口初始化前调用。
 	setcursorstyle("res/cursor.ani");
@@ -205,6 +211,7 @@ void game_settings_interface()
 					}
 					break;
 				case SettingsInterface::ACTION_BACK:
+					game_settings->write_settings();
 					play_button_click_audio();
 					return;
 			}
