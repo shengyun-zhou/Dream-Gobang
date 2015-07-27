@@ -4,6 +4,9 @@
 ## 简介
 `Dream Gobang`（梦幻五子棋）是一款基于WindowsGDI引擎的简易五子棋游戏，目前该游戏可以进行单机人机对战。
 
+## 构建状态
+[![Build status](https://ci.appveyor.com/api/projects/status/mprlvwfe46pxtave?svg=true)](https://ci.appveyor.com/project/BUPTSSE-Zero/dream-gobang)
+
 ## 系统平台要求
 Microsoft Windows XP及以上
 
