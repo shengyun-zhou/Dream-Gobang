@@ -26,3 +26,15 @@
 *.exe
 *.out
 *.app
+
+#Build Directory
+build*/
+
+#Visual Studio Project Files
+*.sln
+*.vcxproj
+
+#Other Project Files
+*.idea
+*.cbp
+Makefile
