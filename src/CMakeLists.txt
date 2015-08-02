@@ -49,7 +49,6 @@ if(MINGW)
 	link_libraries(gdiplus)
 endif()
 
-
 add_library(ege STATIC ${EGE_LIB_SOURCE_FILE})
 if(MSVC)
 	set_target_properties(ege PROPERTIES OUTPUT_NAME_DEBUG ege-debug)
@@ -77,8 +76,14 @@ set(PROJECT_SOURCE_FILE
 	Settings.cpp
 	main.cpp
 	BaseButton.h
+	Button.h
+	Button.cpp
 	ImageButton.h
 	ImageButton.cpp
+	Dialog.h
+	Dialog.cpp
+	MessageDialog.h
+	MessageDialog.cpp
     #Please put the new source files and header files here
     )
 
@@ -86,9 +91,12 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/lib)
 	
 if(MINGW)
-	link_libraries(ege gdi32 imm32 msimg32 ole32 oleaut32 winmm uuid)
+	link_libraries(ege gdi32 imm32 msimg32 ole32 oleaut32 winmm uuid comctl32.lib)
 	set(CMAKE_EXE_LINKER_FLAGS "-mwindows")
+elseif(MSVC)
+	link_libraries(comctl32.lib)
 endif()
+
 
 # Add resource files
 if(WIN32)
@@ -96,7 +104,7 @@ if(WIN32)
         set(CMAKE_RC_COMPILER_INIT windres)
         enable_language(RC)
         set(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> -O coff -i <SOURCE> -o <OBJECT>")
-		list(APPEND PROJECT_SOURCE_FILE res/Dream-Gobang.rc)
+		list(APPEND PROJECT_SOURCE_FILE res/Dream-Gobang-MinGW.rc)
 	elseif(MSVC)
 		list(APPEND PROJECT_SOURCE_FILE res/Dream-Gobang-vs.rc)
 	endif()
@@ -128,4 +136,3 @@ endif()
 #	set(CMAKE_EXE_LINKER_FLAGS "")
 #endif()
 #add_executable (Gobang-Terminal-Test ${TERMINAL_TEST_SOURCE_FILE})
-

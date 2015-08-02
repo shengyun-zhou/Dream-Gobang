@@ -2,10 +2,10 @@
 #include "SettingsInterface.h"
 #include "Music.h"
 #include "Settings.h"
+#include "MessageDialog.h"
 #include <stdlib.h>
 #include <direct.h>
 #include <winuser.h>
-
 
 const int WIDTH = 1280;
 const int HEIGHT = 720;
@@ -36,6 +36,11 @@ int main()
 	setcursorstyle("res/cursor.ani");
 
 	initgraph(WIDTH, HEIGHT);
+
+	//MessageDialog dialog(500,150);
+	//dialog.set_text("Dream-Gobang游戏启动成功。");
+	//dialog.show();
+
 	setbkcolor(WHITE);
 	setcaption("梦幻五子棋");
 

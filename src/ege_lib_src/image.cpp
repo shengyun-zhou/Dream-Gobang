@@ -61,6 +61,15 @@ IMAGE::IMAGE(int width, int height) {
 	CONVERT_IMAGE_END;
 }
 
+IMAGE::IMAGE(HWND hwnd, int width, int height)
+{
+	m_initflag = IMAGE_INIT_FLAG;
+	m_hDC = NULL;
+	m_pattern_obj = NULL;
+	m_texture = NULL;
+	newimage_hwnd(hwnd, width, height);
+}
+
 IMAGE::IMAGE(IMAGE &img) {
 	m_initflag = IMAGE_INIT_FLAG;
 	m_hDC = NULL;
@@ -198,7 +207,6 @@ IMAGE::newimage(HDC hdc, int width, int height) {
 			m_width = width;
 			m_height = height;
 			m_pBuffer = (PDWORD)p_bmp_buf;
-
 			if (b_resize == 0) {
 				setcolor(LIGHTGRAY, this);
 				setbkcolor(BLACK, this);
@@ -218,6 +226,87 @@ IMAGE::newimage(HDC hdc, int width, int height) {
 			return err;
 		}
 	} else {
+		return GetLastError();
+	}
+	return 0;
+}
+
+int
+IMAGE::newimage_hwnd(HWND hwnd, int width, int height) {
+	HDC dc;
+	HBITMAP bitmap;
+	BITMAPINFO bmi = { { 0 } };
+	VOID* p_bmp_buf;
+
+	bmi.bmiHeader.biSize = sizeof(bmi.bmiHeader);
+	bmi.bmiHeader.biWidth = width;
+	bmi.bmiHeader.biHeight = -height - 1;
+	bmi.bmiHeader.biPlanes = 1;
+	bmi.bmiHeader.biBitCount = 32;
+	bmi.bmiHeader.biSizeImage = width * height * 4;
+
+	memset(&m_vpt, 0, sizeof(m_vpt));
+
+	//dc = GetDC(hwnd);
+	dc = CreateCompatibleDC(GetDC(hwnd));
+	if (dc != NULL) {
+		bitmap = CreateDIBSection(
+			NULL,
+			&bmi,
+			DIB_RGB_COLORS,
+			(VOID**)&p_bmp_buf,
+			NULL,
+			0
+			);
+
+		if (bitmap != NULL) {
+			HBITMAP hbmp_def = (HBITMAP)SelectObject(dc, bitmap);
+			int b_resize = 0;
+			if (g_hbmp_def == NULL) {
+				g_hbmp_def = hbmp_def;
+				g_hbr_def = (HBRUSH)GetCurrentObject(dc, OBJ_BRUSH);
+				g_pen_def = (HPEN)GetCurrentObject(dc, OBJ_PEN);
+				g_font_def = (HFONT)GetCurrentObject(dc, OBJ_FONT);
+			}
+			if (m_hDC) {
+				DeleteObject(hbmp_def);
+				b_resize = 1;
+			}
+			else {
+				m_vpt.left = 0;
+				m_vpt.top = 0;
+				m_vpt.right = width;
+				m_vpt.bottom = height;
+				m_vpt.clipflag = 1;
+			}
+			m_hDC = dc;
+			m_hBmp = bitmap;
+			m_width = width;
+			m_height = height;
+			m_pBuffer = (PDWORD)p_bmp_buf;
+
+			if (b_resize == 0) {
+				setcolor(LIGHTGRAY, this);
+				setbkcolor(BLACK, this);
+				SetBkMode(dc, OPAQUE); //TRANSPARENT);
+				setfillstyle(SOLID_FILL, 0, this);
+				setlinestyle(PS_SOLID, 0, 1, this);
+				settextjustify(LEFT_TEXT, TOP_TEXT, this);
+				ege_enable_aa(false, this);
+			}
+			else {
+				//SetBkMode(dc, bkMode);
+			}
+			setviewport(0, 0, m_width, m_height, 1, this);
+			cleardevice(this);
+		}
+		else {
+			int err = GetLastError();
+			DeleteDC(dc);
+			return err;
+		}
+	}
+	else {
 		return GetLastError();
 	}
 	return 0;
@@ -2764,6 +2853,14 @@ newimage(int width, int height) {
 	return new IMAGE(width, height);
 }
 
+PIMAGE
+newimage(HWND hwnd, int width, int height)
+{
+	if (width  < 1) width = 1;
+	if (height < 1) height = 1;
+	return new IMAGE(hwnd, width, height);
+}
+
 void
 delimage(PIMAGE pImg) {
 	delete pImg;
@@ -2788,6 +2885,14 @@ getimage(PIMAGE pDstImg, int srcX, int srcY, int srcWidth, int srcHeight) {
 void
 getimage(PIMAGE pDstImg, const PIMAGE pSrcImg, int srcX, int srcY, int srcWidth, int srcHeight) {
 	pDstImg->getimage(pSrcImg, srcX, srcY, srcWidth, srcHeight);
+}
+
+HDC
+getimage_dc(PIMAGE pImg)
+{
+	PIMAGE img = CONVERT_IMAGE_CONST(pImg);
+	CONVERT_IMAGE_END;
+	return img->getdc();
 }
 
 void

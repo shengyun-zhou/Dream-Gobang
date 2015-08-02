@@ -664,14 +664,20 @@ init_instance(HINSTANCE hInstance, int nCmdShow) {
 
 	//WideCharToMultiByte(CP_UTF8, 0, pg->window_caption, lstrlenW(pg->window_caption), (LPSTR)Title, 256, 0, 0);
 	//MultiByteToWideChar(CP_UTF8, 0, (LPSTR)Title, -1, Title2, 256);
-	dw = GetSystemMetrics(SM_CXFRAME) * 2;
-	dh = GetSystemMetrics(SM_CYFRAME) + GetSystemMetrics(SM_CYCAPTION) * 2;
+	//dw = GetSystemMetrics(SM_CXFRAME) * 2;
+	//dh = GetSystemMetrics(SM_CYFRAME) + GetSystemMetrics(SM_CYCAPTION) * 2;
 	if (g_attach_hwnd) {
 		LONG_PTR style = GetWindowLongPtrW(g_attach_hwnd, GWL_STYLE);
 		style |= WS_CHILDWINDOW | WS_CLIPCHILDREN;
 		SetWindowLongPtrW(g_attach_hwnd, GWL_STYLE, style);
 	}
 
+	RECT window_rect;
+	window_rect.left = window_rect.top = 0;
+	window_rect.right = pg->dc_w;
+	window_rect.bottom = pg->dc_h;
+	AdjustWindowRectEx(&window_rect, g_windowstyle & ~WS_VISIBLE, FALSE, g_windowexstyle);
+	
 	pg->hwnd = CreateWindowEx(
 		g_windowexstyle,
 		pg->window_class_name,
@@ -679,8 +685,8 @@ init_instance(HINSTANCE hInstance, int nCmdShow) {
 		g_windowstyle & ~WS_VISIBLE,
 		g_windowpos_x,
 		g_windowpos_y,
-		pg->dc_w + dw,
-		pg->dc_h + dh,
+		window_rect.right - window_rect.left, 
+		window_rect.bottom - window_rect.top,
 		g_attach_hwnd,
 		NULL,
 		hInstance,
@@ -974,10 +980,12 @@ wndproc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 		}
 		break;
 	case WM_PAINT:
+	{
 		if (pg == pg_w) {
 			on_paint(pg, hWnd);
 		}
 		break;
+	}
 	case WM_CLOSE:
 		if (pg == pg_w) {
 			if (pg->callback_close) {
@@ -1096,12 +1104,12 @@ wndproc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	case WM_USER + 2:
 		::SetFocus((HWND)lParam);
 		break;
-	case WM_CTLCOLOREDIT:
+	/*case WM_CTLCOLOREDIT:
 		{
 			egeControlBase* ctl = (egeControlBase *)GetWindowLongPtrW((HWND)lParam, GWLP_USERDATA);
 			return ctl->onMessage(message, wParam, lParam);
 		}
-		break;
+		break;*/
 	default:
 		if (pg != pg_w) {
 			return ((egeControlBase*)pg_w)->onMessage(message, wParam, lParam);
@@ -1265,7 +1273,7 @@ init_img_page(struct _graph_setting * pg) {
 void
 initgraph(int *gdriver, int *gmode, char *path) {
 	struct _graph_setting * pg = &graph_setting;
-
+	
 	g_initcall = 0;
 	if (!g_has_init) {
 		memset(pg, 0, sizeof(_graph_setting));
@@ -1312,6 +1320,7 @@ initgraph(int *gdriver, int *gmode, char *path) {
 
 void
 initgraph(int Width, int Height, int Flag) {
+	
 	int g = TRUECOLORSIZE, m = (Width) | (Height<<16);
 	if (g_initcall == 0) setinitmode(Flag);
 	initgraph(&g, &m, (char*)"");
@@ -1332,6 +1341,10 @@ closegraph() {
 
 void setcursorstyle(LPCTSTR file_path) {
 	g_cursor = LoadCursorFromFile(file_path);
+}
+
+HCURSOR getcursorstyle() {
+	return g_cursor;
 }
 
 int attachHWND(HWND hWnd) {

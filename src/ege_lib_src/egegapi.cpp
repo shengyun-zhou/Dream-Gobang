@@ -583,7 +583,8 @@ saveBrush(PIMAGE img, int save) { //此函数调用前，已经有Lock
 }
 
 void rectangle(int left, int top, int right, int bottom, PIMAGE pimg) {
-	PIMAGE img = CONVERT_IMAGE(pimg);
+	PIMAGE img = NULL;
+	img = CONVERT_IMAGE(pimg);
 	if (saveBrush(img, 1)) {
 		Rectangle(img->m_hDC, left, top, right, bottom);
 		saveBrush(img, 0);

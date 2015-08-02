@@ -183,6 +183,7 @@ public:
 	bool        m_aa;
 private:
 	int  newimage(HDC hdc, int width, int height);
+	int  newimage_hwnd(HWND hwnd, int width, int height);
 	int  deleteimage();
 public:
 	viewporttype        m_vpt;
@@ -198,6 +199,7 @@ private:
 public:
 	IMAGE();
 	IMAGE(int width, int height);
+	IMAGE(HWND hwnd, int width, int height);
 	IMAGE(IMAGE &img);              // 拷贝构造函数
 	IMAGE& operator = (const IMAGE &img); // 赋值运算符重载函数
 	~IMAGE();
@@ -209,7 +211,6 @@ public:
 	int getwidth()     const {return m_width; }
 	int getheight()    const {return m_height;}
 	color_t* getbuffer() const {return (color_t*)m_pBuffer;}
-
 	int  createimage(int width, int height);
 	int  resize(int width, int height);
 	void copyimage(const PIMAGE pSrcImg);

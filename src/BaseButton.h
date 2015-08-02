@@ -6,6 +6,12 @@ protected:
 	int pos_x_;
 	int pos_y_;
 public:
+	class OnClickListener
+	{
+	public:
+		virtual void on_click() = 0;
+	};
+
 	BaseButton()
 	{
 		button_hover_flag_ = false;
