@@ -84,6 +84,8 @@ set(PROJECT_SOURCE_FILE
 	Dialog.cpp
 	MessageDialog.h
 	MessageDialog.cpp
+	QuestionDialog.h
+	QuestionDialog.cpp
     #Please put the new source files and header files here
     )
 

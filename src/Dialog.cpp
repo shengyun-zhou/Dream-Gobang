@@ -25,6 +25,10 @@ Dialog::Dialog(int width, int height)
 	}
 	width_ = width;
 	height_ = height;
+	if (width_ < 200)
+		width_ = 200;
+	if (height_ < 100)
+		height_ = 100;
 	dialog_image_ = NULL;
 	title_ = "Dialog";
 
@@ -42,6 +46,10 @@ LRESULT CALLBACK Dialog::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	switch (message)
 	{
 		case WM_CREATE:
+			return 0;
+		case WM_CLOSE:
+			if (dialog_data)
+				dialog_data->on_dialog_close();
 			return 0;
 		case WM_SETCURSOR:
 			if (getcursorstyle() != NULL)
@@ -90,11 +98,6 @@ void Dialog::show()
 		(GetSystemMetrics(SM_CYSCREEN) - (window_rect.bottom - window_rect.top)) / 2,
 		window_rect.right - window_rect.left, window_rect.bottom - window_rect.top, NULL, NULL, NULL, NULL);
 	
-	SetWindowLong(dialog_handle_, GWL_USERDATA, (LONG)this);
-	ShowWindow(dialog_handle_, SW_SHOW);
-
-	SetForegroundWindow(dialog_handle_);
-	SetFocus(dialog_handle_);
 	dialog_image_ = newimage(dialog_handle_, width_, height_);
 	dialog_dc_ = getimage_dc(dialog_image_);
 	setbkcolor(WHITE, dialog_image_);
@@ -102,6 +105,12 @@ void Dialog::show()
 	cleardevice(dialog_image_);
 
 	on_dialog_init();
+
+	SetWindowLong(dialog_handle_, GWL_USERDATA, (LONG)this);
+	SetForegroundWindow(dialog_handle_);
+	SetFocus(dialog_handle_);
+	ShowWindow(dialog_handle_, SW_SHOW);
+
 
 	MSG msg = { 0 };
 	exit_flag_ = false;
@@ -122,4 +131,9 @@ void Dialog::set_font(LPCSTR font_family, int size)
 {
 	font_family_ = font_family;
 	font_size_ = size;
+}
+
+void Dialog::on_dialog_close()
+{
+	DestroyWindow(dialog_handle_);
 }

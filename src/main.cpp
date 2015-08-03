@@ -1,8 +1,12 @@
+#ifdef _MSC_VER
+#pragma warning(disable:4996)
+#endif
 #include "WelcomeInterface.h"
 #include "SettingsInterface.h"
 #include "Music.h"
 #include "Settings.h"
 #include "MessageDialog.h"
+#include "QuestionDialog.h"
 #include <stdlib.h>
 #include <direct.h>
 #include <winuser.h>
@@ -37,7 +41,7 @@ int main()
 
 	initgraph(WIDTH, HEIGHT);
 
-	//MessageDialog dialog(500,150);
+	//MessageDialog dialog(500, 150);
 	//dialog.set_text("Dream-Gobang游戏启动成功。");
 	//dialog.show();
 
@@ -99,8 +103,18 @@ void main_loop()
 						break;
 					}
 					case WelcomeInterface::ACTION_EXIT_GAME:
-						closegraph();
-						exit(0);
+					{
+						QuestionDialog dialog(500, 150);
+						dialog.set_title("Dream-Gobang");
+						dialog.set_text("是否要退出 “梦幻五子棋” 游戏？");
+						dialog.show();
+						if (dialog.get_response_result() == QuestionDialog::response_yes)
+						{
+							closegraph();
+							exit(0);
+						}
+						break;
+					}
 					case WelcomeInterface::ACTION_SPECIAL_THANKS:
 					{
 						play_button_click_audio();

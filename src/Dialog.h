@@ -25,6 +25,7 @@ protected:
 
 	virtual void on_dialog_init(){}
 	virtual void on_create_message(){}
+	virtual void on_dialog_close();
 public:
 	Dialog(int width, int height);
 	virtual ~Dialog();

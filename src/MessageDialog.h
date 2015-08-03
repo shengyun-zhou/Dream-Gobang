@@ -21,12 +21,13 @@ protected:
 	};
 
 	OkButtonListener ok_listener_;
-
 	RECT text_rect_;
 	std::string text_;
 	static Button* ok_button_;
 
+	PIMAGE dialog_icon_;
 	static PIMAGE icon_infomation_;
+	static PIMAGE icon_error_;
 
 	static const int icon_margin_ = 35;
 	static const int text_margin_ = 15;
@@ -35,7 +36,13 @@ protected:
 	static const int button_margin_ = 8;
 	static const int button_area_height_ = button_height_ + button_margin_ * 2;
 public:
-	MessageDialog(int width, int height);
+	enum IconType
+	{
+		icon_infomation,
+		icon_error
+	};
+
+	MessageDialog(int width, int height, MessageDialog::IconType type = icon_infomation);
 	virtual ~MessageDialog();
 
 	void set_text(const char* text)

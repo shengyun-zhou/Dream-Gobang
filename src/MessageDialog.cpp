@@ -1,19 +1,20 @@
 #include "MessageDialog.h"
 
 PIMAGE MessageDialog::icon_infomation_ = NULL;
+PIMAGE MessageDialog::icon_error_ = NULL;
 Button* MessageDialog::ok_button_ = NULL;
 
-MessageDialog::MessageDialog(int width, int height) : Dialog(width, height), ok_listener_(NULL)
+MessageDialog::MessageDialog(int width, int height, MessageDialog::IconType type) : Dialog(width, height), ok_listener_(NULL)
 {
-	if (width_ < 200)
-		width_ = 200;
-	if (height_ < 100)
-		height_ = 100;
-
 	if (!icon_infomation_)
 	{
 		icon_infomation_ = newimage();
 		getimage(icon_infomation_, "res/dialog/dialog-icon-information.png");
+	}
+	if (!icon_error_)
+	{
+		icon_error_ = newimage();
+		getimage(icon_error_, "res/dialog/dialog-icon-error.png");
 	}
 	if (!ok_button_)
 	{
@@ -24,14 +25,22 @@ MessageDialog::MessageDialog(int width, int height) : Dialog(width, height), ok_
 		ok_button_->set_icon(icon_ok);
 	}
 
+	switch (type)
+	{
+		case icon_infomation:
+			dialog_icon_ = icon_infomation_;
+			break;
+		case icon_error:
+			dialog_icon_ = icon_error_;
+	}
+
 	ok_button_->set_position(width_ - button_margin_ - button_width_, height_ - button_margin_ - button_height_);
 
-	text_rect_.left = icon_margin_ + getwidth(icon_infomation_) + text_margin_;
+	text_rect_.left = icon_margin_ + getwidth(dialog_icon_) + text_margin_;
 	text_rect_.top = text_margin_;
 	text_rect_.right = width - text_margin_;
 	text_rect_.bottom = height_ - button_area_height_ - text_margin_;
 	text_ = "A message.";
-
 }
 
 MessageDialog::~MessageDialog()
@@ -40,9 +49,9 @@ MessageDialog::~MessageDialog()
 
 void MessageDialog::on_dialog_init()
 {
-	putimage_withalpha(dialog_image_, icon_infomation_,
+	putimage_withalpha(dialog_image_, dialog_icon_,
 										 icon_margin_,
-										 (height_ - button_area_height_ - getheight(icon_infomation_)) / 2);
+										 (height_ - button_area_height_ - getheight(dialog_icon_)) / 2);
 
 	setfont(font_size_, 0, font_family_.c_str(), dialog_image_);
 	setcolor(BLACK, dialog_image_);
