@@ -36,7 +36,7 @@ Dialog::Dialog(int width, int height)
 	LOGFONT system_font;
 	SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &system_font, NULL);
 	font_family_ = system_font.lfFaceName;
-	font_size_ = 20;
+	font_size_ = -15;
 }
 
 LRESULT CALLBACK Dialog::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -130,7 +130,7 @@ Dialog::~Dialog()
 void Dialog::set_font(LPCSTR font_family, int size)
 {
 	font_family_ = font_family;
-	font_size_ = size;
+	font_size_ = size * -1;
 }
 
 void Dialog::on_dialog_close()

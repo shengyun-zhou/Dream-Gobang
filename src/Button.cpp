@@ -32,7 +32,7 @@ Button::Button(int width, int height) : BaseButton()
 	LOGFONT system_font;
 	SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &system_font, NULL);
 	font_family_ = system_font.lfFaceName;
-	font_size_ = 21;
+	font_size_ = -15;
 
 	button_rect_.left = button_rect_.top = 0;
 	button_rect_.right = width_ - 1;
