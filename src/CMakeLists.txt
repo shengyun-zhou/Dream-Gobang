@@ -74,7 +74,7 @@ set(PROJECT_SOURCE_FILE
 	Save.cpp
 	Settings.h
 	Settings.cpp
-	main.cpp
+	GameMain.cpp
 	BaseButton.h
 	Button.h
 	Button.cpp
@@ -86,6 +86,10 @@ set(PROJECT_SOURCE_FILE
 	MessageDialog.cpp
 	QuestionDialog.h
 	QuestionDialog.cpp
+	EditText.h
+	EditText.cpp
+	EditDialog.h
+	EditDialog.cpp
     #Please put the new source files and header files here
     )
 
@@ -138,3 +142,8 @@ endif()
 #	set(CMAKE_EXE_LINKER_FLAGS "")
 #endif()
 #add_executable (Gobang-Terminal-Test ${TERMINAL_TEST_SOURCE_FILE})
+
+#set (EGE-Test-SOURCE 
+#	EGETestMain.cpp)
+#add_executable(EGETest ${EGE-Test-SOURCE})
+#target_link_libraries(EGETest ege)

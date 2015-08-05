@@ -62,7 +62,6 @@ void MessageDialog::on_dialog_init()
 	text_rect_.top = (height_ - button_area_height_ - text_height) / 2;
 	text_rect_.bottom = height_ - button_area_height_ - text_margin_;
 	DrawText(dialog_dc_, text_.c_str(), -1, &text_rect_, text_format);
-
 	setfillcolor(EGERGB(230, 230, 230), dialog_image_);
 	bar(0, height_ - button_area_height_, width_, height_, dialog_image_);
 

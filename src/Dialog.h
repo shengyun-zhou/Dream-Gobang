@@ -12,7 +12,7 @@ protected:
 	HWND dialog_handle_;
 	HDC dialog_dc_;
 	PIMAGE dialog_image_;
-	bool exit_flag_;
+	volatile bool exit_flag_;
 	bool init_flag_;
 
 	std::string font_family_;
@@ -22,6 +22,11 @@ protected:
 	static WNDCLASSEX window_class_;
 
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+	static const int button_width_ = 110;
+	static const int button_height_ = 35;
+	static const int button_margin_ = 8;
+	static const int button_area_height_ = button_height_ + button_margin_ * 2;
 
 	virtual void on_dialog_init(){}
 	virtual void on_create_message(){}

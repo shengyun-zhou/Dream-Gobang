@@ -12,10 +12,9 @@ private:
 	bool is_running_;
 	const char* file_path_;
 	float volume_;
-	bool pause_mission_;
-	bool stop_mission_;
-	bool resume_mission_;
-
+	volatile bool pause_mission_;
+	volatile bool stop_mission_;
+	volatile bool resume_mission_;
 	static DWORD WINAPI on_player_running(LPVOID music_player);
 public:
   /**

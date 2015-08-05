@@ -53,8 +53,11 @@ LRESULT CALLBACK Dialog::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 			return 0;
 		case WM_SETCURSOR:
 			if (getcursorstyle() != NULL)
+			{
 				SetCursor(getcursorstyle());
-			return 0;
+				return 0;
+			}
+			return DefWindowProc(hWnd, message, wParam, lParam);
 		case WM_PAINT:
 		{
 			if (dialog_data && dialog_data->init_flag_ == false)
@@ -98,6 +101,8 @@ void Dialog::show()
 		(GetSystemMetrics(SM_CYSCREEN) - (window_rect.bottom - window_rect.top)) / 2,
 		window_rect.right - window_rect.left, window_rect.bottom - window_rect.top, NULL, NULL, NULL, NULL);
 	
+	if (dialog_image_)
+		delimage(dialog_image_);
 	dialog_image_ = newimage(dialog_handle_, width_, height_);
 	dialog_dc_ = getimage_dc(dialog_image_);
 	setbkcolor(WHITE, dialog_image_);

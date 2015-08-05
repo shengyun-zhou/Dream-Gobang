@@ -1104,12 +1104,12 @@ wndproc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	case WM_USER + 2:
 		::SetFocus((HWND)lParam);
 		break;
-	/*case WM_CTLCOLOREDIT:
+	case WM_CTLCOLOREDIT:
 		{
 			egeControlBase* ctl = (egeControlBase *)GetWindowLongPtrW((HWND)lParam, GWLP_USERDATA);
 			return ctl->onMessage(message, wParam, lParam);
 		}
-		break;*/
+		break;
 	default:
 		if (pg != pg_w) {
 			return ((egeControlBase*)pg_w)->onMessage(message, wParam, lParam);

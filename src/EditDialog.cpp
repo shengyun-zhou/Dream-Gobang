@@ -1,0 +1,102 @@
+#include "EditDialog.h"
+
+PIMAGE EditDialog::dialog_icon_ = NULL;
+Button* EditDialog::ok_button_ = NULL;
+Button* EditDialog::cancel_button_ = NULL;
+
+EditDialog::EditDialog(int width, int height) : Dialog(width, height),
+ok_button_listener_(this, response_ok), cancel_button_listener_(this, response_cancel),
+edit_listener_(this)
+{
+	if (!ok_button_)
+	{
+		ok_button_ = new Button(button_width_, button_height_);
+		ok_button_->set_text("确定");
+		static PIMAGE icon_ok = newimage();
+		getimage(icon_ok, "res/dialog/dialog-button-ok.png");
+		ok_button_->set_icon(icon_ok);
+	}
+	if (!cancel_button_)
+	{
+		cancel_button_ = new Button(button_width_, button_height_);
+		cancel_button_->set_text("取消");
+		static PIMAGE icon_cancel = newimage();
+		getimage(icon_cancel, "res/dialog/dialog-button-cancle.png");
+		cancel_button_->set_icon(icon_cancel);
+	}
+	if (!dialog_icon_)
+	{
+		dialog_icon_ = newimage();
+		getimage(dialog_icon_, "res/dialog/dialog-icon-edit.png");
+	}
+
+	cancel_button_->set_position(width_ - button_margin_ - button_width_, height_ - button_margin_ - button_height_);
+	ok_button_->set_position(width_ - button_margin_ * 2 - button_width_ * 2, height_ - button_margin_ - button_height_);
+
+	edit_text_ = new EditText(width_ - padding_ * 2);
+	text_rect_.top = padding_;
+	text_rect_.left = icon_margin_ + getwidth(dialog_icon_) + text_margin_;
+	text_rect_.bottom = height_ - button_area_height_;
+	text_rect_.right = width_ - padding_;
+	text_ = "An editing dialog.";
+}
+
+
+EditDialog::~EditDialog()
+{
+	delete edit_text_;
+}
+
+void EditDialog::on_dialog_close()
+{
+	response_type_ = response_close;
+	DestroyWindow(dialog_handle_);
+}
+
+void EditDialog::on_dialog_init()
+{
+	setfont(font_size_, 0, font_family_.c_str(), dialog_image_);
+	setcolor(BLACK, dialog_image_);
+	static UINT text_format = DT_LEFT | DT_TOP | DT_EDITCONTROL | DT_WORDBREAK | DT_WORD_ELLIPSIS;
+	//rectangle(text_rect_.left, text_rect_.top, text_rect_.right, text_rect_.bottom, dialog_image_);
+	//计算文本高度
+	int text_height = DrawText(dialog_dc_, text_.c_str(), -1, &text_rect_, text_format | DT_CALCRECT);
+	text_rect_.top = (padding_ + (height_ - button_area_height_ - edit_margin_bottom_ - edit_text_->get_height() - text_margin_)) / 2 - text_height / 2;
+	text_rect_.bottom = text_rect_.top + text_height + 1;
+	DrawText(dialog_dc_, text_.c_str(), -1, &text_rect_, text_format);
+
+	putimage_withalpha(dialog_image_, dialog_icon_,
+		icon_margin_,
+		(text_rect_.top + text_rect_.bottom - getheight(dialog_icon_)) / 2);
+
+	setfillcolor(EGERGB(230, 230, 230), dialog_image_);
+	bar(0, height_ - button_area_height_, width_, height_, dialog_image_);
+	edit_text_->set_position(padding_, height_ - button_area_height_ - edit_margin_bottom_ - edit_text_->get_height());
+
+	response_type_ = response_none;
+	ok_button_->set_on_click_listener(&ok_button_listener_);
+	cancel_button_->set_on_click_listener(&cancel_button_listener_);
+	edit_text_->set_on_activate_listener(&edit_listener_);
+}
+
+void EditDialog::on_create_message()
+{
+	edit_text_->show(dialog_handle_);
+	ok_button_->show(dialog_handle_);
+	cancel_button_->show(dialog_handle_);
+}
+
+void EditDialog::ButtonListener::on_click()
+{
+	dialog_->response_type_ = type_;
+	if (type_ == response_ok)
+		dialog_->edit_text_->get_text(dialog_->input_text_);
+	DestroyWindow(dialog_->dialog_handle_);
+}
+
+void EditDialog::EditListener::on_activate()
+{
+	dialog_->response_type_ = response_ok;
+	dialog_->edit_text_->get_text(dialog_->input_text_);
+	DestroyWindow(dialog_->dialog_handle_);
+}

@@ -33,11 +33,6 @@ Button::Button(int width, int height) : BaseButton()
 	SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &system_font, NULL);
 	font_family_ = system_font.lfFaceName;
 	font_size_ = -15;
-
-	button_rect_.left = button_rect_.top = 0;
-	button_rect_.right = width_ - 1;
-	button_rect_.bottom = height_ - 1;
-
 	on_click_listener_ = NULL;
 }
 
@@ -112,8 +107,19 @@ LRESULT CALLBACK Button::button_proc(HWND hWnd, UINT message, WPARAM wParam, LPA
 			if (button_data && button_data->on_click_listener_)
 				button_data->on_click_listener_->on_click();
 			return 0;
+		case WM_KEYDOWN:
+			if (wParam == VK_RETURN)
+			{
+				if (button_data && button_data->button_image_)
+				{
+					button_data->on_mouse_click();
+					RedrawWindow(hWnd, &button_data->button_rect_, NULL, RDW_UPDATENOW | RDW_INVALIDATE);
+				}
+				if (button_data && button_data->on_click_listener_)
+					button_data->on_click_listener_->on_click();
+			}
+			return 0;
 		case WM_SETFOCUS:
-			printf("on button focus.\n");
 			button_data->is_focus_ = true;
 			if (button_data && button_data->button_image_)
 			{
@@ -169,10 +175,15 @@ void Button::show(HWND parent_window)
 	is_focus_ = false;
 	button_handle_ = CreateWindow(button_class_.lpszClassName, "", WS_CHILD, pos_x_, pos_y_,
 																width_, height_, parent_window, NULL, NULL, NULL);
-
+	
+	button_rect_.left = button_rect_.top = 0;
+	button_rect_.bottom = height_ - 1;
+	button_rect_.right = width_ - 1;
 	SetWindowLong(button_handle_, GWL_USERDATA, (LONG)this);
 	ShowWindow(button_handle_, SW_SHOW);
 
+	if (button_image_)
+		delimage(button_image_);
 	button_image_ = newimage(button_handle_, width_, height_);
 	button_dc_ = getimage_dc(button_image_);
 	this->show();

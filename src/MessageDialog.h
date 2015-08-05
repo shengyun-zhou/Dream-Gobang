@@ -31,10 +31,6 @@ protected:
 
 	static const int icon_margin_ = 35;
 	static const int text_margin_ = 15;
-	static const int button_width_ = 110;
-	static const int button_height_ = 35;
-	static const int button_margin_ = 8;
-	static const int button_area_height_ = button_height_ + button_margin_ * 2;
 public:
 	enum IconType
 	{
