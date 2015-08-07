@@ -2,8 +2,8 @@
 #include "Chess.h"
 #include "Save.h"
 #include "graphics.h"
-#include "Image.h"
-#include "ImageButton.h"
+#include "tools/Image.h"
+#include "widgets/ImageButton.h"
 
 class PlayChess
 {

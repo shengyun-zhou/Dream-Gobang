@@ -3,11 +3,11 @@
 #endif
 #include "WelcomeInterface.h"
 #include "SettingsInterface.h"
-#include "Music.h"
+#include "tools/Music.h"
 #include "Settings.h"
-#include "MessageDialog.h"
-#include "QuestionDialog.h"
-#include "EditDialog.h"
+#include "widgets/MessageDialog.h"
+#include "widgets/QuestionDialog.h"
+#include "widgets/EditDialog.h"
 #include <stdlib.h>
 #include <direct.h>
 #include <winuser.h>

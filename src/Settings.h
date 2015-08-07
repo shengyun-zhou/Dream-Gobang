@@ -1,8 +1,7 @@
 #pragma once
 #include <string>
-#include <fstream>
 #include "Chess.h"
-using namespace std;
+#include "tools/IniSimpleParser.h"
 
 class Settings
 {
@@ -16,7 +15,6 @@ public:
 	bool read_settings();
 	void write_settings();
 private:
-	static const char* file_name;
-	Chess::PieceType color_;
-	bool is_audio_on_;
+	static const char* file_name_;
+	IniSimpleParser file_parser_;
 };

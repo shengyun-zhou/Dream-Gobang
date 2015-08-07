@@ -60,14 +60,10 @@ set(PROJECT_SOURCE_FILE
     Chess.cpp
 	ComputerPlayer.h
 	ComputerPlayer.cpp
-	Image.h
-	Image.cpp
 	WelcomeInterface.h
 	WelcomeInterface.cpp
 	SettingsInterface.h
 	SettingsInterface.cpp
-	Music.h
-	Music.cpp
 	PlayChess.h
 	PlayChess.cpp
 	Save.h
@@ -75,21 +71,27 @@ set(PROJECT_SOURCE_FILE
 	Settings.h
 	Settings.cpp
 	GameMain.cpp
-	BaseButton.h
-	Button.h
-	Button.cpp
-	ImageButton.h
-	ImageButton.cpp
-	Dialog.h
-	Dialog.cpp
-	MessageDialog.h
-	MessageDialog.cpp
-	QuestionDialog.h
-	QuestionDialog.cpp
-	EditText.h
-	EditText.cpp
-	EditDialog.h
-	EditDialog.cpp
+	tools/Image.h
+	tools/Image.cpp
+	tools/Music.h
+	tools/Music.cpp
+	tools/IniSimpleParser.h
+	tools/IniSimpleParser.cpp
+	widgets/BaseButton.h
+	widgets/Button.h
+	widgets/Button.cpp
+	widgets/ImageButton.h
+	widgets/ImageButton.cpp
+	widgets/Dialog.h
+	widgets/Dialog.cpp
+	widgets/MessageDialog.h
+	widgets/MessageDialog.cpp
+	widgets/QuestionDialog.h
+	widgets/QuestionDialog.cpp
+	widgets/EditText.h
+	widgets/EditText.cpp
+	widgets/EditDialog.h
+	widgets/EditDialog.cpp
     #Please put the new source files and header files here
     )
 
@@ -97,10 +99,8 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/lib)
 	
 if(MINGW)
-	link_libraries(ege gdi32 imm32 msimg32 ole32 oleaut32 winmm uuid comctl32.lib)
+	link_libraries(ege gdi32 imm32 msimg32 ole32 oleaut32 winmm uuid)
 	set(CMAKE_EXE_LINKER_FLAGS "-mwindows")
-elseif(MSVC)
-	link_libraries(comctl32.lib)
 endif()
 
 

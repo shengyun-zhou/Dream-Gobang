@@ -1,85 +1,71 @@
 #include "Settings.h"
+#include <string>
 
-const char* Settings::file_name = "game-settings.ini";
+const char* Settings::file_name_ = "game-settings.ini";
 
 Settings::Settings()
 {
-	color_ = Chess::BLACK;
-	is_audio_on_ = true;
 }
-
 
 Chess::PieceType Settings::get_piece_color()
 {
-	return color_;
+	string value;
+	if (file_parser_.get_value("piece-type", value))
+	{
+		IniSimpleParser::lower_convert(value);
+		if (value == "white")
+			return Chess::WHITE;
+		else
+			return Chess::BLACK;
+	}
+	else
+	{
+		file_parser_.set_value("piece-type", "black");
+		return Chess::BLACK;
+	}
 }
 
-void Settings::set_piece_color(Chess::PieceType color_)
+void Settings::set_piece_color(Chess::PieceType color)
 {
-	this -> color_ = color_;
+	if (color == Chess::BLACK)
+		file_parser_.set_value("piece-type", "black");
+	else if (color == Chess::WHITE)
+		file_parser_.set_value("piece-type", "white");
 }
 
 bool Settings::is_audio_on()
 {
-	return is_audio_on_;
+	string value;
+	if (file_parser_.get_value("audio", value))
+	{
+		IniSimpleParser::lower_convert(value);
+		if (value == "off")
+			return false;
+		else
+			return true;
+	}
+	else
+	{
+		file_parser_.set_value("audio", "on");
+		return true;
+	}
 }
 
 void Settings::set_audio(bool is_on)
 {
-	this->is_audio_on_ = is_on;
+	if (is_on)
+		file_parser_.set_value("audio", "on");
+	else
+		file_parser_.set_value("audio", "off");
 }
+
 bool Settings::read_settings()
 {
-	ifstream input;
-	input.open(file_name, ios_base::in);
-	if (input.fail())
-		return false;
-
-	bool read_success_flag = true;
-	string temp;
-	input >> temp;
-	if (temp == "piece-type=black")
-		color_ = Chess::BLACK;
-	else if (temp == "piece-type=white")
-		color_ = Chess::WHITE;
-	else
-	{
-		color_ = Chess::BLACK;
-		read_success_flag = false;
-	}
-
-	input >> temp;
-	if (temp == "audio=on")
-		is_audio_on_ = true;
-	else if (temp == "audio=off")
-		is_audio_on_ = false;
-	else
-	{
-		is_audio_on_ = true;
-		read_success_flag = false;
-	}
-
-	input.close();
-	return read_success_flag;
+	return file_parser_.parse(file_name_);
 }
 
 
 void Settings::write_settings()
 {
-	ofstream output;
-	output.open(file_name, ios_base::out);
-	if (output.fail())
-		return;
-
-	if (color_ == Chess::BLACK)
-		output << "piece-type=black" << endl;
-	else
-		output << "piece-type=white" << endl;
-
-	if (is_audio_on_)
-		output << "audio=on" << endl;
-	else
-		output << "audio=off" << endl;
-
-	output.close();
+	file_parser_.write(file_name_);
 }

@@ -3,8 +3,8 @@
 #include "PlayChess.h"
 #include "ComputerPlayer.h"
 #include "Settings.h"
-#include "Image.h"
-#include "ImageButton.h"
+#include "tools/Image.h"
+#include "widgets/ImageButton.h"
 
 class WelcomeInterface
 {

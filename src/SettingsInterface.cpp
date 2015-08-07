@@ -1,5 +1,5 @@
 #include "SettingsInterface.h"
-#include "Image.h"
+#include "tools/Image.h"
 #include "Chess.h"
 
 SettingsInterface::SettingsInterface(Settings* settings)
