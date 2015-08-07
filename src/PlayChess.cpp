@@ -76,23 +76,19 @@ void PlayChess::show_chessboard()
 }
 
 
-void PlayChess::update_windows(Chess &c)
+void PlayChess::update_windows()
 {
-	cleardevice();
-
-	ofstream out;
-	out.open("recovery.txt", ios_base::out);
-	for(int i = 0; i < Chess::SIZE; i++)
+	show_chessboard();
+	int i, j;
+	for (i = 0; i < Chess::SIZE; i++)
 	{
-		for(int j = 0; j < Chess::SIZE; j++)
+		for (j = 0; j < Chess::SIZE; j++)
 		{
-			out << 0 << " ";
+			if (p->get_point(i, j) != Chess::EMPTY)
+				play_chess_by_computer(i, j, p->get_point(i, j));
 		}
-		out << endl;
 	}
-	out.close();
 }
-
 
 PlayChess::ACTION_TYPE PlayChess::action_judge(int x, int y)
 {
@@ -123,50 +119,19 @@ PlayChess::ACTION_TYPE PlayChess::action_judge(int x, int y)
 		return ACTION_NONE;
 }
 
-
-void PlayChess::save_last_game(Save &save, Chess &chess_)
+void PlayChess::show_last_game(ChessSaver& saver)
 {
-	//当没分出胜负且用户点退出时保存残局
-	if(p -> judge_win() == Chess::EMPTY)
-	{
-		save.Record(chess_);
-	}
+	*p = saver.get_chess();
+	update_windows();
 }
 
 
-void PlayChess::show_last_game()
-{
-	ifstream in;
-	in.open("recovery.txt", ios_base::in);
-	int temp;
-	if(!in.fail())
-	{
-		for (int i = 0; i < Chess::SIZE; i++)
-	  {
-		  for (int j = 0; j < Chess::SIZE; j++)
-		  {
-		  	in >> temp;
-		  	if(temp == 1)
-		  	{
-		  		play_chess_by_computer(i + 1, j + 1, Chess::BLACK);
-		  	}
-		  	else if(temp == -1)
-		  	{
-		  		play_chess_by_computer(i + 1, j + 1, Chess::WHITE);
-		  	}
-		  }
-	  }
-	}
-	in.close();
-}
-
-
-bool PlayChess::show_outcome(Chess &chess)
+bool PlayChess::show_outcome()
 {
 	static Image image_tie("res/result-tie.png");
 	static Image image_win_black("res/result-win-black.png");
 	static Image image_win_white("res/result-win-white.png");
-	if(chess.judge_win() == Chess::BLACK)
+	if(p->judge_win() == Chess::BLACK)
 	{
 	  const int image_width = 454;
 	  const int image_height = 340;
@@ -182,7 +147,7 @@ bool PlayChess::show_outcome(Chess &chess)
 		}
 	  return true;
 	}
-	else if(chess.judge_win() == Chess::WHITE)
+	else if(p->judge_win() == Chess::WHITE)
 	{
 		const int image_width = 454;
 		const int image_height = 340;
@@ -198,7 +163,7 @@ bool PlayChess::show_outcome(Chess &chess)
 		}
 	  return true;
 	}
-	else if(chess.judge_win() == Chess::EMPTY && chess.is_chess_full())
+	else if(p->judge_win() == Chess::EMPTY && p->is_chess_full())
 	{
 	  const int image_width = 500;
 	  const int image_height = 200;

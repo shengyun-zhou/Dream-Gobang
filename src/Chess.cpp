@@ -1,8 +1,6 @@
 #include "Chess.h"
 #include <stdio.h>
 
-Chess::PieceType Chess::picetype_ = Chess::BLACK;
-
 Chess::Chess()
 {
 	int i, j;
@@ -198,28 +196,6 @@ void Chess::show_chess()
 	}
 }
 
-
-void Chess::set_man_picetype(Chess::PieceType value)
-{
-	picetype_ = value;
-}
-
-
-Chess::PieceType Chess::get_man_piecetype()
-{
-	return picetype_;
-}
-
-
-Chess::PieceType Chess::get_computer_piecetype()
-{
-
-	if (picetype_ == BLACK)
-		return WHITE;
-	else
-		return BLACK;
-}
-
 int Chess::two_end(int x, int y, Direction dire)
 {
 	const int i = x;
@@ -264,7 +240,7 @@ int Chess::two_end(int x, int y, Direction dire)
 					break;
 				}
 			}
-			for (v = j; v<SIZE; v++)
+			for (v = j; v < SIZE; v++)
 			{
 				if (chess_array_[i][v] == EMPTY)
 				{

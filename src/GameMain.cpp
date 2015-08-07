@@ -140,21 +140,67 @@ void play_chess_interface()
 	PlayChess::ACTION_TYPE n;
 	int m;
 	mouse_msg msg;
+	bool recover_flag = false;
+	ChessSaver saver;
+
+	if (ChessSaver::is_recovery_data_exist())
+	{
+		QuestionDialog query_dialog(500, 150);
+		query_dialog.set_title("Dream-Gobang");
+		query_dialog.set_text("发现上次未结束的棋局，是否继续上次游戏？");
+		query_dialog.show();
+		if (query_dialog.get_response_result() == QuestionDialog::response_yes)
+			recover_flag = true;
+	}
+
+	if (recover_flag)
+	{
+		if (saver.read_chess() == false)
+		{
+			MessageDialog message_dialog(500, 150, MessageDialog::icon_error);
+			message_dialog.set_title("Error");
+			message_dialog.set_text("读取残局数据时发生错误。");
+			message_dialog.show();
+			recover_flag = false;
+		}
+	}
+
+	if (ChessSaver::is_recovery_data_exist())
+		ChessSaver::delete_recovery_file();
+
 	while (is_run())
 	{
 		Chess c;
-		c.set_man_picetype(game_settings->get_piece_color());
+		Chess::PieceType player_type;
+		Chess::PieceType computer_type;
 		PlayChess* p = new PlayChess(&c);
-		ComputerPlayer cp(c.get_computer_piecetype(), &c);
-		p->show_chessboard();
-		//p -> show_last_game();
+		bool game_end_flag = false;
+		if (recover_flag)
+		{
+			player_type = saver.get_player_piece_type();
+			p->show_last_game(saver);
+		}
+		else
+		{
+			player_type = game_settings->get_piece_color();
+			p->show_chessboard();
+		}
+
+		if (player_type == Chess::BLACK)
+			computer_type = Chess::WHITE;
+		else
+			computer_type = Chess::BLACK;
+		ComputerPlayer cp(computer_type, &c);
+
 		int row, col;
-		if (c.get_computer_piecetype() == Chess::BLACK)												//电脑执黑子先下
+		if (computer_type == Chess::BLACK && recover_flag == false)							//电脑执黑子先下
 		{
 			cp.calc_next_step(row, col);
-			p->play_chess_by_computer(row, col, c.get_computer_piecetype());
-			c.set_point(row, col, c.get_computer_piecetype());
+			p->play_chess_by_computer(row, col, computer_type);
+			c.set_point(row, col, computer_type);
 		}
+		if (recover_flag)
+			recover_flag = false;
 		while (is_run())																											//循环接收鼠标坐标
 		{
 			msg = getmouse();
@@ -163,31 +209,39 @@ void play_chess_interface()
       p->on_mouse_move(n);
       if(msg.is_down() && msg.is_left())
         p->on_mouse_click(n);
-			if (n == PlayChess::ACTION_PLAY && m == 1 && (p->show_outcome(c) == false))								//下棋
+
+			if (n == PlayChess::ACTION_PLAY && m == 1 && !game_end_flag)								//下棋
 			{
 				play_button_click_audio();
-				p->play_chess_by_man(msg.x, msg.y, c.get_man_piecetype());
-				c.set_point(p->mouse_to_row(msg.x, msg.y), p->mouse_to_col(msg.x, msg.y), c.get_man_piecetype());
-				p->show_outcome(c);
+				p->play_chess_by_man(msg.x, msg.y, player_type);
+				c.set_point(p->mouse_to_row(msg.x, msg.y), p->mouse_to_col(msg.x, msg.y), player_type);
+				if (p->show_outcome())
+				{
+					game_end_flag = true;
+					continue;
+				}
 				cp.calc_next_step(row, col);
-				printf("computer_row:%d, computer_col:%d\n", row, col);
-				p->play_chess_by_computer(row, col, c.get_computer_piecetype());
-				c.set_point(row, col, c.get_computer_piecetype());
-				p->show_outcome(c);
+				p->play_chess_by_computer(row, col, computer_type);
+				c.set_point(row, col, computer_type);
+				if (p->show_outcome())
+				{
+					game_end_flag = true;
+					continue;
+				}
+
 				c.show_chess();																						//调试输出
 			}
 			else if (n == PlayChess::ACTION_REPLAY && m == 1)						//重新开始
 			{
 				play_button_click_audio();
-				p->update_windows(c);
 				delete p;
 				break;
 			}
 			else if (n == PlayChess::ACTION_QUIT && m == 1)						//退出游戏
 			{
 				play_button_click_audio();
-				//Save save;
-				//p -> save_last_game(save, c);
+				if (game_end_flag == false && c.get_empty_grid_num() < Chess::SIZE * Chess::SIZE)
+					ChessSaver::save_chess(c, player_type);
 				return;
 			}
 		}

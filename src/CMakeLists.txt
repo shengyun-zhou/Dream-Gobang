@@ -66,8 +66,8 @@ set(PROJECT_SOURCE_FILE
 	SettingsInterface.cpp
 	PlayChess.h
 	PlayChess.cpp
-	Save.h
-	Save.cpp
+	ChessSaver.h
+	ChessSaver.cpp
 	Settings.h
 	Settings.cpp
 	GameMain.cpp

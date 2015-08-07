@@ -99,7 +99,7 @@ void Dialog::show()
 	dialog_handle_ = CreateWindowEx(dwExStyle, window_class_.lpszClassName, title_.c_str(), dwStyle,
 		(GetSystemMetrics(SM_CXSCREEN) - (window_rect.right - window_rect.left)) / 2,
 		(GetSystemMetrics(SM_CYSCREEN) - (window_rect.bottom - window_rect.top)) / 2,
-		window_rect.right - window_rect.left, window_rect.bottom - window_rect.top, NULL, NULL, NULL, NULL);
+		window_rect.right - window_rect.left, window_rect.bottom - window_rect.top, getHWnd(), NULL, NULL, NULL);
 	
 	if (dialog_image_)
 		delimage(dialog_image_);

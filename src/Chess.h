@@ -28,13 +28,9 @@ public:
 	int get_empty_grid_num();
 	PieceType judge_win();
 	void show_chess();
-	void set_man_picetype(PieceType picetype);
-	PieceType get_man_piecetype();
-	PieceType get_computer_piecetype();
 	bool judge_win_ex(PieceType piece);								//判断当前必胜可能性
 private:
 	PieceType chess_array_[SIZE][SIZE];
-	static PieceType picetype_;
 
 	int two_end(int x, int y, Direction dire);//返回两端无障碍的数目，且（x,y)处若为空子返回0
 };
