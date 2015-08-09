@@ -63,6 +63,11 @@ bool ChessSaver::save_chess(Chess& chess, Chess::PieceType player_type_)
 					output_file << -1 << " ";
 				else
 					output_file << 0 << " ";
+				if (output_file.fail() || output_file.bad())
+				{
+					output_file.close();
+					return false;
+				}
 			}
 			output_file << endl;
 		}
@@ -98,7 +103,7 @@ bool ChessSaver::read_chess()
 		{
 			for (j = 0; j < Chess::SIZE; j++)
 			{
-				if (input_file.eof())
+				if (input_file.eof() || input_file.bad() || input_file.fail())
 				{
 					input_file.close();
 					return false;
@@ -140,7 +145,7 @@ bool ChessSaver::read_chess()
 			return false;
 		}
 		input_file.close();
-		return true;
+		return chess_check(chess_buf_, player_piece_color_);
 	}
 	catch (exception e) {
 		cout << e.what() << endl;

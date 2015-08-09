@@ -151,6 +151,8 @@ void play_chess_interface()
 		query_dialog.show();
 		if (query_dialog.get_response_result() == QuestionDialog::response_yes)
 			recover_flag = true;
+		else if (query_dialog.get_response_result() == QuestionDialog::response_close)
+			return;
 	}
 
 	if (recover_flag)
