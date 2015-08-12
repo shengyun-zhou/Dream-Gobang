@@ -92,6 +92,10 @@ set(PROJECT_SOURCE_FILE
 	widgets/EditText.cpp
 	widgets/EditDialog.h
 	widgets/EditDialog.cpp
+	socket/ClientSocket.h
+	socket/ClientSocket.cpp
+	socket/ServerSocket.h
+	socket/ServerSocket.cpp
     #Please put the new source files and header files here
     )
 
@@ -99,7 +103,7 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/lib)
 	
 if(MINGW)
-	link_libraries(ege gdi32 imm32 msimg32 ole32 oleaut32 winmm uuid)
+	link_libraries(ege gdi32 imm32 msimg32 ole32 oleaut32 winmm uuid wsock32)
 	set(CMAKE_EXE_LINKER_FLAGS "-mwindows")
 endif()
 
@@ -147,3 +151,9 @@ endif()
 #	EGETestMain.cpp)
 #add_executable(EGETest ${EGE-Test-SOURCE})
 #target_link_libraries(EGETest ege)
+
+#set (Socket-Test-SOURCE 
+#	SocketTestMain.cpp
+#	socket/ServerSocket.cpp
+#	socket/ClientSocket.cpp)
+#add_executable(SocketTest ${Socket-Test-SOURCE})

@@ -98,7 +98,6 @@ void Music::start()
 	if (is_running_ == false)
 	{
 		thread_handle_ = CreateThread(NULL, 0, on_player_running, this, 0, NULL);
-		is_running_ = true;
 	}
 }
 
