@@ -10,14 +10,18 @@ ClientSocket::ClientSocket()
 	server_IP_addr_ = "127.0.0.1";
 	server_port_ = "10085";
 	running_flag_ = false;
-	receive_flag_ = false;
-	send_flag_ = false;
 	stop_flag_ = false;
 }
 
 ClientSocket::~ClientSocket()
 {
 	stop();
+}
+
+void ClientSocket::clean_mission_queue()
+{
+	while (mission_queue_.empty() == false)
+		mission_queue_.pop();
 }
 
 bool ClientSocket::win_socket_init()
@@ -57,6 +61,9 @@ DWORD WINAPI ClientSocket::on_socket_running(LPVOID data)
 	if (connect(socket_data->client_socket_, (SOCKADDR*)&server_addr, sizeof(server_addr)) != 0)
 	{
 		WSA_error_code = WSAGetLastError();
+		#ifdef _DEBUG
+		printf("client connect failed.error code:%d.\n", WSA_error_code);
+		#endif
 		if (WSA_error_code != WSAEINTR)
 			socket_data->on_connect_failed(socket_data->client_socket_, WSA_error_code);
 		closesocket(socket_data->client_socket_);
@@ -65,44 +72,58 @@ DWORD WINAPI ClientSocket::on_socket_running(LPVOID data)
 		return 0;
 	}
 	socket_data->on_connect_success(socket_data->client_socket_);
+	socket_mission mission;
 	while (true)
 	{
-		if (socket_data->receive_flag_)
-		{
-			int len;
-			len = recv(socket_data->client_socket_, socket_data->receive_buf_, sizeof(socket_data->receive_buf_), 0);
-			if (len <= 0)
-			{
-				WSA_error_code = WSAGetLastError();
-				if (WSA_error_code != WSAEINTR && WSA_error_code != WSAESHUTDOWN)
-					socket_data->on_receive_failed(socket_data->client_socket_, WSA_error_code);
-			}
-			else																				//注意要一次性读取完
-			{
-				socket_data->receive_buf_[len] = '\0';
-				socket_data->on_receive_completed(socket_data->client_socket_, socket_data->receive_buf_, len);
-			}
-			socket_data->receive_flag_ = false;
-		}
-		else if (socket_data->send_flag_)
-		{
-			if (send(socket_data->client_socket_, socket_data->send_str_.c_str(),
-				socket_data->send_str_.length() + 1, 0) < 0)
-			{
-				WSA_error_code = WSAGetLastError();
-				if (WSA_error_code != WSAEINTR && WSA_error_code != WSAESHUTDOWN)
-					socket_data->on_send_failed(socket_data->client_socket_, WSA_error_code);
-			}
-			//printf("client send complete.\n");
-			socket_data->send_flag_ = false;
-		}
-		else if (socket_data->stop_flag_ || socket_data->running_flag_ == false)
+		if (socket_data->stop_flag_ || socket_data->running_flag_ == false)
 		{
 			closesocket(socket_data->client_socket_);
 			WSACleanup();
 			socket_data->stop_flag_ = false;
 			socket_data->running_flag_ = false;
 			return 0;
+		}
+		if (socket_data->mission_queue_.empty())
+		{
+			Sleep(30);
+			continue;
+		}
+		mission = socket_data->mission_queue_.front();
+		socket_data->mission_queue_.pop();
+		switch (mission.mission_ID)
+		{
+			case MISSION_RECEIVE:
+				int len;
+				len = recv(socket_data->client_socket_, socket_data->receive_buf_, sizeof(socket_data->receive_buf_), 0);
+				if (len <= 0)
+				{
+					WSA_error_code = WSAGetLastError();
+					#ifdef _DEBUG
+					printf("client receive failed.error code:%d.\n", WSA_error_code);
+					#endif
+					if (WSA_error_code != WSAEINTR && WSA_error_code != WSAESHUTDOWN)
+						socket_data->on_receive_failed(socket_data->client_socket_, WSA_error_code);
+				}
+				else																				//注意要一次性读取完
+				{
+					socket_data->receive_buf_[len] = '\0';
+					socket_data->on_receive_completed(socket_data->client_socket_, socket_data->receive_buf_, len);
+				}
+				break;
+			case MISSION_SEND:
+				if (send(socket_data->client_socket_, mission.send_str.c_str(),
+					mission.send_str.length() + 1, 0) < 0)
+				{
+					WSA_error_code = WSAGetLastError();
+					#ifdef _DEBUG
+					printf("client send failed.error code:%d.\n", WSA_error_code);
+					#endif
+					if (WSA_error_code != WSAEINTR && WSA_error_code != WSAESHUTDOWN)
+						socket_data->on_send_failed(socket_data->client_socket_, WSA_error_code);
+				}
+				break;
+			default:
+				break;
 		}
 		Sleep(30);
 	}
@@ -123,9 +144,8 @@ void ClientSocket::start()
 {
 	if (running_flag_)
 		stop();
+	clean_mission_queue();
 	running_flag_ = false;
-	receive_flag_ = false;
-	send_flag_ = false;
 	stop_flag_ = false;
 	socket_thread_ = CreateThread(NULL, 0, on_socket_running, this, 0, NULL);
 	running_flag_ = true;
@@ -147,14 +167,20 @@ void ClientSocket::stop()
 void ClientSocket::receive()
 {
 	if (running_flag_)
-		receive_flag_ = true;
+	{
+		socket_mission recv_mission;
+		recv_mission.mission_ID = MISSION_RECEIVE;
+		mission_queue_.push(recv_mission);
+	}
 }
 
 void ClientSocket::send_string(const char* str)
 {
 	if (running_flag_)
 	{
-		send_str_ = str;
-		send_flag_ = true;
+		socket_mission send_mission;
+		send_mission.mission_ID = MISSION_SEND;
+		send_mission.send_str = str;
+		mission_queue_.push(send_mission);
 	}
 }

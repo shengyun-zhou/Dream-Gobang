@@ -9,12 +9,19 @@ ServerSocket::ServerSocket()
 	server_port_ = "10085";
 	server_socket_ = INVALID_SOCKET;
 	connect_socket_ = INVALID_SOCKET;
-	running_flag_ = receive_flag_ = send_flag_ = stop_flag_ = accept_flag_= stop_connect_flag_ = false;
+	running_flag_ = stop_flag_ = false;
+	clean_mission_queue();
 }
 
 ServerSocket::~ServerSocket()
 {
 	stop();
+}
+
+void ServerSocket::clean_mission_queue()
+{
+	while (mission_queue_.empty() == false)
+		mission_queue_.pop();
 }
 
 bool ServerSocket::win_socket_init()
@@ -55,6 +62,9 @@ DWORD WINAPI ServerSocket::on_socket_running(LPVOID data)
 	if (bind(socket_data->server_socket_, (SOCKADDR*)&server_addr, sizeof(server_addr)) != 0)
 	{
 		WSA_error_code = WSAGetLastError();
+		#ifdef _DEBUG
+		printf("server bind failed.error code:%d.\n", WSA_error_code);
+		#endif
 		if (WSA_error_code != WSAEINTR)
 			socket_data->on_socket_bind_failed(socket_data->server_socket_, WSA_error_code);
 		closesocket(socket_data->server_socket_);
@@ -69,64 +79,10 @@ DWORD WINAPI ServerSocket::on_socket_running(LPVOID data)
 	SOCKADDR client_addr;
 	int sockaddr_len = sizeof(SOCKADDR);
 
+	socket_mission mission;
 	while (true)
 	{
-		if (socket_data->accept_flag_)
-		{
-			if (socket_data->connect_socket_ != INVALID_SOCKET)
-				closesocket(socket_data->connect_socket_);
-			socket_data->connect_socket_ = accept(socket_data->server_socket_, &client_addr, &sockaddr_len);
-			if (socket_data->connect_socket_ == INVALID_SOCKET)
-			{
-				WSA_error_code = WSAGetLastError();
-				if (WSA_error_code != WSAEINTR && WSA_error_code != WSAESHUTDOWN)
-					socket_data->on_accept_failed(socket_data->server_socket_, WSA_error_code);
-			}
-			else
-				socket_data->on_accept_success(socket_data->server_socket_, socket_data->connect_socket_);
-			socket_data->accept_flag_ = false;
-		}
-		else if (socket_data->receive_flag_)
-		{
-			if (socket_data->connect_socket_ != INVALID_SOCKET)
-			{
-				int len;
-				len = recv(socket_data->connect_socket_, socket_data->receive_buf_, sizeof(socket_data->receive_buf_), 0);
-				if (len <= 0)
-				{
-					WSA_error_code = WSAGetLastError();
-					if (WSA_error_code != WSAEINTR && WSA_error_code != WSAESHUTDOWN)
-						socket_data->on_receive_failed(socket_data->server_socket_, socket_data->connect_socket_, WSA_error_code);
-				}
-				else
-				{
-					socket_data->receive_buf_[len] = '\0';
-					socket_data->on_receive_completed(socket_data->server_socket_, socket_data->connect_socket_, socket_data->receive_buf_, len);
-				}
-			}
-			socket_data->receive_flag_ = false;
-		}
-		else if (socket_data->send_flag_)
-		{
-			if (socket_data->connect_socket_ != INVALID_SOCKET)
-			{
-				if (send(socket_data->server_socket_, socket_data->send_str_.c_str(),
-					socket_data->send_str_.length() + 1, 0) < 0)
-				{
-					WSA_error_code = WSAGetLastError();
-					if (WSA_error_code != WSAEINTR && WSA_error_code != WSAESHUTDOWN)
-						socket_data->on_send_failed(socket_data->server_socket_, socket_data->connect_socket_, WSA_error_code);
-				}
-			}
-			socket_data->send_flag_ = false;
-		}
-		else if (socket_data->stop_connect_flag_)
-		{
-			if (socket_data->connect_socket_ != INVALID_SOCKET)
-				closesocket(socket_data->connect_socket_);
-			socket_data->stop_connect_flag_ = false;
-		}
-		else if (socket_data->stop_flag_ || socket_data->running_flag_ == false)
+		if (socket_data->stop_flag_ || socket_data->running_flag_ == false)
 		{
 			if (socket_data->connect_socket_ != INVALID_SOCKET)
 				closesocket(socket_data->connect_socket_);
@@ -135,6 +91,74 @@ DWORD WINAPI ServerSocket::on_socket_running(LPVOID data)
 			socket_data->stop_flag_ = false;
 			socket_data->running_flag_ = false;
 			return 0;
+		}
+		if (socket_data->mission_queue_.empty())
+		{
+			Sleep(30);
+			continue;
+		}
+		mission = socket_data->mission_queue_.front();
+		socket_data->mission_queue_.pop();
+		switch (mission.mission_ID)
+		{
+			case MISSION_ACCEPT:
+				if (socket_data->connect_socket_ != INVALID_SOCKET)
+					closesocket(socket_data->connect_socket_);
+				socket_data->connect_socket_ = accept(socket_data->server_socket_, &client_addr, &sockaddr_len);
+				if (socket_data->connect_socket_ == INVALID_SOCKET)
+				{
+					WSA_error_code = WSAGetLastError();
+					#ifdef _DEBUG
+					printf("server accept failed.error code:%d.\n", WSA_error_code);
+					#endif
+					if (WSA_error_code != WSAEINTR && WSA_error_code != WSAESHUTDOWN)
+						socket_data->on_accept_failed(socket_data->server_socket_, WSA_error_code);
+				}
+				else
+					socket_data->on_accept_success(socket_data->server_socket_, socket_data->connect_socket_);
+				break;
+			case MISSION_RECEIVE:
+				if (socket_data->connect_socket_ != INVALID_SOCKET)
+				{
+					int len;
+					len = recv(socket_data->connect_socket_, socket_data->receive_buf_, sizeof(socket_data->receive_buf_), 0);
+					if (len <= 0)
+					{
+						WSA_error_code = WSAGetLastError();
+						#ifdef _DEBUG
+						printf("server receive failed.error code:%d.\n", WSA_error_code);
+						#endif
+						if (WSA_error_code != WSAEINTR && WSA_error_code != WSAESHUTDOWN)
+							socket_data->on_receive_failed(socket_data->server_socket_, socket_data->connect_socket_, WSA_error_code);
+					}
+					else
+					{
+						socket_data->receive_buf_[len] = '\0';
+						socket_data->on_receive_completed(socket_data->server_socket_, socket_data->connect_socket_, socket_data->receive_buf_, len);
+					}
+				}
+				break;
+			case MISSION_SEND:
+				if (socket_data->connect_socket_ != INVALID_SOCKET)
+				{
+					if (send(socket_data->server_socket_, mission.send_str.c_str(),
+						mission.send_str.length() + 1, 0) < 0)
+					{
+						WSA_error_code = WSAGetLastError();
+						#ifdef _DEBUG
+						printf("server send failed.error code:%d.\n", WSA_error_code);
+						#endif
+						if (WSA_error_code != WSAEINTR && WSA_error_code != WSAESHUTDOWN)
+							socket_data->on_send_failed(socket_data->server_socket_, socket_data->connect_socket_, WSA_error_code);
+					}
+				}
+				break;
+			case MISSION_STOP_CONNECTION:
+				if (socket_data->connect_socket_ != INVALID_SOCKET)
+					closesocket(socket_data->connect_socket_);
+				break;
+			default:
+				break;
 		}
 		Sleep(30);
 	}
@@ -155,9 +179,10 @@ void ServerSocket::start()
 {
 	if (running_flag_)
 		stop();
-	receive_flag_ = send_flag_ = stop_flag_ = accept_flag_ = stop_connect_flag_ = false;
+	clean_mission_queue();
 	socket_thread_ = CreateThread(NULL, 0, on_socket_running, this, 0, NULL);
 	running_flag_ = true;
+	stop_flag_ = false;
 }
 
 void ServerSocket::stop()
@@ -178,26 +203,40 @@ void ServerSocket::stop()
 void ServerSocket::accept_new_connection()
 {
 	if (running_flag_)
-		accept_flag_ = true;
+	{
+		socket_mission accept_mission;
+		accept_mission.mission_ID = MISSION_ACCEPT;
+		mission_queue_.push(accept_mission);
+	}
 }
 
 void ServerSocket::receive()
 {
 	if (running_flag_)
-		receive_flag_ = true;
+	{
+		socket_mission recv_mission;
+		recv_mission.mission_ID = MISSION_RECEIVE;
+		mission_queue_.push(recv_mission);
+	}
 }
 
 void ServerSocket::send_string(const char* str)
 {
 	if (running_flag_)
 	{
-		send_str_ = str;
-		send_flag_ = true;
+		socket_mission send_mission;
+		send_mission.mission_ID = MISSION_SEND;
+		send_mission.send_str = str;
+		mission_queue_.push(send_mission);
 	}
 }
 
 void ServerSocket::stop_connection()
 {
 	if (running_flag_)
-		stop_connect_flag_ = true;
+	{
+		socket_mission stop_connect_mission;
+		stop_connect_mission.mission_ID = MISSION_STOP_CONNECTION;
+		mission_queue_.push(stop_connect_mission);
+	}
 }

@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <string>
 #include <stdio.h>
+#include <queue>
 using namespace std;
 class ServerSocket
 {
@@ -14,17 +15,26 @@ private:
 	static const int max_buf_size_ = 1024;
 
 	HANDLE socket_thread_;
+	enum mission_type
+	{
+		MISSION_ACCEPT,
+		MISSION_RECEIVE,
+		MISSION_SEND,
+		MISSION_STOP_CONNECTION
+	};
+	struct socket_mission
+	{
+		mission_type mission_ID;
+		string send_str;												//仅当ID为MISSION_SEND时有效
+	};
+	queue<socket_mission> mission_queue_;
 	volatile bool running_flag_;
-	volatile bool accept_flag_;
-	volatile bool receive_flag_;
-	volatile bool send_flag_;
 	volatile bool stop_flag_;
-	volatile bool stop_connect_flag_;
-	string send_str_;
 	char receive_buf_[max_buf_size_];
 
 	static bool win_socket_init();
 	static DWORD WINAPI on_socket_running(LPVOID data);
+	void clean_mission_queue();
 protected:
 	virtual void on_init_failed(){}
 	virtual void on_socket_create_failed(int WSA_error_code){}
