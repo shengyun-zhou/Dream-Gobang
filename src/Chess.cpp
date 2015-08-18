@@ -18,13 +18,13 @@ void Chess::set_point(int x, int y, PieceType value)
 }
 
 
-Chess::PieceType Chess::get_point(int x, int y)
+Chess::PieceType Chess::get_point(int x, int y) const
 {
 	return chess_array_[x][y];
 }
 
 
-int Chess::get_empty_grid_num()
+int Chess::get_empty_grid_num() const
 {
   int i, j;
   int num = 0;
@@ -41,7 +41,7 @@ int Chess::get_empty_grid_num()
 
 
 //1代表上下 2代表左右 3代表左上到右下 4代表右上到左下
-int Chess::judge(int x, int y, Direction dire)
+int Chess::judge(int x, int y, Direction dire) const
 {
 	PieceType temp = chess_array_[x][y];
 	int result1, result2;
@@ -137,7 +137,7 @@ int Chess::judge(int x, int y, Direction dire)
 }
 
 
-bool Chess::is_chess_full()
+bool Chess::is_chess_full() const
 {
 	int i, j;
 	for (i = 0; i < SIZE; i++)
@@ -152,7 +152,7 @@ bool Chess::is_chess_full()
 }
 
 
-Chess::PieceType Chess::judge_win()
+Chess::PieceType Chess::judge_win() const
 {
 	int i, j, dire;
 	for (i = 0; i < SIZE; i++)
@@ -173,7 +173,7 @@ Chess::PieceType Chess::judge_win()
 }
 
 
-void Chess::show_chess()
+void Chess::show_chess() const
 {
 	int i, j;
 	printf(" %2s", " ");
@@ -196,7 +196,7 @@ void Chess::show_chess()
 	}
 }
 
-int Chess::two_end(int x, int y, Direction dire)
+int Chess::two_end(int x, int y, Direction dire) const
 {
 	const int i = x;
 	const int j = y;
@@ -304,7 +304,7 @@ int Chess::two_end(int x, int y, Direction dire)
 	}
 }
 
-bool Chess::judge_win_ex(PieceType piece)
+bool Chess::judge_win_ex(PieceType piece) const
 {
 	PieceType self_type = piece;
 	PieceType oposite_type;

@@ -27,4 +27,14 @@ class Image
 		 * @attention 非PNG格式的图片请勿使用此函数,PNG图片若要正常显示请使用此函数
 		 */
 		void show_image_with_alpha(int x, int y, double alpha);
+
+		int get_width()
+		{
+			return getwidth(image_);
+		}
+
+		int get_height()
+		{
+			return getheight(image_);
+		}
 };

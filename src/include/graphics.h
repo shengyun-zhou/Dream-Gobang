@@ -36,7 +36,9 @@
 #ifndef _GRAPHICS_H_
 #define _GRAPHICS_H_
 
-//#define SHOW_CONSOLE
+#ifdef _DEBUG
+#define SHOW_CONSOLE
+#endif
 
 #ifndef __cplusplus
 #error You must use C++ compiler, or you need filename with '.cpp' suffix

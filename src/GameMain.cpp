@@ -175,7 +175,7 @@ void play_chess_interface()
 		Chess c;
 		Chess::PieceType player_type;
 		Chess::PieceType computer_type;
-		PlayChess* p = new PlayChess(&c);
+		PlayChess* p = new PlayChess(c);
 		bool game_end_flag = false;
 		if (recover_flag)
 		{
@@ -216,7 +216,6 @@ void play_chess_interface()
 			{
 				play_button_click_audio();
 				p->play_chess_by_man(msg.x, msg.y, player_type);
-				c.set_point(p->mouse_to_row(msg.x, msg.y), p->mouse_to_col(msg.x, msg.y), player_type);
 				if (p->show_outcome())
 				{
 					game_end_flag = true;
@@ -224,14 +223,12 @@ void play_chess_interface()
 				}
 				cp.calc_next_step(row, col);
 				p->play_chess_by_computer(row, col, computer_type);
-				c.set_point(row, col, computer_type);
 				if (p->show_outcome())
 				{
 					game_end_flag = true;
 					continue;
 				}
-
-				c.show_chess();																						//调试输出
+				//c.show_chess();																						//调试输出
 			}
 			else if (n == PlayChess::ACTION_REPLAY && m == 1)						//重新开始
 			{
@@ -239,7 +236,7 @@ void play_chess_interface()
 				delete p;
 				break;
 			}
-			else if (n == PlayChess::ACTION_QUIT && m == 1)						//退出游戏
+			else if (n == PlayChess::ACTION_QUIT && m == 1)							//退出游戏
 			{
 				play_button_click_audio();
 				if (game_end_flag == false && c.get_empty_grid_num() < Chess::SIZE * Chess::SIZE)

@@ -58,6 +58,8 @@ endif()
 set(PROJECT_SOURCE_FILE
     Chess.h
     Chess.cpp
+	ChessBoardView.h
+	ChessBoardView.cpp
 	ComputerPlayer.h
 	ComputerPlayer.cpp
 	WelcomeInterface.h
