@@ -19,6 +19,7 @@ public:
 	PlayChess(Chess& c);
 	~PlayChess();
 
+	void enter_interface();
 	void show_chessboard();															//显示主界面
 	void update_windows();															//刷新界面
 	PlayChess::ACTION_TYPE action_judge(int x, int y);	//根据鼠标坐标判断其对应区域，并返回相应操作类型
@@ -27,7 +28,7 @@ public:
 	void play_chess_by_man(int x, int y, Chess::PieceType value);//根据鼠标传来的坐标及棋子类型执行下棋动作
 	void play_chess_by_computer(int row, int col, Chess::PieceType value);//根据计算机下棋的行列坐标及棋子类型
 
-	void on_mouse_move(PlayChess::ACTION_TYPE action);
+	void on_mouse_move(int x, int y, PlayChess::ACTION_TYPE action);
 	void on_mouse_click(PlayChess::ACTION_TYPE action);
 
 private:

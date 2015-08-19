@@ -1,6 +1,7 @@
 #pragma once
 #include "Chess.h"
 #include "tools/Image.h"
+#include "graphics.h"
 class ChessBoardView
 {
 private:
@@ -11,7 +12,15 @@ private:
 	static const int chess_edge_length_ = 640;
 	static const int block_edge_length_ = 10;
 	static const int width_each_row_col_ = chess_edge_length_ / (Chess::SIZE + 1);
-	static const int offset_ = 10;
+	static const int offset_ = 15;
+	
+	struct BufferImage
+	{
+		int x;
+		int y;
+		PIMAGE img;
+	};
+	BufferImage buffer_img_;
 public:
 	ChessBoardView();
 	~ChessBoardView();
@@ -28,5 +37,8 @@ public:
 	void draw_piece_by_coor(int row, int col, Chess::PieceType piece_type);
 	bool is_mouse_in_board(int x, int y);
 	void mouse_to_coor(int mouse_x, int mouse_y, int& target_row, int& target_col);
+
+	void on_mouse_move(int x, int y, const Chess& chess);
+	void on_mouse_click();
 };
 

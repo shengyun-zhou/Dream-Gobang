@@ -2907,7 +2907,8 @@ putimage(int dstX, int dstY, int dstWidth, int dstHeight, const PIMAGE pSrcImg, 
 
 void
 putimage(PIMAGE pDstImg, int dstX, int dstY, const PIMAGE pSrcImg, DWORD dwRop) {
-	pSrcImg->putimage(pDstImg, dstX, dstY, dwRop);
+	PIMAGE pConvertImg = CONVERT_IMAGE(pSrcImg);
+	pConvertImg->putimage(pDstImg, dstX, dstY, dwRop);
 }
 
 void

@@ -28,6 +28,7 @@ public:
 
 	WelcomeInterface();
 	static void opening_animation();
+	void enter_interface();
 	void show_welcome();
 	static void curtain();
 

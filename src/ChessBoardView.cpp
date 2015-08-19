@@ -10,6 +10,9 @@ ChessBoardView::ChessBoardView()
 	if (!white_piece_image_)
 		white_piece_image_ = new Image("res/white-piece.png");
 	pos_x_ = pos_y_ = 10;
+	buffer_img_.x = -width_each_row_col_;
+	buffer_img_.y = -width_each_row_col_;
+	buffer_img_.img = NULL;
 }
 
 ChessBoardView::~ChessBoardView()
@@ -101,4 +104,63 @@ void ChessBoardView::draw_piece_by_coor(int row, int col, Chess::PieceType piece
 		default:
 			break;
 	}
+}
+
+void ChessBoardView::on_mouse_move(int x, int y, const Chess& chess)
+{
+	if (x >= buffer_img_.x && x <= buffer_img_.x + 2 * offset_ &&
+		y >= buffer_img_.y && y <= buffer_img_.y + 2 * offset_)
+		return;
+	if (buffer_img_.img)
+	{
+		putimage(buffer_img_.x, buffer_img_.y, buffer_img_.img);
+		delimage(buffer_img_.img);
+	}
+	buffer_img_.x = buffer_img_.y = -width_each_row_col_;
+	buffer_img_.img = NULL;
+	if (!is_mouse_in_board(x, y))
+		return;
+	int row, col;
+	mouse_to_coor(x, y, row, col);
+	if (row < 0 || col < 0)
+		return;
+	if (chess.get_point(row, col) != Chess::EMPTY)
+		return;
+	row++;
+	col++;
+	int target_left = pos_x_ + col * width_each_row_col_ - offset_;
+	int target_top = pos_y_ + row * width_each_row_col_ - offset_;
+
+	int temp_viewport_left, temp_viewport_right, temp_viewport_top, temp_viewport_bottom;
+	getviewport(&temp_viewport_left, &temp_viewport_top, &temp_viewport_right, &temp_viewport_bottom);
+	setviewport(target_left, target_top, target_left + 2 * offset_, target_top + 2 * offset_);
+	buffer_img_.x = target_left;
+	buffer_img_.y = target_top;
+	buffer_img_.img = newimage(2 * offset_, 2 * offset_);
+	putimage(buffer_img_.img, 0, 0, NULL);
+	setviewport(temp_viewport_left, temp_viewport_top, temp_viewport_right, temp_viewport_bottom);
+
+	setcolor(WHITE);
+	setlinestyle(SOLID_LINE, 0, 2);
+	target_left += offset_;
+	target_top += offset_;
+	line(target_left - block_edge_length_ / 2 - 1, target_top - block_edge_length_ / 2 - 1, target_left - offset_ + 1, target_top - block_edge_length_ / 2 - 1);
+	line(target_left - block_edge_length_ / 2 - 1, target_top - block_edge_length_ / 2 - 1, target_left - block_edge_length_ / 2 - 1, target_top - offset_ + 1);
+	line(target_left + block_edge_length_ / 2 + 1, target_top - block_edge_length_ / 2 - 1, target_left + offset_ - 1, target_top - block_edge_length_ / 2 - 1);
+	line(target_left + block_edge_length_ / 2 + 1, target_top - block_edge_length_ / 2 - 1, target_left + block_edge_length_ / 2 + 1, target_top - offset_ + 1);
+	line(target_left - block_edge_length_ / 2 - 1, target_top + block_edge_length_ / 2 + 1, target_left - offset_ + 1, target_top + block_edge_length_ / 2 + 1);
+	line(target_left - block_edge_length_ / 2 - 1, target_top + block_edge_length_ / 2 + 1, target_left - block_edge_length_ / 2 - 1, target_top + offset_ - 1);
+	line(target_left + block_edge_length_ / 2 + 1, target_top + block_edge_length_ / 2 + 1, target_left + offset_ - 1, target_top + block_edge_length_ / 2 + 1);
+	line(target_left + block_edge_length_ / 2 + 1, target_top + block_edge_length_ / 2 + 1, target_left + block_edge_length_ / 2 + 1, target_top + offset_ - 1);
+}
+
+void ChessBoardView::on_mouse_click()
+{
+	if (buffer_img_.img)
+	{
+		putimage(buffer_img_.x, buffer_img_.y, buffer_img_.img);
+		delimage(buffer_img_.img);
+	}
+	buffer_img_.x = buffer_img_.y = -width_each_row_col_;
+	buffer_img_.img = NULL;
 }

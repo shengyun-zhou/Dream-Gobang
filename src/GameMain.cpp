@@ -8,12 +8,12 @@
 #include "widgets/MessageDialog.h"
 #include "widgets/QuestionDialog.h"
 #include "widgets/EditDialog.h"
+#include "Gobang.h"
+#include "tools/GradientAnimation.h"
 #include <stdlib.h>
 #include <direct.h>
 #include <winuser.h>
 
-const int WIDTH = 1280;
-const int HEIGHT = 720;
 Music* game_bgm = NULL;
 Settings* game_settings = NULL;
 
@@ -40,7 +40,7 @@ int main()
 	//载入鼠标样式文件并设置鼠标样式，需要在窗口初始化前调用。
 	setcursorstyle("res/cursor.ani");
 
-	initgraph(WIDTH, HEIGHT);
+	initgraph(Gobang::WINDOW_WIDTH, Gobang::WINDOW_HEIGHT);
 
 	/*EditDialog dialog(600, 200);
 	dialog.set_title("GetCoords函数示例");
@@ -74,10 +74,14 @@ void main_loop()
 	bool welcome_flag;
 	WelcomeInterface welcome_interface;
 	WelcomeInterface::action_type welcome_action;
+	bool enter_welcome_flag = true;
 
 	while (is_run())
 	{
-		welcome_interface.show_welcome();
+		if (enter_welcome_flag)
+			welcome_interface.enter_interface();
+		else
+			welcome_interface.show_welcome();
 		welcome_flag = false;
 		while (is_run())
 		{
@@ -94,8 +98,10 @@ void main_loop()
 					case WelcomeInterface::ACTION_ENTER_GAME:
 					{
 						play_button_click_audio();
+						GradientAnimation::transition_ease_in();
 						play_chess_interface();
 						welcome_flag = true;
+						enter_welcome_flag = true;
 						break;
 					}
 					case WelcomeInterface::ACTION_GAME_SETTINGS:
@@ -103,6 +109,7 @@ void main_loop()
 						play_button_click_audio();
 						game_settings_interface();
 						welcome_flag = true;
+						enter_welcome_flag = false;
 						break;
 					}
 					case WelcomeInterface::ACTION_EXIT_GAME:
@@ -113,6 +120,7 @@ void main_loop()
 						dialog.show();
 						if (dialog.get_response_result() == QuestionDialog::response_yes)
 						{
+							GradientAnimation::transition_ease_in();
 							closegraph();
 							exit(0);
 						}
@@ -121,8 +129,10 @@ void main_loop()
 					case WelcomeInterface::ACTION_SPECIAL_THANKS:
 					{
 						play_button_click_audio();
+						GradientAnimation::transition_ease_in();
 						game_curtain();
 						welcome_flag = true;
+						enter_welcome_flag = true;
 						break;
 					}
 					default:
@@ -141,6 +151,7 @@ void play_chess_interface()
 	int m;
 	mouse_msg msg;
 	bool recover_flag = false;
+	bool first_enter_flag = true;
 	ChessSaver saver;
 
 	if (ChessSaver::is_recovery_data_exist())
@@ -177,16 +188,20 @@ void play_chess_interface()
 		Chess::PieceType computer_type;
 		PlayChess* p = new PlayChess(c);
 		bool game_end_flag = false;
+		if (first_enter_flag)
+		{
+			p->enter_interface();
+			first_enter_flag = false;
+		}
+		else
+			p->show_chessboard();
 		if (recover_flag)
 		{
 			player_type = saver.get_player_piece_type();
 			p->show_last_game(saver);
 		}
 		else
-		{
 			player_type = game_settings->get_piece_color();
-			p->show_chessboard();
-		}
 
 		if (player_type == Chess::BLACK)
 			computer_type = Chess::WHITE;
@@ -208,13 +223,14 @@ void play_chess_interface()
 			msg = getmouse();
 			n = p->action_judge(msg.x, msg.y);
 			m = ((msg.is_up() && msg.is_left() == 1) ? 1 : 0);
-      p->on_mouse_move(n);
+      p->on_mouse_move(msg.x, msg.y, n);
       if(msg.is_down() && msg.is_left())
         p->on_mouse_click(n);
 
 			if (n == PlayChess::ACTION_PLAY && m == 1 && !game_end_flag)								//下棋
 			{
 				play_button_click_audio();
+				p->on_mouse_click(n);
 				p->play_chess_by_man(msg.x, msg.y, player_type);
 				if (p->show_outcome())
 				{
@@ -230,7 +246,7 @@ void play_chess_interface()
 				}
 				//c.show_chess();																						//调试输出
 			}
-			else if (n == PlayChess::ACTION_REPLAY && m == 1)						//重新开始
+			else if (n == PlayChess::ACTION_REPLAY && m == 1)							//重新开始
 			{
 				play_button_click_audio();
 				delete p;
@@ -239,6 +255,7 @@ void play_chess_interface()
 			else if (n == PlayChess::ACTION_QUIT && m == 1)							//退出游戏
 			{
 				play_button_click_audio();
+				GradientAnimation::transition_ease_in();
 				if (game_end_flag == false && c.get_empty_grid_num() < Chess::SIZE * Chess::SIZE)
 					ChessSaver::save_chess(c, player_type);
 				return;
@@ -309,6 +326,7 @@ void game_curtain()
 		if (k == 1 && msg.x > 800 - offset && msg.x < 950 - offset && msg.y > 600 - offset && msg.y < 650 + offset)
 		{
 			play_button_click_audio();
+			GradientAnimation::transition_ease_in();
 			return;
 		}
 	}

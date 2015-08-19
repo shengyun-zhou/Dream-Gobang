@@ -1,4 +1,5 @@
 #include "PlayChess.h"
+#include "tools/GradientAnimation.h"
 
 const int offset = 10;
 ImageButton* PlayChess::button_game_quit_ = NULL;
@@ -32,6 +33,13 @@ PlayChess::PlayChess(Chess& c) : chess_(c)
 
 PlayChess::~PlayChess()
 {
+}
+
+void PlayChess::enter_interface()
+{
+	show_chessboard();
+	static Image window_image = Image();
+	GradientAnimation::transition_ease_out(&window_image);
 }
 
 void PlayChess::show_chessboard()
@@ -164,8 +172,9 @@ void PlayChess::play_chess_by_computer(int row, int col, Chess::PieceType value)
 	chess_.set_point(row, col, value);
 }
 
-void PlayChess::on_mouse_move(PlayChess::ACTION_TYPE action)
+void PlayChess::on_mouse_move(int x, int y, PlayChess::ACTION_TYPE action)
 {
+	chess_board_.on_mouse_move(x, y, chess_);
   switch(action)
   {
     case PlayChess::ACTION_REPLAY:
@@ -189,6 +198,9 @@ void PlayChess::on_mouse_click(PlayChess::ACTION_TYPE action)
 {
   switch(action)
   {
+		case PlayChess::ACTION_PLAY:
+			chess_board_.on_mouse_click();
+			break;
     case PlayChess::ACTION_REPLAY:
 			button_game_replay_->on_mouse_click();
       break;

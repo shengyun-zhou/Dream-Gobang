@@ -79,6 +79,8 @@ set(PROJECT_SOURCE_FILE
 	tools/Music.cpp
 	tools/IniSimpleParser.h
 	tools/IniSimpleParser.cpp
+	tools/GradientAnimation.h
+	tools/GradientAnimation.cpp
 	widgets/BaseButton.h
 	widgets/Button.h
 	widgets/Button.cpp

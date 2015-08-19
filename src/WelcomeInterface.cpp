@@ -1,4 +1,5 @@
 #include "WelcomeInterface.h"
+#include "tools/GradientAnimation.h"
 
 ImageButton* WelcomeInterface::button_enter_game_ = NULL;
 ImageButton* WelcomeInterface::button_game_settings_ = NULL;
@@ -92,11 +93,14 @@ void WelcomeInterface::opening_animation()												//显示开场动画
 	delay_ms(100);
 }
 	
+void WelcomeInterface::enter_interface()
+{
+	GradientAnimation::transition_ease_out(game_welcome_bg_);
+	show_welcome();
+}
 
 void WelcomeInterface::show_welcome()						
 {
-	game_welcome_bg_->show_image(0, 0);
-
 	setrendermode(RENDER_MANUAL);
 
 	for(int x = 0; is_run() && x <= 80; delay_fps(60), x += 10) 
@@ -129,8 +133,7 @@ void WelcomeInterface::curtain()
 {
 	setbkmode(TRANSPARENT);
 	static Image game_thanks_bg("res/game-special-thanks-bg.png");
-	game_thanks_bg.show_image(0, 0);
-	ege_enable_aa(true);
+	GradientAnimation::transition_ease_out(&game_thanks_bg);
 	AddFontResource("res/font-llt.ttc");									//加载字体文件
 	setfont(-40, 0, "萝莉体 第二版");
 	static LOGFONTA current_font;
