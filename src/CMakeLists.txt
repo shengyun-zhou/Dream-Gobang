@@ -68,6 +68,10 @@ set(PROJECT_SOURCE_FILE
 	SettingsInterface.cpp
 	PlayChess.h
 	PlayChess.cpp
+	NetSelectionInterface.h
+	NetSelectionInterface.cpp
+	NetSettingsInterface.h
+	NetSettingsInterface.cpp
 	ChessSaver.h
 	ChessSaver.cpp
 	Settings.h

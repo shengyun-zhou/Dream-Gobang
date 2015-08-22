@@ -34,10 +34,6 @@ edit_listener_(this)
 	ok_button_->set_position(width_ - button_margin_ * 2 - button_width_ * 2, height_ - button_margin_ - button_height_);
 
 	edit_text_ = new EditText(width_ - padding_ * 2);
-	text_rect_.top = padding_;
-	text_rect_.left = icon_margin_ + getwidth(dialog_icon_) + text_margin_;
-	text_rect_.bottom = height_ - button_area_height_;
-	text_rect_.right = width_ - padding_;
 	text_ = "An editing dialog.";
 }
 
@@ -60,6 +56,10 @@ void EditDialog::on_dialog_init()
 	static UINT text_format = DT_LEFT | DT_TOP | DT_EDITCONTROL | DT_WORDBREAK | DT_WORD_ELLIPSIS;
 	//rectangle(text_rect_.left, text_rect_.top, text_rect_.right, text_rect_.bottom, dialog_image_);
 	//计算文本高度
+	text_rect_.top = padding_;
+	text_rect_.left = icon_margin_ + getwidth(dialog_icon_) + text_margin_;
+	text_rect_.bottom = height_ - button_area_height_;
+	text_rect_.right = width_ - padding_;
 	int text_height = DrawText(dialog_dc_, text_.c_str(), -1, &text_rect_, text_format | DT_CALCRECT);
 	text_rect_.top = (padding_ + (height_ - button_area_height_ - edit_margin_bottom_ - edit_text_->get_height() - text_margin_)) / 2 - text_height / 2;
 	text_rect_.bottom = text_rect_.top + text_height + 1;
@@ -82,6 +82,7 @@ void EditDialog::on_dialog_init()
 void EditDialog::on_create_message()
 {
 	edit_text_->show(dialog_handle_);
+	edit_text_->set_text(input_text_.c_str());
 	ok_button_->show(dialog_handle_);
 	cancel_button_->show(dialog_handle_);
 }

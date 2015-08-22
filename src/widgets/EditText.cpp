@@ -186,10 +186,15 @@ void EditText::show(HWND parent_window)
 	ShowWindow(edit_frame_handle_, SW_SHOW);
 }
 
+void EditText::set_text(const char* text)
+{
+	SendMessage(edit_handle_, WM_SETTEXT, (WPARAM)max_len_, (LPARAM)text);
+}
+
 void EditText::get_text(std::string& str)
 {
 	char buf[1024];
-	SendMessage(edit_handle_, WM_GETTEXT, (WPARAM)max_len_, (LPARAM)buf);
+	SendMessage(edit_handle_, WM_GETTEXT, (WPARAM)(max_len_ + 1), (LPARAM)buf);
 	str = buf;
 }
 

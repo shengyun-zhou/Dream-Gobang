@@ -14,6 +14,7 @@ protected:
 	HWND edit_frame_handle_;
 	HWND edit_handle_;
 	std::string text_;
+	std::string input_text_;
 	int max_len_;
 	bool init_flag_;
 
@@ -31,8 +32,8 @@ protected:
 	static LRESULT CALLBACK edit_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK edit_frame_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-	void on_normal();
-	void on_focus();
+	virtual void on_normal();
+	virtual void on_focus();
 public:
 	EditText(int width);
 	~EditText();
@@ -50,6 +51,8 @@ public:
 
 	virtual void show(HWND parent_window);
 	void set_max_len(int len);
+
+	void set_text(const char* text);
 	void get_text(std::string& text);
 	void set_font(int size, LPCSTR font_family);
 

@@ -38,6 +38,16 @@ public:
 		text_ = text;
 	}
 
+	void set_input_max_len(int length)
+	{
+		edit_text_->set_max_len(length);
+	}
+
+	void set_input_text(const char* text)
+	{
+		input_text_ = text;
+	}
+
 	std::string get_input_text()
 	{
 		return input_text_;
@@ -47,6 +57,7 @@ public:
 	{
 		return response_type_;
 	}
+
 private:
 	ResponseType response_type_;
 

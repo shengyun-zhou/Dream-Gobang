@@ -3,6 +3,8 @@
 #endif
 #include "WelcomeInterface.h"
 #include "SettingsInterface.h"
+#include "NetSelectionInterface.h"
+#include "NetSettingsInterface.h"
 #include "tools/Music.h"
 #include "Settings.h"
 #include "widgets/MessageDialog.h"
@@ -21,6 +23,8 @@ void main_loop();
 void play_chess_interface();
 void game_settings_interface();
 void game_curtain();
+void game_net_select_interface();
+void game_net_settings_interface();
 
 void play_button_click_audio()
 {
@@ -41,14 +45,6 @@ int main()
 	setcursorstyle("res/cursor.ani");
 
 	initgraph(Gobang::WINDOW_WIDTH, Gobang::WINDOW_HEIGHT);
-
-	/*EditDialog dialog(600, 200);
-	dialog.set_title("GetCoords函数示例");
-	dialog.set_text("正在输入坐标...\n请输入第1对坐标，用逗号隔开（如：13,14），按回车输入。\n(请使用半角输入，每次输入一对坐标)");
-	dialog.show();
-	if (dialog.get_response_type() == EditDialog::response_ok)
-		printf("input:%s", dialog.get_input_text().c_str());*/
-
 	setbkcolor(WHITE);
 	setcaption("梦幻五子棋");
 
@@ -63,6 +59,7 @@ int main()
 	if (game_settings->is_audio_on())
 		game_bgm->start();
 	main_loop();
+	//game_net_select_interface();
 	return 0;
 }
 
@@ -332,3 +329,119 @@ void game_curtain()
 	}
 }
 
+void game_net_select_interface()
+{
+	NetSelectionInterface net_select_interface;
+	mouse_msg msg;
+	NetSelectionInterface::ACTION_TYPE action_type;
+	bool back_flag = false;
+	bool enter_flag = true;
+	while (is_run())
+	{
+		if (enter_flag)
+			net_select_interface.enter_interface();
+		else
+			net_select_interface.show_interface();
+		back_flag = false;
+		enter_flag = true;
+		while (is_run())
+		{
+			msg = getmouse();
+			action_type = net_select_interface.action_judge(msg.x, msg.y);
+			net_select_interface.on_mouse_move(action_type);
+			if (msg.is_down() && msg.is_left())
+				net_select_interface.on_mouse_click(action_type);
+			else if (msg.is_up() && msg.is_left())
+			{
+				switch (action_type)
+				{
+					case NetSelectionInterface::ACTION_NET_SETTINGS:
+					{
+						game_net_settings_interface();
+						back_flag = true;
+						enter_flag = false;
+						break;
+					}
+					case NetSelectionInterface::ACTION_BACK:
+						GradientAnimation::transition_ease_in();
+						return;
+					default:
+						break;
+				}
+				if (back_flag)
+					break;
+			}
+		}
+	}
+}
+
+void game_net_settings_interface()
+{
+	NetSettingsInterface settings_interface(game_settings);
+	settings_interface.show_interface();
+	mouse_msg msg;
+	NetSettingsInterface::ACTION_TYPE action_type;
+	EditDialog edit_dialog(500, 200);
+	while (true)
+	{
+		msg = getmouse();
+		action_type = settings_interface.action_judge(msg.x, msg.y);
+		settings_interface.on_mouse_move(action_type);
+		if (msg.is_down() && msg.is_left())
+			settings_interface.on_mouse_click(action_type);
+		if (msg.is_up() && msg.is_left())
+		{
+			switch (action_type)
+			{
+				case NetSettingsInterface::ACTION_SAVE:
+					game_settings->write_settings();
+					return;
+				case NetSettingsInterface::ACTION_CANCEL:
+					game_settings->read_settings();
+					return;
+				case NetSettingsInterface::ACTION_EDIT_USER_NAME:
+					edit_dialog.set_title("更改用户名");
+					edit_dialog.set_text("请输入新的用户名。\n用户名中不能含有空格。");
+					edit_dialog.set_input_max_len(20);
+					edit_dialog.set_input_text(game_settings->get_user_name().c_str());
+					edit_dialog.show();
+					if (edit_dialog.get_response_type() == EditDialog::response_ok)
+						game_settings->set_user_name(edit_dialog.get_input_text());
+					settings_interface.show_interface();
+					break;
+				case NetSettingsInterface::ACTION_EDIT_SERVER_PORT:
+					edit_dialog.set_title("设置服务端端口号");
+					edit_dialog.set_text("请输入新的端口号，范围为0-65535。\n请注意不要与当前系统中已占用的端口冲突。");
+					edit_dialog.set_input_text(game_settings->get_server_port().c_str());
+					edit_dialog.set_input_max_len(5);
+					edit_dialog.show();
+					if (edit_dialog.get_response_type() == EditDialog::response_ok)
+						game_settings->set_server_port(edit_dialog.get_input_text());
+					settings_interface.show_interface();
+					break;
+				case NetSettingsInterface::ACTION_EDIT_CLIENT_CONNECT_IP:
+					edit_dialog.set_title("设置客户端连接目标IP地址");
+					edit_dialog.set_text("请输入新的IP地址，格式为a.b.c.d。\na，b，c，d的范围均为0-255。");
+					edit_dialog.set_input_text(game_settings->get_client_connect_IP_addr().c_str());
+					edit_dialog.set_input_max_len(15);
+					edit_dialog.show();
+					if (edit_dialog.get_response_type() == EditDialog::response_ok)
+						game_settings->set_client_connect_IP_addr(edit_dialog.get_input_text());
+					settings_interface.show_interface();
+					break;
+				case NetSettingsInterface::ACTION_EDIT_CLIENT_CONNECT_PORT:
+					edit_dialog.set_title("设置客户端连接目标端口号");
+					edit_dialog.set_text("请输入新的端口号，范围为0-65535。");
+					edit_dialog.set_input_text(game_settings->get_client_connect_port().c_str());
+					edit_dialog.set_input_max_len(5);
+					edit_dialog.show();
+					if (edit_dialog.get_response_type() == EditDialog::response_ok)
+						game_settings->set_client_connect_port(edit_dialog.get_input_text());
+					settings_interface.show_interface();
+					break;
+				default:
+					break;
+			}
+		}
+	}
+}

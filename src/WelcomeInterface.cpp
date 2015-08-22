@@ -102,25 +102,20 @@ void WelcomeInterface::enter_interface()
 void WelcomeInterface::show_welcome()						
 {
 	setrendermode(RENDER_MANUAL);
+	game_welcome_bg_->show_image(0, 0);
 
 	for(int x = 0; is_run() && x <= 80; delay_fps(60), x += 10) 
 	{
-		game_welcome_bg_->show_image(0, 0);
 		button_enter_game_->set_position(x, 350);
 		button_enter_game_->show();
 	}
 	for(int x = 0; is_run() && x <= 80; delay_fps(60), x += 10) 
 	{
-		game_welcome_bg_->show_image(0, 0);
-		button_enter_game_->show();
 		button_game_settings_->set_position(x, 450);
 		button_game_settings_->show();
 	}
 	for(int x = 0; is_run() && x <= 80; delay_fps(60), x += 10) 
 	{
-		game_welcome_bg_->show_image(0, 0);
-		button_enter_game_->show();
-		button_game_settings_->show();
 		button_exit_game_->set_position(x, 550);
 		button_exit_game_->show();
 	}
