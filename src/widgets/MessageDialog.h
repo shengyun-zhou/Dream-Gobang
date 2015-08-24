@@ -6,6 +6,7 @@ class MessageDialog : public Dialog
 protected:
 	virtual void on_dialog_init();
 	virtual void on_create_message();
+	virtual bool on_key_press(unsigned int key_value);
 
 	class OkButtonListener : public BaseButton::OnClickListener
 	{

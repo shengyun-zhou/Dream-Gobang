@@ -40,6 +40,7 @@ EditText::EditText(int width)
 	edit_frame_image_ = NULL;
 	max_len_ = 1024;
 	listener_ = NULL;
+	focus_flag_ = false;
 }
 
 EditText::~EditText()
@@ -71,6 +72,11 @@ void EditText::set_max_len(int len)
 		max_len_ = 1;
 	else if (max_len_ > 1024)
 		max_len_ = 1024;
+}
+
+void EditText::set_focus()
+{
+	focus_flag_ = true;
 }
 
 LRESULT CALLBACK EditText::edit_frame_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -112,6 +118,11 @@ LRESULT CALLBACK EditText::edit_frame_proc(HWND hWnd, UINT message, WPARAM wPara
 				HDC hdc = BeginPaint(hWnd, &ps);
 				BitBlt(hdc, 0, 0, edit_data->width_, edit_data->height_, edit_data->edit_frame_dc_, 0, 0, SRCCOPY);
 				EndPaint(hWnd, &ps);
+			}
+			if (edit_data->focus_flag_)
+			{
+				SetFocus(edit_data->edit_handle_);
+				edit_data->focus_flag_ = false;
 			}
 			return 0;
 		default:
@@ -188,7 +199,7 @@ void EditText::show(HWND parent_window)
 
 void EditText::set_text(const char* text)
 {
-	SendMessage(edit_handle_, WM_SETTEXT, (WPARAM)max_len_, (LPARAM)text);
+	SendMessage(edit_handle_, WM_SETTEXT, (WPARAM)0, (LPARAM)text);
 }
 
 void EditText::get_text(std::string& str)

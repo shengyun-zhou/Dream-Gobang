@@ -17,7 +17,7 @@ private:
 	std::string text_;
 	virtual void on_dialog_init();
 	virtual void on_create_message();
-	virtual void on_dialog_close();
+	virtual bool on_dialog_close();
 public:
 	enum IconType
 	{

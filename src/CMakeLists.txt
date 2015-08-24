@@ -155,11 +155,6 @@ endif()
 #endif()
 #add_executable (Gobang-Terminal-Test ${TERMINAL_TEST_SOURCE_FILE})
 
-#set (EGE-Test-SOURCE 
-#	EGETestMain.cpp)
-#add_executable(EGETest ${EGE-Test-SOURCE})
-#target_link_libraries(EGETest ege)
-
 #set (Socket-Test-SOURCE 
 #	SocketTestMain.cpp
 #	socket/ServerSocket.cpp

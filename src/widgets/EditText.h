@@ -17,6 +17,7 @@ protected:
 	std::string input_text_;
 	int max_len_;
 	bool init_flag_;
+	bool focus_flag_;
 
 	LOGFONT font_;
 	PIMAGE edit_frame_image_;
@@ -55,6 +56,7 @@ public:
 	void set_text(const char* text);
 	void get_text(std::string& text);
 	void set_font(int size, LPCSTR font_family);
+	void set_focus();
 
 	class OnActivateListener
 	{

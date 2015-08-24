@@ -58,8 +58,8 @@ int main()
 		game_settings->write_settings();
 	if (game_settings->is_audio_on())
 		game_bgm->start();
-	main_loop();
-	//game_net_select_interface();
+	//main_loop();
+	game_net_select_interface();
 	return 0;
 }
 
@@ -382,6 +382,8 @@ void game_net_settings_interface()
 	mouse_msg msg;
 	NetSettingsInterface::ACTION_TYPE action_type;
 	EditDialog edit_dialog(500, 200);
+	MessageDialog error_dialog(400, 150, MessageDialog::icon_error);
+	error_dialog.set_title("Error");
 	while (true)
 	{
 		msg = getmouse();
@@ -403,40 +405,92 @@ void game_net_settings_interface()
 					edit_dialog.set_title("更改用户名");
 					edit_dialog.set_text("请输入新的用户名。\n用户名中不能含有空格。");
 					edit_dialog.set_input_max_len(20);
-					edit_dialog.set_input_text(game_settings->get_user_name().c_str());
-					edit_dialog.show();
-					if (edit_dialog.get_response_type() == EditDialog::response_ok)
-						game_settings->set_user_name(edit_dialog.get_input_text());
+					while (true)
+					{
+						edit_dialog.set_input_text(game_settings->get_user_name().c_str());
+						edit_dialog.show();
+						if (edit_dialog.get_response_type() == EditDialog::response_ok)
+						{
+							if (game_settings->set_user_name(edit_dialog.get_input_text()))
+								break;
+							else
+							{
+								error_dialog.set_text("输入的用户名不合法，请重新输入。");
+								error_dialog.show();
+							}
+						}
+						else
+							break;
+					}
 					settings_interface.show_interface();
 					break;
 				case NetSettingsInterface::ACTION_EDIT_SERVER_PORT:
 					edit_dialog.set_title("设置服务端端口号");
 					edit_dialog.set_text("请输入新的端口号，范围为0-65535。\n请注意不要与当前系统中已占用的端口冲突。");
-					edit_dialog.set_input_text(game_settings->get_server_port().c_str());
 					edit_dialog.set_input_max_len(5);
-					edit_dialog.show();
-					if (edit_dialog.get_response_type() == EditDialog::response_ok)
-						game_settings->set_server_port(edit_dialog.get_input_text());
+					while (true)
+					{
+						edit_dialog.set_input_text(game_settings->get_server_port().c_str());
+						edit_dialog.show();
+						if (edit_dialog.get_response_type() == EditDialog::response_ok)
+						{
+							if (game_settings->set_server_port(edit_dialog.get_input_text()))
+								break;
+							else
+							{
+								error_dialog.set_text("输入的端口号不合法，请重新输入。");
+								error_dialog.show();
+							}
+						}
+						else
+							break;
+					}
 					settings_interface.show_interface();
 					break;
 				case NetSettingsInterface::ACTION_EDIT_CLIENT_CONNECT_IP:
 					edit_dialog.set_title("设置客户端连接目标IP地址");
 					edit_dialog.set_text("请输入新的IP地址，格式为a.b.c.d。\na，b，c，d的范围均为0-255。");
-					edit_dialog.set_input_text(game_settings->get_client_connect_IP_addr().c_str());
 					edit_dialog.set_input_max_len(15);
-					edit_dialog.show();
-					if (edit_dialog.get_response_type() == EditDialog::response_ok)
-						game_settings->set_client_connect_IP_addr(edit_dialog.get_input_text());
+					while (true)
+					{
+						edit_dialog.set_input_text(game_settings->get_client_connect_IP_addr().c_str());
+						edit_dialog.show();
+						if (edit_dialog.get_response_type() == EditDialog::response_ok)
+						{
+							if (game_settings->set_client_connect_IP_addr(edit_dialog.get_input_text()))
+								break;
+							else
+							{
+								error_dialog.set_text("输入的IP地址不合法，请重新输入。");
+								error_dialog.show();
+							}
+						}
+						else
+							break;
+					}
 					settings_interface.show_interface();
 					break;
 				case NetSettingsInterface::ACTION_EDIT_CLIENT_CONNECT_PORT:
 					edit_dialog.set_title("设置客户端连接目标端口号");
 					edit_dialog.set_text("请输入新的端口号，范围为0-65535。");
-					edit_dialog.set_input_text(game_settings->get_client_connect_port().c_str());
 					edit_dialog.set_input_max_len(5);
-					edit_dialog.show();
-					if (edit_dialog.get_response_type() == EditDialog::response_ok)
-						game_settings->set_client_connect_port(edit_dialog.get_input_text());
+					while (true)
+					{
+						edit_dialog.set_input_text(game_settings->get_client_connect_port().c_str());
+						edit_dialog.show();
+						if (edit_dialog.get_response_type() == EditDialog::response_ok)
+						{
+							if (game_settings->set_client_connect_port(edit_dialog.get_input_text()))
+								break;
+							else
+							{
+								error_dialog.set_text("输入的端口号不合法，请重新输入。");
+								error_dialog.show();
+							}
+						}
+						else
+							break;
+					}
 					settings_interface.show_interface();
 					break;
 				default:

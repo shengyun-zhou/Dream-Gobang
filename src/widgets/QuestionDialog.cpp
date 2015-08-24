@@ -90,12 +90,14 @@ void QuestionDialog::on_create_message()
 {
 	yes_button_->show(dialog_handle_);
 	no_button_->show(dialog_handle_);
+	no_button_->set_focus();
 }
 
-void QuestionDialog::on_dialog_close()
+bool QuestionDialog::on_dialog_close()
 {
 	response_result_ = response_close;
 	DestroyWindow(dialog_handle_);
+	return true;
 }
 
 void QuestionDialog::ButtonListener::on_click()

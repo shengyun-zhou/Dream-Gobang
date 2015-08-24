@@ -18,7 +18,7 @@ private:
 	RECT text_rect_;
 
 	virtual void on_dialog_init();
-	virtual void on_dialog_close();
+	virtual bool on_dialog_close();
 	virtual void on_create_message();
 	std::string input_text_;
 public:

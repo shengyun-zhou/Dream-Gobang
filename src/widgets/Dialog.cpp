@@ -49,8 +49,11 @@ LRESULT CALLBACK Dialog::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 			return 0;
 		case WM_CLOSE:
 			if (dialog_data)
-				dialog_data->on_dialog_close();
-			return 0;
+			{
+				if (dialog_data->on_dialog_close())
+					return 0;
+			}
+			return DefWindowProc(hWnd, message, wParam, lParam);
 		case WM_SETCURSOR:
 			if (getcursorstyle() != NULL)
 			{
@@ -74,9 +77,16 @@ LRESULT CALLBACK Dialog::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 			}
 			return 0;
 		}
-		case WM_DESTROY: //窗口销毁的消息
-			PostQuitMessage(0); //发送退出消息
+		case WM_DESTROY:				//窗口销毁的消息
+			PostQuitMessage(0);		//发送退出消息
 			return 0;
+		case WM_KEYDOWN:
+			if (dialog_data)
+			{
+				if (dialog_data->on_key_press(wParam))
+					return 0;
+			}
+			return DefWindowProc(hWnd, message, wParam, lParam);
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 	}
@@ -116,7 +126,6 @@ void Dialog::show()
 	SetFocus(dialog_handle_);
 	ShowWindow(dialog_handle_, SW_SHOW);
 
-
 	MSG msg = { 0 };
 	exit_flag_ = false;
 	while (GetMessage(&msg, NULL, 0, 0) && exit_flag_ == false)
@@ -136,9 +145,4 @@ void Dialog::set_font(LPCSTR font_family, int size)
 {
 	font_family_ = font_family;
 	font_size_ = size * -1;
-}
-
-void Dialog::on_dialog_close()
-{
-	DestroyWindow(dialog_handle_);
 }

@@ -20,6 +20,7 @@ protected:
 	RECT text_rect_;
 	RECT button_rect_;
 	bool is_focus_;
+	bool focus_flag_;
 	BaseButton::OnClickListener* on_click_listener_;								//按钮被点击后运行的函数
 
 	static bool register_flag_;
@@ -53,6 +54,11 @@ public:
 	void set_on_click_listener(BaseButton::OnClickListener* listener)
 	{
 		on_click_listener_ = listener;
+	}
+
+	void set_focus()
+	{
+		focus_flag_ = true;
 	}
 
 	virtual ~Button();

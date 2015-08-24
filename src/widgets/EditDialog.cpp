@@ -37,16 +37,16 @@ edit_listener_(this)
 	text_ = "An editing dialog.";
 }
 
-
 EditDialog::~EditDialog()
 {
 	delete edit_text_;
 }
 
-void EditDialog::on_dialog_close()
+bool EditDialog::on_dialog_close()
 {
 	response_type_ = response_close;
 	DestroyWindow(dialog_handle_);
+	return true;
 }
 
 void EditDialog::on_dialog_init()
@@ -83,6 +83,7 @@ void EditDialog::on_create_message()
 {
 	edit_text_->show(dialog_handle_);
 	edit_text_->set_text(input_text_.c_str());
+	edit_text_->set_focus();
 	ok_button_->show(dialog_handle_);
 	cancel_button_->show(dialog_handle_);
 }

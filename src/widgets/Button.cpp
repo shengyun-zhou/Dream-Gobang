@@ -63,6 +63,11 @@ LRESULT CALLBACK Button::button_proc(HWND hWnd, UINT message, WPARAM wParam, LPA
 				BitBlt(hdc, 0, 0, button_data->width_, button_data->height_, button_data->button_dc_, 0, 0, SRCCOPY);
 				EndPaint(hWnd, &ps);
 			}
+			if (button_data&&button_data->focus_flag_)
+			{
+				SetFocus(button_data->button_handle_);
+				button_data->focus_flag_ = false;
+			}
 			return 0;
 		}
 		case WM_MOUSELEAVE:

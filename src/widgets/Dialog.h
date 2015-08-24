@@ -30,7 +30,8 @@ protected:
 
 	virtual void on_dialog_init(){}
 	virtual void on_create_message(){}
-	virtual void on_dialog_close();
+	virtual bool on_dialog_close(){ return false; }
+	virtual bool on_key_press(unsigned int key_value){ return false; }
 public:
 	Dialog(int width, int height);
 	virtual ~Dialog();
