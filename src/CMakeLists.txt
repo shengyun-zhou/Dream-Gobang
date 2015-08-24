@@ -72,6 +72,10 @@ set(PROJECT_SOURCE_FILE
 	NetSelectionInterface.cpp
 	NetSettingsInterface.h
 	NetSettingsInterface.cpp
+	NetPlayerInfoView.h
+	NetPlayerInfoView.cpp
+	NetWaitingInterface.h
+	NetWaitingInterface.cpp
 	ChessSaver.h
 	ChessSaver.cpp
 	Settings.h

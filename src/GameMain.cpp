@@ -5,6 +5,8 @@
 #include "SettingsInterface.h"
 #include "NetSelectionInterface.h"
 #include "NetSettingsInterface.h"
+#include "NetWaitingInterface.h"
+#include "NetPlayerInfoView.h"
 #include "tools/Music.h"
 #include "Settings.h"
 #include "widgets/MessageDialog.h"
@@ -25,6 +27,8 @@ void game_settings_interface();
 void game_curtain();
 void game_net_select_interface();
 void game_net_settings_interface();
+bool wait_open_room();
+bool wait_enter_room();
 
 void play_button_click_audio()
 {
@@ -52,14 +56,13 @@ int main()
 
 	game_bgm = new Music("res/game-bgm.wma", -1, 2);
 	game_bgm->set_volume(0.85);
-
 	game_settings = new Settings();
 	if (game_settings->read_settings() == false)
 		game_settings->write_settings();
 	if (game_settings->is_audio_on())
 		game_bgm->start();
-	//main_loop();
-	game_net_select_interface();
+	main_loop();
+	//game_net_select_interface();
 	return 0;
 }
 
@@ -355,13 +358,21 @@ void game_net_select_interface()
 			{
 				switch (action_type)
 				{
+					case NetSelectionInterface::ACTION_OPEN_ROOM:
+						if (!wait_open_room())
+							enter_flag = false;
+						back_flag = true;
+						break;
+					case NetSelectionInterface::ACTION_ENTER_ROOM:
+						if (!wait_enter_room())
+							enter_flag = false;
+						back_flag = true;
+						break;
 					case NetSelectionInterface::ACTION_NET_SETTINGS:
-					{
 						game_net_settings_interface();
 						back_flag = true;
 						enter_flag = false;
 						break;
-					}
 					case NetSelectionInterface::ACTION_BACK:
 						GradientAnimation::transition_ease_in();
 						return;
@@ -498,4 +509,68 @@ void game_net_settings_interface()
 			}
 		}
 	}
+}
+
+bool wait_open_room()
+{
+	NetWaitingInterface wait_interface;
+	wait_interface.set_tip_text("正在创建房间，请稍后……");
+	wait_interface.show_interface();
+	mouse_msg msg;
+	NetWaitingInterface::ACTION_TYPE action_type;
+	while (is_run())
+	{ 
+		if (mousemsg())
+		{
+			msg = getmouse();
+			action_type = wait_interface.action_judge(msg.x, msg.y);
+			wait_interface.on_mouse_move(action_type);
+			if (msg.is_down() && msg.is_left())
+				wait_interface.on_mouse_click(action_type);
+			else if (msg.is_up() && msg.is_left())
+			{
+				switch (action_type)
+				{
+					case NetWaitingInterface::ACTION_CANCEL:
+						return false;
+					default:
+						break;
+				}
+			}
+		}
+		Sleep(2);
+	}
+	return false;
+}
+
+bool wait_enter_room()
+{
+	NetWaitingInterface wait_interface;
+	wait_interface.set_tip_text("正在尝试进入房间，请稍后……");
+	wait_interface.show_interface();
+	mouse_msg msg;
+	NetWaitingInterface::ACTION_TYPE action_type;
+	while (true)
+	{
+		if (mousemsg())
+		{
+			msg = getmouse();
+			action_type = wait_interface.action_judge(msg.x, msg.y);
+			wait_interface.on_mouse_move(action_type);
+			if (msg.is_down() && msg.is_left())
+				wait_interface.on_mouse_click(action_type);
+			else if (msg.is_up() && msg.is_left())
+			{
+				switch (action_type)
+				{
+					case NetWaitingInterface::ACTION_CANCEL:
+						return false;
+					default:
+						break;
+				}
+			}
+		}
+		Sleep(2);
+	}
+	return false;
 }
