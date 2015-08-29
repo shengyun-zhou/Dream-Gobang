@@ -108,6 +108,10 @@ set(PROJECT_SOURCE_FILE
 	socket/ClientSocket.cpp
 	socket/ServerSocket.h
 	socket/ServerSocket.cpp
+	socket/ClientPlayer.h
+	socket/ClientPlayer.cpp
+	socket/ServerPlayer.h
+	socket/ServerPlayer.cpp
     #Please put the new source files and header files here
     )
 

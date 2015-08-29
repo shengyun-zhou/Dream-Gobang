@@ -13,7 +13,9 @@ private:
 	string server_IP_addr_;
 	string server_port_;
 
+	static const int max_mission_num_ = 1000;
 	static const int max_buf_size_ = 1024;
+	static const int connect_time_out_ = 10;
 
 	enum mission_type
 	{
@@ -33,7 +35,6 @@ private:
 
 	static bool win_socket_init();
 	static DWORD WINAPI on_socket_running(LPVOID data);
-	void clean_mission_queue();
 protected:
 	//回调函数
 	virtual void on_init_failed(){}
@@ -42,7 +43,8 @@ protected:
 	virtual void on_connect_success(SOCKET socket){}
 	virtual void on_receive_failed(SOCKET socket, int WSA_error_code){}
 	virtual void on_receive_completed(SOCKET socket, char* str, int length){}
-	virtual void on_send_failed(SOCKET socket, int WSA_error_code){}
+	virtual void on_send_failed(SOCKET socket, const char* send_str, int WSA_error_code){}
+	virtual void on_send_completed(SOCKET socket){}
 	void send_stop_message();																						//该函数用于在回调函数中发送终止消息来终止socket守护线程
 public:
 	ClientSocket();
@@ -58,6 +60,7 @@ public:
 		server_port_ = port;
 	}
 
+	void clean_mission_queue();
 	void start();																				//启动socket守护线程
 	void stop();																				//停止socket守护线程，请勿在回调函数中使用。回调函数中请使用send_stop_message()函数
 	void receive();																			//接收消息

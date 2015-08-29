@@ -14,6 +14,8 @@
 #include "widgets/EditDialog.h"
 #include "Gobang.h"
 #include "tools/GradientAnimation.h"
+#include "socket/ClientPlayer.h"
+#include "socket/ServerPlayer.h"
 #include <stdlib.h>
 #include <direct.h>
 #include <winuser.h>
@@ -61,8 +63,8 @@ int main()
 		game_settings->write_settings();
 	if (game_settings->is_audio_on())
 		game_bgm->start();
-	main_loop();
-	//game_net_select_interface();
+	//main_loop();
+	game_net_select_interface();
 	return 0;
 }
 
@@ -415,7 +417,7 @@ void game_net_settings_interface()
 				case NetSettingsInterface::ACTION_EDIT_USER_NAME:
 					edit_dialog.set_title("更改用户名");
 					edit_dialog.set_text("请输入新的用户名。\n用户名中不能含有空格。");
-					edit_dialog.set_input_max_len(20);
+					edit_dialog.set_input_max_len(Gobang::USER_NAME_MAX_LEN);
 					while (true)
 					{
 						edit_dialog.set_input_text(game_settings->get_user_name().c_str());
@@ -511,6 +513,13 @@ void game_net_settings_interface()
 	}
 }
 
+void show_error_dialog(const char* text)
+{
+	MessageDialog dialog(500, 150, MessageDialog::icon_error);
+	dialog.set_text(text);
+	dialog.show();
+}
+
 bool wait_open_room()
 {
 	NetWaitingInterface wait_interface;
@@ -518,8 +527,67 @@ bool wait_open_room()
 	wait_interface.show_interface();
 	mouse_msg msg;
 	NetWaitingInterface::ACTION_TYPE action_type;
+	ServerPlayer player;
+	ServerPlayer::ServerMessage server_message;
+	player.set_server_port(game_settings->get_server_port().c_str());
+	player.start();
+	player.accept_new_connection();
+	int complete_step = 0;
+	string opposite_name;
 	while (is_run())
 	{ 
+		server_message = player.get_message();
+		if (complete_step > 1 && complete_step < 3)
+			player.receive();
+		if (server_message.msg_type == ServerPlayer::MESSAGE_ERROR)
+		{
+			if (server_message.msg_content.error_msg == ServerPlayer::ERROR_SOCKET_BIND_FAILED)
+				show_error_dialog("服务端启动失败，请检查网络设置中的服务器端口号是否已被其它程序占用。");
+			else
+				show_error_dialog("服务端启动失败！请稍后重试。");
+			player.stop();
+			return false;
+		}
+		else if (server_message.msg_type == ServerPlayer::MESSAGE_COMPLETE)
+		{
+			if (server_message.msg_content.complete_msg == ServerPlayer::COMPLETE_LISTEN)
+			{
+				wait_interface.set_tip_text("房间已创建，正在等待其他玩家加入……");
+				wait_interface.show_interface();
+				complete_step++;
+			}
+			else if (server_message.msg_content.complete_msg == ServerPlayer::COMPLETE_ACCEPT)
+			{
+				wait_interface.set_tip_text("已有玩家加入，正在获取对手信息……");
+				wait_interface.show_interface();
+				if (game_settings->get_piece_color() == Chess::BLACK)
+					player.send_chess_type(Chess::WHITE);
+				else
+					player.send_chess_type(Chess::BLACK);
+				Sleep(100);
+				complete_step++;
+			}
+			else if (server_message.msg_content.complete_msg == ServerPlayer::COMPLETE_RECEIVE)
+			{
+				ServerPlayer::ActionInfo action = player.get_opposite_action(server_message);
+				if (action.action_type == ServerPlayer::ACTION_TELL_USER_NAME)
+				{
+					opposite_name = action.ex_data.user_name;
+					complete_step++;
+					player.clean_mission_queue();
+					player.send_user_name(game_settings->get_user_name().c_str());
+				}
+			}
+		}
+		if (complete_step >= 3)
+		{
+			static char temp[30];
+			sprintf(temp, "对手用户名：%s我方执子：%d", opposite_name.c_str(), game_settings->get_piece_color());
+			wait_interface.set_tip_text(temp);
+			wait_interface.show_interface();
+			complete_step = 0;
+			//player.clean_mission_queue();
+		}
 		if (mousemsg())
 		{
 			msg = getmouse();
@@ -538,7 +606,8 @@ bool wait_open_room()
 				}
 			}
 		}
-		Sleep(2);
+		else
+			Sleep(2);
 	}
 	return false;
 }
@@ -550,8 +619,60 @@ bool wait_enter_room()
 	wait_interface.show_interface();
 	mouse_msg msg;
 	NetWaitingInterface::ACTION_TYPE action_type;
-	while (true)
+	ClientPlayer::ClientMessage socket_msg;
+	ClientPlayer player;
+	player.set_server_IP_addr(game_settings->get_client_connect_IP_addr().c_str());
+	player.set_server_port(game_settings->get_client_connect_port().c_str());
+	player.start();
+	int complete_step = 0;
+	Chess::PieceType self_type;
+	string opposite_name;
+	while (is_run())
 	{
+		if (complete_step > 0 && complete_step < 3)
+			player.receive();
+		socket_msg = player.get_message();
+		if (socket_msg.msg_type == ClientPlayer::MESSAGE_COMPLETE)
+		{
+			if (socket_msg.msg_content.complete_msg == ClientPlayer::COMPLETE_CONNECT)
+			{
+				wait_interface.set_tip_text("连接成功，正在获取对手信息……");
+				wait_interface.show_interface();
+				player.send_user_name(game_settings->get_user_name().c_str());
+				Sleep(100);
+				complete_step++;
+			}
+			else if (socket_msg.msg_content.complete_msg == ClientPlayer::COMPLETE_RECEIVE)
+			{
+				ClientPlayer::ActionInfo action = player.get_opposite_action(socket_msg);
+				if (action.action_type == ClientPlayer::ACTION_TELL_USER_NAME)
+				{
+					opposite_name = action.ex_data.user_name;
+					complete_step++;
+				}
+				else if (action.action_type == ClientPlayer::ACTION_TELL_PIECE_TYPE)
+				{
+					self_type = action.ex_data.piece_type;
+					complete_step++;
+				}
+			}
+		}
+		else if (socket_msg.msg_type == ClientPlayer::MESSAGE_ERROR)
+		{
+			MessageDialog error_dialog(500, 150, MessageDialog::icon_error);
+			show_error_dialog("连接失败！请确认您的网络状况良好及网络设置无误后再重试。");
+			player.stop();
+			return false;
+		}
+		if (complete_step >= 3)
+		{
+			static char temp[30];
+			sprintf(temp, "对手用户名：%s我方执子：%d", opposite_name.c_str(), self_type);
+			wait_interface.set_tip_text(temp);
+			wait_interface.show_interface();
+			complete_step = 0;
+			player.clean_mission_queue();
+		}
 		if (mousemsg())
 		{
 			msg = getmouse();
@@ -564,13 +685,16 @@ bool wait_enter_room()
 				switch (action_type)
 				{
 					case NetWaitingInterface::ACTION_CANCEL:
+						player.stop();
 						return false;
 					default:
 						break;
 				}
 			}
 		}
-		Sleep(2);
+		else
+			Sleep(2);
+
 	}
 	return false;
 }

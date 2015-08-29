@@ -29,9 +29,12 @@ MessageDialog::MessageDialog(int width, int height, MessageDialog::IconType type
 	{
 		case icon_infomation:
 			dialog_icon_ = icon_infomation_;
+			set_title("ÌáÊ¾");
 			break;
 		case icon_error:
 			dialog_icon_ = icon_error_;
+			set_title("´íÎó");
+			break;
 	}
 
 	ok_button_->set_position(width_ - button_margin_ - button_width_, height_ - button_margin_ - button_height_);

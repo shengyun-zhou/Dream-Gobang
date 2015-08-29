@@ -1,4 +1,5 @@
 #include "Settings.h"
+#include "Gobang.h"
 #include <string>
 #ifdef _MSC_VER
 #pragma warning(disable:4018)
@@ -66,7 +67,11 @@ string Settings::get_user_name()
 {
 	string value;
 	if (file_parser_.get_value("user-name", value))
+	{
+		if (value.length() > Gobang::USER_NAME_MAX_LEN)
+			return value.substr(0, Gobang::USER_NAME_MAX_LEN);
 		return value;
+	}
 	else
 		return string();
 }

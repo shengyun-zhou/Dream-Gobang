@@ -85,6 +85,11 @@ public:
 		}
 	}
 
+	Chess::PieceType get_piece_type()
+	{
+		return piece_type_;
+	}
+
 	void show();
 };
 
