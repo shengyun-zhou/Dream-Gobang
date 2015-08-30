@@ -1,10 +1,12 @@
 #include "WelcomeInterface.h"
 #include "tools/GradientAnimation.h"
+#include "Gobang.h"
 
 ImageButton* WelcomeInterface::button_enter_game_ = NULL;
 ImageButton* WelcomeInterface::button_game_settings_ = NULL;
 ImageButton* WelcomeInterface::button_exit_game_ = NULL;
 ImageButton* WelcomeInterface::button_special_thanks_ = NULL;
+ImageButton* WelcomeInterface::button_net_play_ = NULL;
 Image* WelcomeInterface::game_welcome_bg_ = NULL;
 
 WelcomeInterface::WelcomeInterface()
@@ -54,6 +56,11 @@ WelcomeInterface::WelcomeInterface()
 	{
 		button_special_thanks_ = new ImageButton();
 		button_special_thanks_->add_normal_image(new Image("res/button-special-thanks.png"), 0, 0);
+	}
+	if (!button_net_play_)
+	{
+		button_net_play_ = new ImageButton();
+		button_net_play_->add_normal_image(new Image("res/button-net-playing.png"), 0, 0);
 	}
 }
 
@@ -122,6 +129,9 @@ void WelcomeInterface::show_welcome()
 	
 	button_special_thanks_->set_position(1000, 10);
 	button_special_thanks_->show();
+	button_net_play_->set_position(Gobang::WINDOW_WIDTH - 20 - button_net_play_->get_width(),
+															 	 Gobang::WINDOW_HEIGHT - 20 - button_net_play_->get_height());
+	button_net_play_->show();
 }
 
 void WelcomeInterface::curtain()
@@ -178,6 +188,8 @@ WelcomeInterface::action_type WelcomeInterface::action_judge(int x, int y)
 		return ACTION_EXIT_GAME;
 	else if (x > 1000 - offset && x < 1200 + offset && y > 30 - offset && y < 230 + offset)
 		return ACTION_SPECIAL_THANKS;
+	else if (button_net_play_->is_mouse_in_button(x, y))
+		return ACTION_NET_PLAY;
 	else
 		return ACTION_NONE;
 }

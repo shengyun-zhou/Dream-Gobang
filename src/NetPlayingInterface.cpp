@@ -1,6 +1,7 @@
 #include "NetPlayingInterface.h"
 #include "Gobang.h"
 #include "tools/GradientAnimation.h"
+#include "widgets/MessageDialog.h"
 
 ImageButton* NetPlayingInterface::button_quit_ = NULL;
 Image* NetPlayingInterface::game_bg_img_ = NULL;
@@ -98,6 +99,25 @@ NetPlayingInterface::ACTION_TYPE NetPlayingInterface::action_judge(int x, int y)
 		return ACTION_QUIT;
 	else
 		return ACTION_NONE;
+}
+
+bool NetPlayingInterface::show_result()
+{
+	MessageDialog dialog(500, 150);
+	dialog.set_title("游戏结束");
+	Chess::PieceType win_piece = chess_->judge_win();
+	if (win_piece != Chess::EMPTY || chess_->is_chess_full())
+	{
+		if (win_piece == self_player_->get_piece_type())
+			dialog.set_text("恭喜你，你赢了！");
+		else if (win_piece == opposite_player_->get_piece_type())
+			dialog.set_text("很遗憾，你输了！");
+		else
+			dialog.set_text("双方平局结束！");
+		dialog.show();
+		return true;
+	}
+	return false;
 }
 
 void NetPlayingInterface::on_mouse_move(int x, int y, ACTION_TYPE action)

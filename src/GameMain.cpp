@@ -14,7 +14,7 @@
 #include "widgets/EditDialog.h"
 #include "Gobang.h"
 #include "tools/GradientAnimation.h"
-#include "socket/ClientPlayer.h"
+#include "socket/ServerPlayer.h"
 #include "socket/ServerPlayer.h"
 #include <stdlib.h>
 #include <direct.h>
@@ -65,8 +65,8 @@ int main()
 		game_settings->write_settings();
 	if (game_settings->is_audio_on())
 		game_bgm->start();
-	//main_loop();
-	game_net_select_interface();
+	main_loop();
+	//game_net_select_interface();
 	return 0;
 }
 
@@ -135,6 +135,15 @@ void main_loop()
 						play_button_click_audio();
 						GradientAnimation::transition_ease_in();
 						game_curtain();
+						welcome_flag = true;
+						enter_welcome_flag = true;
+						break;
+					}
+					case WelcomeInterface::ACTION_NET_PLAY:
+					{
+						play_button_click_audio();
+						GradientAnimation::transition_ease_in();
+						game_net_select_interface();
 						welcome_flag = true;
 						enter_welcome_flag = true;
 						break;
@@ -515,11 +524,16 @@ void game_net_settings_interface()
 	}
 }
 
-void show_error_dialog(const char* text)
+void show_error_dialog(const char* text, bool is_error = true)
 {
-	MessageDialog dialog(500, 150, MessageDialog::icon_error);
-	dialog.set_text(text);
-	dialog.show();
+	MessageDialog* dialog;
+	if (is_error)
+		dialog = new MessageDialog(500, 150, MessageDialog::icon_error);
+	else
+		dialog = new MessageDialog(500, 150);
+	dialog->set_text(text);
+	dialog->show();
+	delete dialog;
 }
 
 bool wait_open_room()
@@ -715,12 +729,137 @@ bool wait_enter_room()
 	return false;
 }
 
+bool query_quit(const char* text)
+{
+	QuestionDialog dialog(500, 150);
+	dialog.set_title("提示");
+	dialog.set_text(text);
+	dialog.show();
+	if (dialog.get_response_result() == QuestionDialog::response_yes)
+		return true;
+	return false;
+}
+
 void client_play(ClientPlayer* player, NetPlayerInfoView* self_player, NetPlayerInfoView* opposite_player)
 {
 	Chess chess;
 	NetPlayingInterface play_interface(self_player, opposite_player, &chess);
 	play_interface.enter_interface();
-	getch();
+	mouse_msg msg;
+	NetPlayingInterface::ACTION_TYPE action;
+	ClientPlayer::ClientMessage socket_msg;
+	while (is_run())
+	{
+		self_player->set_ready_state(false);
+		opposite_player->set_ready_state(false);
+		play_interface.show_interface();
+		player->clean_mission_queue();
+		bool start_flag = false;
+		bool is_self_playing = false;
+		while (is_run())
+		{
+			player->receive();
+			socket_msg = player->get_message();
+			if (socket_msg.msg_type == ClientPlayer::MESSAGE_ERROR || !player->is_run())
+			{
+				show_error_dialog("连接发生意外中断。");
+				player->stop();
+				GradientAnimation::transition_ease_in();
+				return;
+			}
+			else if (socket_msg.msg_type == ClientPlayer::MESSAGE_COMPLETE && socket_msg.msg_content.complete_msg == ClientPlayer::COMPLETE_RECEIVE)
+			{
+				ClientPlayer::ActionInfo action_info = player->get_opposite_action(socket_msg);
+				if (action_info.action_type == ClientPlayer::ACTION_QUIT)
+				{
+					show_error_dialog("对手已退出游戏。", false);
+					player->stop();
+					GradientAnimation::transition_ease_in();
+					return;
+				}
+				if (action_info.action_type == ClientPlayer::ACTION_READY)
+				{
+					opposite_player->set_ready_state(true);
+					play_interface.show_interface();
+				}
+				if (start_flag && !is_self_playing && action_info.action_type == ServerPlayer::ACTION_PLAY_CHESS)
+				{
+					play_interface.on_mouse_click(NetPlayingInterface::ACTION_PLAY_CHESS);
+					chess.set_point(action_info.ex_data.chess_pos[0], action_info.ex_data.chess_pos[1],
+						opposite_player->get_piece_type());
+					play_interface.play_chess_by_opposite(action_info.ex_data.chess_pos[0], action_info.ex_data.chess_pos[1],
+						opposite_player->get_piece_type());
+					if (play_interface.show_result())
+						break;
+					is_self_playing = true;
+				}
+			}
+			if (mousemsg())
+			{
+				msg = getmouse();
+				action = play_interface.action_judge(msg.x, msg.y);
+				play_interface.on_mouse_move(msg.x, msg.y, action);
+				if (msg.is_down() && msg.is_left())
+					play_interface.on_mouse_click(action);
+				else if (msg.is_up() && msg.is_left())
+				{
+					switch (action)
+					{
+						case NetPlayingInterface::ACTION_READY:
+							self_player->set_ready_state(true);
+							player->clean_mission_queue();
+							player->send_ready_message();
+							play_interface.show_interface();
+							break;
+						case NetPlayingInterface::ACTION_QUIT:
+							if (query_quit("确定要退出网络对战？"))
+							{
+								player->clean_mission_queue();
+								player->send_quit_message();
+								while (is_run() && player->is_run())
+								{
+									socket_msg = player->get_message();
+									if (socket_msg.msg_type == ClientPlayer::MESSAGE_COMPLETE && socket_msg.msg_content.complete_msg == ClientPlayer::COMPLETE_SEND)
+									{
+										player->stop();
+										GradientAnimation::transition_ease_in();
+										return;
+									}
+								}
+							}
+							break;
+						case NetPlayingInterface::ACTION_PLAY_CHESS:
+							if (!start_flag || !is_self_playing)
+								break;
+							int row, col;
+							play_interface.on_mouse_click(NetPlayingInterface::ACTION_PLAY_CHESS);
+							play_interface.mouse_to_coor(msg.x, msg.y, row, col);
+							chess.set_point(row, col, self_player->get_piece_type());
+							play_interface.play_chess_by_self(msg.x, msg.y, self_player->get_piece_type());
+							player->clean_mission_queue();
+							player->send_chess_pos(row, col);
+							is_self_playing = false;
+							if (play_interface.show_result())
+								goto game_end;
+							break;
+						default:
+							break;
+					}
+				}
+			}
+			else
+				Sleep(2);
+			if (!start_flag && self_player->is_ready() && opposite_player->is_ready())
+			{
+				start_flag = true;
+				if (self_player->get_piece_type() == Chess::BLACK)
+					is_self_playing = true;
+				else
+					is_self_playing = false;
+			}
+		}
+	game_end:;
+	}
 }
 
 void server_play(ServerPlayer* player, NetPlayerInfoView* self_player, NetPlayerInfoView* opposite_player)
@@ -728,5 +867,119 @@ void server_play(ServerPlayer* player, NetPlayerInfoView* self_player, NetPlayer
 	Chess chess;
 	NetPlayingInterface play_interface(self_player, opposite_player, &chess);
 	play_interface.enter_interface();
-	getch();
+	mouse_msg msg;
+	NetPlayingInterface::ACTION_TYPE action;
+	ServerPlayer::ServerMessage socket_msg;
+	while (is_run())
+	{
+		self_player->set_ready_state(false);
+		opposite_player->set_ready_state(false);
+		play_interface.show_interface();
+		player->clean_mission_queue();
+		bool start_flag = false;
+		bool is_self_playing = false;
+		while (is_run())
+		{
+			player->receive();
+			socket_msg = player->get_message();
+			if (socket_msg.msg_type == ServerPlayer::MESSAGE_ERROR || !player->is_run())
+			{
+				show_error_dialog("连接发生意外中断。");
+				player->stop();
+				GradientAnimation::transition_ease_in();
+				return;
+			}
+			else if (socket_msg.msg_type == ServerPlayer::MESSAGE_COMPLETE && socket_msg.msg_content.complete_msg == ServerPlayer::COMPLETE_RECEIVE)
+			{
+				ServerPlayer::ActionInfo action_info = player->get_opposite_action(socket_msg);
+				if (action_info.action_type == ServerPlayer::ACTION_QUIT)
+				{
+					show_error_dialog("对手已退出游戏。", false);
+					player->stop();
+					GradientAnimation::transition_ease_in();
+					return;
+				}
+				if (action_info.action_type == ServerPlayer::ACTION_READY)
+				{
+					opposite_player->set_ready_state(true);
+					play_interface.show_interface();
+				}
+				if (start_flag && !is_self_playing && action_info.action_type == ServerPlayer::ACTION_PLAY_CHESS)
+				{
+					play_interface.on_mouse_click(NetPlayingInterface::ACTION_PLAY_CHESS);
+					chess.set_point(action_info.ex_data.chess_pos[0], action_info.ex_data.chess_pos[1],
+						opposite_player->get_piece_type());
+					play_interface.play_chess_by_opposite(action_info.ex_data.chess_pos[0], action_info.ex_data.chess_pos[1],
+																								opposite_player->get_piece_type());
+					if (play_interface.show_result())
+						break;
+					is_self_playing = true;
+				}
+			}
+			if (mousemsg())
+			{
+				msg = getmouse();
+				action = play_interface.action_judge(msg.x, msg.y);
+				play_interface.on_mouse_move(msg.x, msg.y, action);
+				if (msg.is_down() && msg.is_left())
+					play_interface.on_mouse_click(action);
+				else if (msg.is_up() && msg.is_left())
+				{
+					switch (action)
+					{
+						case NetPlayingInterface::ACTION_READY:
+							self_player->set_ready_state(true);
+							player->clean_mission_queue();
+							player->send_ready_message();
+							play_interface.show_interface();
+							break;
+						case NetPlayingInterface::ACTION_QUIT:
+							if (query_quit("确定要退出网络对战？"))
+							{
+								player->clean_mission_queue();
+								player->send_quit_message();
+								while (is_run() && player->is_run())
+								{
+									socket_msg = player->get_message();
+									if (socket_msg.msg_type == ServerPlayer::MESSAGE_COMPLETE && socket_msg.msg_content.complete_msg == ServerPlayer::COMPLETE_SEND)
+									{
+										player->stop();
+										GradientAnimation::transition_ease_in();
+										return;
+									}
+								}
+							}
+							break;
+						case NetPlayingInterface::ACTION_PLAY_CHESS:
+							if (!start_flag || !is_self_playing)
+								break;
+							int row, col;
+							play_interface.on_mouse_click(NetPlayingInterface::ACTION_PLAY_CHESS);
+							play_interface.mouse_to_coor(msg.x, msg.y, row, col);
+							chess.set_point(row, col, self_player->get_piece_type());
+							play_interface.play_chess_by_self(msg.x, msg.y, self_player->get_piece_type());
+							player->clean_mission_queue();
+							player->send_chess_pos(row, col);
+							is_self_playing = false;
+							if (play_interface.show_result())
+								goto game_end;
+							break;
+						default:
+							break;
+					}
+				}
+			}
+			else
+				Sleep(2);
+			if (!start_flag && self_player->is_ready() && opposite_player->is_ready())
+			{
+				start_flag = true;
+				if (self_player->get_piece_type() == Chess::BLACK)
+					is_self_playing = true;
+				else
+					is_self_playing = false;
+			}
+		}
+	game_end:;
+	}
 }

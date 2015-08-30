@@ -73,7 +73,7 @@ void NetPlayerInfoView::calc_view_width_height()
 
 NetPlayerInfoView::ACTION_TYPE NetPlayerInfoView::action_judge(int x, int y)
 {
-	if (!is_ready_&&button_ready_->is_mouse_in_button(x, y))
+	if (!is_ready_ && !is_opposite_ &&button_ready_->is_mouse_in_button(x, y))
 		return ACTION_READY;
 	return ACTION_NONE;
 }
@@ -83,7 +83,7 @@ void NetPlayerInfoView::on_mouse_move(ACTION_TYPE type)
 	switch (type)
 	{
 		case NetPlayerInfoView::ACTION_NONE:
-			if (button_ready_->get_hover_status())
+			if (button_ready_->get_hover_status() && !is_ready_ && !is_opposite_)
 				button_ready_->show();
 			break;
 		case NetPlayerInfoView::ACTION_READY:
@@ -99,7 +99,8 @@ void NetPlayerInfoView::on_mouse_click(ACTION_TYPE type)
 	switch (type)
 	{
 		case NetPlayerInfoView::ACTION_READY:
-			button_ready_->on_mouse_click();
+			if (!is_ready_ && !is_opposite_)
+				button_ready_->on_mouse_click();
 			break;
 		default:
 			break;

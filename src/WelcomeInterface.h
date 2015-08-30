@@ -16,6 +16,7 @@ private:
 	static ImageButton* button_game_settings_;
 	static ImageButton* button_exit_game_;
 	static ImageButton* button_special_thanks_;
+	static ImageButton* button_net_play_;
 
 public:
 	enum action_type{
@@ -23,7 +24,8 @@ public:
 		ACTION_ENTER_GAME,
 		ACTION_GAME_SETTINGS,
 		ACTION_EXIT_GAME,
-		ACTION_SPECIAL_THANKS
+		ACTION_SPECIAL_THANKS,
+		ACTION_NET_PLAY
 	};
 
 	WelcomeInterface();

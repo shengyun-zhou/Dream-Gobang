@@ -25,6 +25,7 @@ public:
 	void play_chess_by_self(int x, int y, Chess::PieceType value);
 	void play_chess_by_opposite(int row, int col, Chess::PieceType value);
 	void mouse_to_coor(int x, int y, int& target_row, int& target_col);
+	bool show_result();
 
 	enum ACTION_TYPE
 	{
