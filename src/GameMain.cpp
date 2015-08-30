@@ -6,7 +6,7 @@
 #include "NetSelectionInterface.h"
 #include "NetSettingsInterface.h"
 #include "NetWaitingInterface.h"
-#include "NetPlayerInfoView.h"
+#include "NetPlayingInterface.h"
 #include "tools/Music.h"
 #include "Settings.h"
 #include "widgets/MessageDialog.h"
@@ -31,6 +31,8 @@ void game_net_select_interface();
 void game_net_settings_interface();
 bool wait_open_room();
 bool wait_enter_room();
+void server_play(ServerPlayer* player, NetPlayerInfoView* self_player, NetPlayerInfoView* opposite_player);
+void client_play(ClientPlayer* player, NetPlayerInfoView* self_player, NetPlayerInfoView* opposite_player);
 
 void play_button_click_audio()
 {
@@ -581,12 +583,19 @@ bool wait_open_room()
 		}
 		if (complete_step >= 3)
 		{
-			static char temp[30];
-			sprintf(temp, "对手用户名：%s我方执子：%d", opposite_name.c_str(), game_settings->get_piece_color());
-			wait_interface.set_tip_text(temp);
-			wait_interface.show_interface();
-			complete_step = 0;
-			//player.clean_mission_queue();
+			NetPlayerInfoView self_player(false);
+			self_player.set_player_name(game_settings->get_user_name().c_str());
+			self_player.set_piece_type(game_settings->get_piece_color());
+			NetPlayerInfoView opposite_player(true);
+			opposite_player.set_player_name(opposite_name.c_str());
+			if (game_settings->get_piece_color() == Chess::WHITE)
+				opposite_player.set_piece_type(Chess::BLACK);
+			else
+				opposite_player.set_piece_type(Chess::WHITE);
+			Sleep(100);
+			GradientAnimation::transition_ease_in();
+			server_play(&player, &self_player, &opposite_player);
+			return true;
 		}
 		if (mousemsg())
 		{
@@ -666,12 +675,19 @@ bool wait_enter_room()
 		}
 		if (complete_step >= 3)
 		{
-			static char temp[30];
-			sprintf(temp, "对手用户名：%s我方执子：%d", opposite_name.c_str(), self_type);
-			wait_interface.set_tip_text(temp);
-			wait_interface.show_interface();
-			complete_step = 0;
-			player.clean_mission_queue();
+			NetPlayerInfoView self_player(false);
+			self_player.set_player_name(game_settings->get_user_name().c_str());
+			self_player.set_piece_type(self_type);
+			NetPlayerInfoView opposite_player(true);
+			opposite_player.set_player_name(opposite_name.c_str());
+			if (self_type == Chess::WHITE)
+				opposite_player.set_piece_type(Chess::BLACK);
+			else
+				opposite_player.set_piece_type(Chess::WHITE);
+			Sleep(100);
+			GradientAnimation::transition_ease_in();
+			client_play(&player, &self_player, &opposite_player);
+			return true;
 		}
 		if (mousemsg())
 		{
@@ -697,4 +713,20 @@ bool wait_enter_room()
 
 	}
 	return false;
+}
+
+void client_play(ClientPlayer* player, NetPlayerInfoView* self_player, NetPlayerInfoView* opposite_player)
+{
+	Chess chess;
+	NetPlayingInterface play_interface(self_player, opposite_player, &chess);
+	play_interface.enter_interface();
+	getch();
+}
+
+void server_play(ServerPlayer* player, NetPlayerInfoView* self_player, NetPlayerInfoView* opposite_player)
+{
+	Chess chess;
+	NetPlayingInterface play_interface(self_player, opposite_player, &chess);
+	play_interface.enter_interface();
+	getch();
 }

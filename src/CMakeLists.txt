@@ -76,6 +76,8 @@ set(PROJECT_SOURCE_FILE
 	NetPlayerInfoView.cpp
 	NetWaitingInterface.h
 	NetWaitingInterface.cpp
+	NetPlayingInterface.h
+	NetPlayingInterface.cpp
 	ChessSaver.h
 	ChessSaver.cpp
 	Settings.h

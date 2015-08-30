@@ -37,7 +37,7 @@ private:
 	};
 	BufferImage buffer_img_;
 
-	int calc_view_width_height();
+	void calc_view_width_height();
 public:
 	NetPlayerInfoView(bool is_opposite);
 	~NetPlayerInfoView();
@@ -68,6 +68,11 @@ public:
 		is_ready_ = is_ready;
 	}
 
+	bool is_ready()
+	{
+		return is_ready_;
+	}
+
 	void set_piece_type(Chess::PieceType piece_type)
 	{
 		piece_type_ = piece_type;
@@ -91,5 +96,17 @@ public:
 	}
 
 	void show();
+
+	int get_view_width()
+	{
+		calc_view_width_height();
+		return view_width_;
+	}
+
+	int get_view_height()
+	{
+		calc_view_width_height();
+		return view_height_;
+	}
 };
 

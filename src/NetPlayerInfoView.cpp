@@ -38,7 +38,7 @@ NetPlayerInfoView::~NetPlayerInfoView()
 	delete button_ready_;
 }
 
-int NetPlayerInfoView::calc_view_width_height()
+void NetPlayerInfoView::calc_view_width_height()
 {
 	view_width_ = 0;
 	int height = 0;
@@ -68,7 +68,7 @@ int NetPlayerInfoView::calc_view_width_height()
 		view_width_ = max(view_width_, button_ready_->get_width());
 		height += button_ready_->get_height() + margin_;
 	}
-	return height;
+	view_height_ = height;
 }
 
 NetPlayerInfoView::ACTION_TYPE NetPlayerInfoView::action_judge(int x, int y)
@@ -114,7 +114,7 @@ void NetPlayerInfoView::show()
 		delimage(buffer_img_.img);
 		buffer_img_.img = NULL;
 	}
-	view_height_ = calc_view_width_height();
+	calc_view_width_height();
 	buffer_img_.x = pos_x_;
 	buffer_img_.y = pos_y_;
 	int temp_viewport_left, temp_viewport_right, temp_viewport_top, temp_viewport_bottom;

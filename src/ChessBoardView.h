@@ -31,6 +31,11 @@ public:
 		pos_y_ = y;
 	}
 
+	int get_view_width()
+	{
+		return chess_edge_length_;
+	}
+
 	void show_empty_board();
 	void show_board(const Chess& c);
 	void draw_piece_by_mouse(int x, int y, Chess::PieceType piece_type);
