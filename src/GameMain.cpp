@@ -70,6 +70,17 @@ int main()
 	return 0;
 }
 
+void show_error_dialog(const char* text, bool is_error = true)
+{
+	MessageDialog* dialog;
+	if (is_error)
+		dialog = new MessageDialog(500, 150, MessageDialog::icon_error);
+	else
+		dialog = new MessageDialog(500, 150);
+	dialog->set_text(text);
+	dialog->show();
+	delete dialog;
+}
 
 void main_loop()
 {
@@ -143,7 +154,34 @@ void main_loop()
 					{
 						play_button_click_audio();
 						GradientAnimation::transition_ease_in();
+						if (game_settings->get_user_name().length() <= 0)
+						{
+							EditDialog edit_dialog(500, 200);
+							edit_dialog.set_title("输入用户名");
+							edit_dialog.set_text("首次进入网络对战，请输入一个新的用户名。\n用户名中不能含有空格。");
+							edit_dialog.set_input_max_len(Gobang::USER_NAME_MAX_LEN);
+							while (true)
+							{
+								edit_dialog.set_input_text(game_settings->get_user_name().c_str());
+								edit_dialog.show();
+								if (edit_dialog.get_response_type() == EditDialog::response_ok)
+								{
+									if (edit_dialog.get_input_text().length() <= 0)
+										show_error_dialog("用户名不能为空。");
+									else if (game_settings->set_user_name(edit_dialog.get_input_text()))
+									{
+										game_settings->write_settings();
+										break;
+									}
+									else
+										show_error_dialog("输入的用户名格式有误，请重新输入。");
+								}
+								else
+									goto back_main;
+							}
+						}
 						game_net_select_interface();
+						back_main:;
 						welcome_flag = true;
 						enter_welcome_flag = true;
 						break;
@@ -522,18 +560,6 @@ void game_net_settings_interface()
 			}
 		}
 	}
-}
-
-void show_error_dialog(const char* text, bool is_error = true)
-{
-	MessageDialog* dialog;
-	if (is_error)
-		dialog = new MessageDialog(500, 150, MessageDialog::icon_error);
-	else
-		dialog = new MessageDialog(500, 150);
-	dialog->set_text(text);
-	dialog->show();
-	delete dialog;
 }
 
 bool wait_open_room()

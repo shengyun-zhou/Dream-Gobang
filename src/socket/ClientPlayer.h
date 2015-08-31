@@ -2,7 +2,7 @@
 #include "ClientSocket.h"
 #include "../Gobang.h"
 #include "../Chess.h"
-#include <queue>
+#include "../tools/ThreadQueue.h"
 class ClientPlayer : public ClientSocket
 {
 protected:
@@ -86,6 +86,6 @@ public:
 
 	static void parse_chess_pos(const string& str, int& target_row, int& target_col);
 private:
-	queue<ClientMessage> client_msg_queue_;
+	ThreadQueue<ClientMessage> client_msg_queue_;
 };
 

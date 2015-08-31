@@ -46,15 +46,13 @@ void NetWaitingInterface::show_interface()
 		(float)(Gobang::WINDOW_WIDTH < Gobang::WINDOW_HEIGHT) ? Gobang::WINDOW_HEIGHT : Gobang::WINDOW_WIDTH, 0, 130);
 	delimage(black_bg);
 
-	LOGFONT system_font;
-	SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &system_font, NULL);
-	system_font.lfQuality = ANTIALIASED_QUALITY;
-	system_font.lfHeight = -tip_text_font_size_;
-	setfont(&system_font);
+	Gobang::load_font_res();
+	Gobang::set_font(Gobang::font_default, tip_text_font_size_);
 
 	setbkmode(TRANSPARENT);
 	int target_top = Gobang::WINDOW_HEIGHT / 2 - 100;
 	xyprintf((Gobang::WINDOW_WIDTH - textwidth(tip_text_.c_str())) / 2, target_top, tip_text_.c_str());
+	Gobang::remove_font_res();
 	target_top += textheight(tip_text_.c_str()) + margin_;
 	button_cancel_->set_position((Gobang::WINDOW_WIDTH - button_cancel_->get_width()) / 2, target_top);
 	button_cancel_->show();

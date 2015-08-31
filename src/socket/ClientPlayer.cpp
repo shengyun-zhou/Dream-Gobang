@@ -18,8 +18,10 @@ ClientPlayer::~ClientPlayer()
 
 void ClientPlayer::flush_message()
 {
-	while (!client_msg_queue_.empty())
-		client_msg_queue_.pop();
+	client_msg_queue_.lock();
+	while (!client_msg_queue_.is_empty(false))
+		client_msg_queue_.pop(false);
+	client_msg_queue_.unlock();
 }
 
 void ClientPlayer::start()
@@ -31,14 +33,12 @@ void ClientPlayer::start()
 ClientPlayer::ClientMessage ClientPlayer::get_message()
 {
 	ClientMessage msg;
-	if (client_msg_queue_.empty())
+	if (client_msg_queue_.is_empty())
 	{
 		msg.msg_type = MESSAGE_NONE;
 		return msg;
 	}
-	msg = client_msg_queue_.front();
-	client_msg_queue_.pop();
-	return msg;
+	return client_msg_queue_.pop();
 }
 
 void ClientPlayer::parse_chess_pos(const string& str, int& target_row, int& target_col)

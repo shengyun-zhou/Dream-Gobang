@@ -1,8 +1,8 @@
 #include "Dialog.h"
+#include "../Gobang.h"
 
 bool Dialog::register_flag_ = false;
 WNDCLASSEX Dialog::window_class_ = { 0 };
-
 
 Dialog::Dialog(int width, int height)
 {
@@ -32,11 +32,8 @@ Dialog::Dialog(int width, int height)
 	dialog_image_ = NULL;
 	title_ = "Dialog";
 
-	//获取系统字体
-	LOGFONT system_font;
-	SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &system_font, NULL);
-	font_family_ = system_font.lfFaceName;
-	font_size_ = -15;
+	font_family_ = Gobang::font_default;
+	font_size_ = 15;
 }
 
 LRESULT CALLBACK Dialog::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -144,5 +141,5 @@ Dialog::~Dialog()
 void Dialog::set_font(LPCSTR font_family, int size)
 {
 	font_family_ = font_family;
-	font_size_ = size * -1;
+	font_size_ = size;
 }

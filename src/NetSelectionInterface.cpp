@@ -75,17 +75,14 @@ void NetSelectionInterface::show_interface()
 	bg_img_->show_image(0, 0);
 
 	setbkmode(TRANSPARENT);
-	AddFontResource("res/font-llt.ttc");									//加载字体文件
-	setfont(-40, 0, "萝莉体 第二版");
-	static LOGFONTA current_font;
-	getfont(&current_font);
-	current_font.lfQuality = ANTIALIASED_QUALITY;					//开启字体抗锯齿
-	setfont(&current_font);
 	setcolor(WHITE);
+	Gobang::load_font_res();
+	Gobang::set_font(Gobang::font_llt, 40);
 
 	xyprintf(20, 20, "网 络 对 战");
 	setlinestyle(SOLID_LINE, 0, 5);
 	line(20, 80, Gobang::WINDOW_WIDTH - 20, 80);
+	Gobang::remove_font_res();
 
 	button_open_room_->set_position(Gobang::WINDOW_WIDTH / 2 - button_margin_ / 2 - button_open_room_->get_width(),
 		Gobang::WINDOW_HEIGHT / 2 - button_margin_ / 2 - button_open_room_->get_height() - height_offset_);

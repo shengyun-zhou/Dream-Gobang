@@ -1,4 +1,5 @@
 #include "EditText.h"
+#include "../Gobang.h"
 #include <string.h>
 
 LRESULT(WINAPI *EditText::origin_proc)(HWND, UINT, WPARAM, LPARAM) = NULL;

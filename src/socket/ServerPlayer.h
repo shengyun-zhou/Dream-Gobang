@@ -3,7 +3,7 @@
 #include "../Gobang.h"
 #include "../Chess.h"
 #include "ClientPlayer.h"
-#include <queue>
+#include "../tools/ThreadQueue.h"
 
 using namespace std;
 
@@ -91,6 +91,6 @@ public:
 	void send_quit_message();
 	void send_ready_message();
 private:
-	queue<ServerMessage> server_msg_queue_;
+	ThreadQueue<ServerMessage> server_msg_queue_;
 };
 

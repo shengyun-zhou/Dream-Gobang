@@ -138,13 +138,8 @@ void WelcomeInterface::curtain()
 	setbkmode(TRANSPARENT);
 	static Image game_thanks_bg("res/game-special-thanks-bg.png");
 	GradientAnimation::transition_ease_out(&game_thanks_bg);
-	AddFontResource("res/font-llt.ttc");									//加载字体文件
-	setfont(-40, 0, "萝莉体 第二版");
-	static LOGFONTA current_font;
-	getfont(&current_font);
-	current_font.lfUnderline = 1;													//设置字体带下划线
-	current_font.lfQuality = ANTIALIASED_QUALITY;					//开启字体抗锯齿
-	setfont(&current_font);
+	Gobang::load_font_res();
+	Gobang::set_font(Gobang::font_default, 40, true);
 
 	setcolor(WHITE);
 
@@ -173,7 +168,7 @@ void WelcomeInterface::curtain()
 
 	outtextxy(800, 600, "返回");
 
-	RemoveFontResource("res/font-llt.ttc");
+	Gobang::remove_font_res();
 }
 
 WelcomeInterface::action_type WelcomeInterface::action_judge(int x, int y)

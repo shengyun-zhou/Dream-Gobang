@@ -14,8 +14,10 @@ ServerPlayer::~ServerPlayer()
 
 void ServerPlayer::flush_message()
 {
-	while (!server_msg_queue_.empty())
-		server_msg_queue_.pop();
+	server_msg_queue_.lock();
+	while (!server_msg_queue_.is_empty(false))
+		server_msg_queue_.pop(false);
+	server_msg_queue_.unlock();
 }
 
 void ServerPlayer::start()
@@ -27,14 +29,12 @@ void ServerPlayer::start()
 ServerPlayer::ServerMessage ServerPlayer::get_message()
 {
 	ServerMessage msg;
-	if (server_msg_queue_.empty())
+	if (server_msg_queue_.is_empty())
 	{
 		msg.msg_type = MESSAGE_NONE;
 		return msg;
 	}
-	msg = server_msg_queue_.front();
-	server_msg_queue_.pop();
-	return msg;
+	return server_msg_queue_.pop();
 }
 
 ServerPlayer::ActionInfo ServerPlayer::get_opposite_action(const ServerMessage& msg)

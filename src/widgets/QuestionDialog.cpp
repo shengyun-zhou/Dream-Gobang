@@ -1,4 +1,5 @@
 #include "QuestionDialog.h"
+#include "../Gobang.h"
 
 PIMAGE QuestionDialog::icon_question_ = NULL;
 PIMAGE QuestionDialog::icon_warning_ = NULL;
@@ -62,11 +63,11 @@ QuestionDialog::~QuestionDialog()
 
 void QuestionDialog::on_dialog_init()
 {
+	Gobang::load_font_res();
+	Gobang::set_font(font_family_.c_str(), font_size_, false, false, dialog_image_);
 	putimage_withalpha(dialog_image_, dialog_icon_,
 		icon_margin_,
 		(height_ - button_area_height_ - getheight(dialog_icon_)) / 2);
-
-	setfont(font_size_, 0, font_family_.c_str(), dialog_image_);
 	setcolor(BLACK, dialog_image_);
 	static UINT text_format = DT_LEFT | DT_TOP | DT_EDITCONTROL | DT_WORDBREAK | DT_WORD_ELLIPSIS;
 	//rectangle(text_rect_.left, text_rect_.top, text_rect_.right, text_rect_.bottom, dialog_image_);
@@ -75,6 +76,7 @@ void QuestionDialog::on_dialog_init()
 	text_rect_.top = (height_ - button_area_height_ - text_height) / 2;
 	text_rect_.bottom = height_ - button_area_height_ - text_margin_;
 	DrawText(dialog_dc_, text_.c_str(), -1, &text_rect_, text_format);
+	Gobang::remove_font_res();
 
 	setfillcolor(EGERGB(230, 230, 230), dialog_image_);
 	bar(0, height_ - button_area_height_, width_, height_, dialog_image_);

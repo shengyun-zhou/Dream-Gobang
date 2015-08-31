@@ -69,32 +69,26 @@ void NetSettingsInterface::show_interface()
 										  (float)(Gobang::WINDOW_WIDTH < Gobang::WINDOW_HEIGHT)?Gobang::WINDOW_HEIGHT:Gobang::WINDOW_WIDTH, 0, 130);
 	delimage(black_bg);
 
-	LOGFONT system_font;
-	SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &system_font, NULL);
-	system_font.lfQuality = ANTIALIASED_QUALITY;
-	system_font.lfHeight = -40;
-	setfont(&system_font);
+	Gobang::load_font_res();
+	Gobang::set_font(Gobang::font_default, 40);
+	setcolor(WHITE);
 
 	xyprintf(20, 20, "网 络 设 置");
 	setlinestyle(SOLID_LINE, 0, 5);
 	line(20, 80, Gobang::WINDOW_WIDTH - 20, 80);
 
-	system_font.lfHeight = -font_size_level_1_;
-	setfont(&system_font);
+	Gobang::set_font(Gobang::font_default, font_size_level_1_);
 	int text_height_1 = textheight("A");
-	system_font.lfHeight = -font_size_level_2_;
-	setfont(&system_font);
+	Gobang::set_font(Gobang::font_default, font_size_level_2_);
 	int text_height_2 = textheight("A");
 
 	int text_width;
 	int target_top = 100;
-	system_font.lfHeight = -font_size_level_1_;
-	setfont(&system_font);
+	Gobang::set_font(Gobang::font_default, font_size_level_1_);
 	xyprintf(text_indent_, target_top, "用户设置");
 	target_top += text_height_1 + text_margin_;
 
-	system_font.lfHeight = -font_size_level_2_;
-	setfont(&system_font);
+	Gobang::set_font(Gobang::font_default, font_size_level_2_);
 	xyprintf(text_indent_ * 2, target_top, "用户名: %s", game_settings_->get_user_name().c_str());
 	text_width = textwidth((game_settings_->get_user_name() + "用户名: ").c_str());
 	button_edit_[0]->set_position(text_indent_ * 2 + text_width + button_margin_,
@@ -102,13 +96,11 @@ void NetSettingsInterface::show_interface()
 	button_edit_[0]->show();
 	target_top += text_height_2 + text_margin_;
 
-	system_font.lfHeight = -font_size_level_1_;
-	setfont(&system_font);
+	Gobang::set_font(Gobang::font_default, font_size_level_1_);
 	xyprintf(text_indent_ , target_top, "开设房间-服务端设置");
 	target_top += text_height_1 + text_margin_;
 
-	system_font.lfHeight = -font_size_level_2_;
-	setfont(&system_font);
+	Gobang::set_font(Gobang::font_default, font_size_level_2_);
 	xyprintf(text_indent_ * 2, target_top, "端口号: %s", game_settings_->get_server_port().c_str());
 	text_width = textwidth((game_settings_->get_server_port() + "端口号: ").c_str());
 	button_edit_[1]->set_position(text_indent_ * 2 + text_width + button_margin_,
@@ -116,13 +108,11 @@ void NetSettingsInterface::show_interface()
 	button_edit_[1]->show();
 	target_top += text_height_2 + text_margin_;
 
-	system_font.lfHeight = -font_size_level_1_;
-	setfont(&system_font);
+	Gobang::set_font(Gobang::font_default, font_size_level_1_);
 	xyprintf(text_indent_, target_top, "进入房间-客户端设置");
 	target_top += text_height_1 + text_margin_;
 
-	system_font.lfHeight = -font_size_level_2_;
-	setfont(&system_font);
+	Gobang::set_font(Gobang::font_default, font_size_level_2_);
 	xyprintf(text_indent_ * 2, target_top, "连接目标IP地址: %s", game_settings_->get_client_connect_IP_addr().c_str());
 	text_width = textwidth((game_settings_->get_client_connect_IP_addr() + "连接目标IP地址: ").c_str());
 	button_edit_[2]->set_position(text_indent_ * 2 + text_width + button_margin_,
@@ -136,6 +126,8 @@ void NetSettingsInterface::show_interface()
 		target_top - (button_edit_[3]->get_height() - text_height_2) / 2);
 	button_edit_[3]->show();
 	target_top += text_height_2 + text_margin_;
+
+	Gobang::remove_font_res();
 
 	button_save_->set_position(Gobang::WINDOW_WIDTH - 20 - button_cancel_->get_width() - button_margin_ -  button_save_->get_width(), 
 														 80 - button_margin_ - button_save_->get_height());

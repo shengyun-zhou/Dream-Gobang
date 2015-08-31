@@ -1,4 +1,5 @@
 #include "NetPlayerInfoView.h"
+#include "Gobang.h"
 #include <windef.h>
 
 NetPlayerInfoView::NetPlayerInfoView(bool is_opposite)
@@ -48,16 +49,15 @@ void NetPlayerInfoView::calc_view_width_height()
 		height += player_pic_->get_height() + margin_;
 	}
 
-	system_font_.lfHeight = -name_font_size_;
-	setfont(&system_font_);
+	Gobang::load_font_res();
+	Gobang::set_font(Gobang::font_default, name_font_size_, true);
 	if (player_name_.length() > 0)
 	{
 		view_width_ = max(view_width_, textwidth(player_name_.c_str()));
 		height += textheight(player_name_.c_str()) + margin_;
 	}
 
-	system_font_.lfHeight = -ready_font_size_;
-	setfont(&system_font_);
+	Gobang::set_font(Gobang::font_default, ready_font_size_);
 	if (is_ready_)
 	{
 		view_width_ = max(view_width_, textwidth("Ready!"));
@@ -68,6 +68,7 @@ void NetPlayerInfoView::calc_view_width_height()
 		view_width_ = max(view_width_, button_ready_->get_width());
 		height += button_ready_->get_height() + margin_;
 	}
+	Gobang::remove_font_res();
 	view_height_ = height;
 }
 
@@ -131,19 +132,19 @@ void NetPlayerInfoView::show()
 		player_pic_->show_image_with_alpha(pos_x_ + view_width_ / 2 - player_pic_->get_width() / 2, target_top, 1.0);
 		target_top += player_pic_->get_width() + margin_;
 	}
-
-	system_font_.lfHeight = -name_font_size_;
-	setfont(&system_font_);
+	
+	Gobang::load_font_res();
+	setcolor(WHITE);
 	if (player_name_.length() > 0)
 	{
+		Gobang::set_font(Gobang::font_default, name_font_size_, true);
 		xyprintf(pos_x_ + view_width_ / 2 - textwidth(player_name_.c_str()) / 2, target_top, player_name_.c_str());
 		target_top += textheight(player_name_.c_str()) + margin_;
 	}
 	
 	if (is_ready_)
 	{
-		system_font_.lfHeight = -ready_font_size_;
-		setfont(&system_font_);
+		Gobang::set_font(Gobang::font_default, ready_font_size_);
 		xyprintf(pos_x_ + view_width_ / 2 - textwidth("Ready!") / 2, target_top, "Ready!");
 	}
 	else if (!is_opposite_)
@@ -151,4 +152,5 @@ void NetPlayerInfoView::show()
 		button_ready_->set_position(pos_x_ + view_width_ / 2 - button_ready_->get_width() / 2, target_top);
 		button_ready_->show();
 	}
+	Gobang::remove_font_res();
 }

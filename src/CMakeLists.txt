@@ -57,6 +57,7 @@ endif()
 	
 set(PROJECT_SOURCE_FILE
 	Gobang.h
+	Gobang.cpp
     Chess.h
     Chess.cpp
 	ChessBoardView.h

@@ -43,7 +43,7 @@ public:
 	virtual void set_font(LPCSTR font_family, int size)
 	{
 		font_family_ = font_family;
-		font_size_ = size * -1;
+		font_size_ = size;
 	}
 
 	void set_text(const char* text)
