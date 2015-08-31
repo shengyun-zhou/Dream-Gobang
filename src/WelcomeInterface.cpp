@@ -66,7 +66,6 @@ WelcomeInterface::WelcomeInterface()
 
 void WelcomeInterface::opening_animation()												//显示开场动画
 {
-	//显示开场动画
 	static Image game_logo("res/game-logo.png");
 	const int image_width = 500;
 	const int image_height = 222;

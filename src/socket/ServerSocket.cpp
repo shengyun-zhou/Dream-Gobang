@@ -20,8 +20,7 @@ ServerSocket::~ServerSocket()
 
 void ServerSocket::clean_mission_queue()
 {
-	while (mission_queue_.empty() == false)
-		mission_queue_.pop();
+	mission_queue_.clean_queue();
 }
 
 bool ServerSocket::win_socket_init()
@@ -96,13 +95,17 @@ DWORD WINAPI ServerSocket::on_socket_running(LPVOID data)
 			socket_data->running_flag_ = false;
 			return 0;
 		}
-		if (socket_data->mission_queue_.empty())
+
+		socket_data->mission_queue_.lock();
+		if (socket_data->mission_queue_.is_empty(false))
 		{
+			socket_data->mission_queue_.unlock();
 			Sleep(30);
 			continue;
 		}
-		mission = socket_data->mission_queue_.front();
-		socket_data->mission_queue_.pop();
+		mission = socket_data->mission_queue_.pop();
+		socket_data->mission_queue_.unlock();
+
 		switch (mission.mission_ID)
 		{
 			case MISSION_ACCEPT:
@@ -248,8 +251,6 @@ void ServerSocket::accept_new_connection()
 {
 	if (running_flag_)
 	{
-		if (mission_queue_.size() >= max_mission_num_)
-			return;
 		socket_mission accept_mission;
 		accept_mission.mission_ID = MISSION_ACCEPT;
 		mission_queue_.push(accept_mission);
@@ -260,8 +261,6 @@ void ServerSocket::receive()
 {
 	if (running_flag_)
 	{
-		if (mission_queue_.size() >= max_mission_num_)
-			return;
 		socket_mission recv_mission;
 		recv_mission.mission_ID = MISSION_RECEIVE;
 		mission_queue_.push(recv_mission);
@@ -272,8 +271,6 @@ void ServerSocket::send_string(const char* str)
 {
 	if (running_flag_)
 	{
-		if (mission_queue_.size() >= max_mission_num_)
-			return;
 		socket_mission send_mission;
 		send_mission.mission_ID = MISSION_SEND;
 		send_mission.send_str = str;
@@ -285,8 +282,6 @@ void ServerSocket::stop_connection()
 {
 	if (running_flag_)
 	{
-		if (mission_queue_.size() >= max_mission_num_)
-			return;
 		socket_mission stop_connect_mission;
 		stop_connect_mission.mission_ID = MISSION_STOP_CONNECTION;
 		mission_queue_.push(stop_connect_mission);

@@ -1,7 +1,7 @@
 #pragma once
 #include <winsock.h>
 #include <windows.h>
-#include <queue>
+#include "../tools/ThreadQueue.h"
 #include <string>
 
 using namespace std;
@@ -27,7 +27,7 @@ private:
 		mission_type mission_ID;
 		string send_str;												//仅当ID为MISSION_SEND时有效
 	};
-	queue<socket_mission> mission_queue_;
+	ThreadQueue<socket_mission> mission_queue_;
 	volatile bool running_flag_;
 	volatile bool stop_flag_;
 	char receive_buf_[max_buf_size_];

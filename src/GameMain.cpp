@@ -750,6 +750,7 @@ void client_play(ClientPlayer* player, NetPlayerInfoView* self_player, NetPlayer
 	ClientPlayer::ClientMessage socket_msg;
 	while (is_run())
 	{
+		chess = Chess();
 		self_player->set_ready_state(false);
 		opposite_player->set_ready_state(false);
 		play_interface.show_interface();
@@ -848,7 +849,7 @@ void client_play(ClientPlayer* player, NetPlayerInfoView* self_player, NetPlayer
 				}
 			}
 			else
-				Sleep(2);
+				Sleep(5);
 			if (!start_flag && self_player->is_ready() && opposite_player->is_ready())
 			{
 				start_flag = true;
@@ -872,6 +873,7 @@ void server_play(ServerPlayer* player, NetPlayerInfoView* self_player, NetPlayer
 	ServerPlayer::ServerMessage socket_msg;
 	while (is_run())
 	{
+		chess = Chess();
 		self_player->set_ready_state(false);
 		opposite_player->set_ready_state(false);
 		play_interface.show_interface();
@@ -970,7 +972,7 @@ void server_play(ServerPlayer* player, NetPlayerInfoView* self_player, NetPlayer
 				}
 			}
 			else
-				Sleep(2);
+				Sleep(5);
 			if (!start_flag && self_player->is_ready() && opposite_player->is_ready())
 			{
 				start_flag = true;

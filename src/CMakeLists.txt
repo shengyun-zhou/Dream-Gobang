@@ -56,6 +56,7 @@ if(MSVC)
 endif()
 	
 set(PROJECT_SOURCE_FILE
+	Gobang.h
     Chess.h
     Chess.cpp
 	ChessBoardView.h
@@ -91,6 +92,7 @@ set(PROJECT_SOURCE_FILE
 	tools/IniSimpleParser.cpp
 	tools/GradientAnimation.h
 	tools/GradientAnimation.cpp
+	tools/ThreadQueue.h
 	widgets/BaseButton.h
 	widgets/Button.h
 	widgets/Button.cpp
