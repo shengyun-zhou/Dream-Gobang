@@ -2,7 +2,7 @@
 #include "Gobang.h"
 
 Image* NetWaitingInterface::bg_img_ = NULL;
-ImageButton* NetWaitingInterface::button_cancel_ = NULL;
+ImageTextButton* NetWaitingInterface::button_cancel_ = NULL;
 
 NetWaitingInterface::NetWaitingInterface()
 {
@@ -13,14 +13,13 @@ NetWaitingInterface::NetWaitingInterface()
 	static Image* button_press_img = new Image("res/button-blue-middle-press.png");
 	if (!button_cancel_)
 	{
-		button_cancel_ = new ImageButton();
-		Image* button_text = new Image("res/text-cancel.png");
+		button_cancel_ = new ImageTextButton();
 		button_cancel_->add_normal_image(button_img, 0, 0);
-		button_cancel_->add_normal_image(button_text, text_x_offset, text_y_offset);
+		button_cancel_->set_normal_text("取 消", button_text_size_);
 		button_cancel_->add_hover_image(button_hover_img, 0, 0);
-		button_cancel_->add_hover_image(button_text, text_x_offset, text_y_offset);
+		button_cancel_->set_hover_text("取 消", button_text_size_);
 		button_cancel_->add_press_image(button_press_img, 0, 0);
-		button_cancel_->add_press_image(button_text, text_x_offset, text_y_offset);
+		button_cancel_->set_press_text("取 消", button_text_size_);
 		button_cancel_->set_recovery_flag(false);
 	}
 }
@@ -46,13 +45,10 @@ void NetWaitingInterface::show_interface()
 		(float)(Gobang::WINDOW_WIDTH < Gobang::WINDOW_HEIGHT) ? Gobang::WINDOW_HEIGHT : Gobang::WINDOW_WIDTH, 0, 130);
 	delimage(black_bg);
 
-	Gobang::load_font_res();
 	Gobang::set_font(Gobang::font_default, tip_text_font_size_);
-
 	setbkmode(TRANSPARENT);
 	int target_top = Gobang::WINDOW_HEIGHT / 2 - 100;
 	xyprintf((Gobang::WINDOW_WIDTH - textwidth(tip_text_.c_str())) / 2, target_top, tip_text_.c_str());
-	Gobang::remove_font_res();
 	target_top += textheight(tip_text_.c_str()) + margin_;
 	button_cancel_->set_position((Gobang::WINDOW_WIDTH - button_cancel_->get_width()) / 2, target_top);
 	button_cancel_->show();

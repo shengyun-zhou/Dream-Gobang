@@ -2,9 +2,9 @@
 #include "tools/GradientAnimation.h"
 #include "Gobang.h"
 
-ImageButton* WelcomeInterface::button_enter_game_ = NULL;
-ImageButton* WelcomeInterface::button_game_settings_ = NULL;
-ImageButton* WelcomeInterface::button_exit_game_ = NULL;
+ImageTextButton* WelcomeInterface::button_enter_game_ = NULL;
+ImageTextButton* WelcomeInterface::button_game_settings_ = NULL;
+ImageTextButton* WelcomeInterface::button_exit_game_ = NULL;
 ImageButton* WelcomeInterface::button_special_thanks_ = NULL;
 ImageButton* WelcomeInterface::button_net_play_ = NULL;
 Image* WelcomeInterface::game_welcome_bg_ = NULL;
@@ -18,38 +18,35 @@ WelcomeInterface::WelcomeInterface()
 	//加载所有按钮
 	if (!button_enter_game_)
 	{
-		button_enter_game_ = new ImageButton();
-		Image* text_enter_game = new Image("res/text-enter-game.png");
+		button_enter_game_ = new ImageTextButton();
 		button_enter_game_->add_normal_image(new Image("res/button-enter-game.png"), 0, 0);
-		button_enter_game_->add_normal_image(text_enter_game, text_x_offset_, text_y_offset_);
+		button_enter_game_->set_normal_text("进 入 游 戏", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 		button_enter_game_->add_hover_image(new Image("res/button-hover-enter-game.png"), 0, 0);
-		button_enter_game_->add_hover_image(text_enter_game, text_x_offset_, text_y_offset_);
+		button_enter_game_->set_hover_text("进 入 游 戏", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 		button_enter_game_->add_press_image(new Image("res/button-press-enter-game.png"), 0, 0);
-		button_enter_game_->add_press_image(text_enter_game, text_x_offset_, text_y_offset_);
+		button_enter_game_->set_press_text("进 入 游 戏", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 	}
 
 	if (!button_game_settings_)
 	{
-		button_game_settings_ = new ImageButton();
-		Image* text_game_settings = new Image("res/text-game-settings.png");
+		button_game_settings_ = new ImageTextButton();
 		button_game_settings_->add_normal_image(new Image("res/button-game-settings.png"), 0, 0);
-		button_game_settings_->add_normal_image(text_game_settings, text_x_offset_, text_y_offset_);
+		button_game_settings_->set_normal_text("游 戏 设 置", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 		button_game_settings_->add_hover_image(new Image("res/button-hover-game-settings.png"), 0, 0);
-		button_game_settings_->add_hover_image(text_game_settings, text_x_offset_, text_y_offset_);
+		button_game_settings_->set_hover_text("游 戏 设 置", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 		button_game_settings_->add_press_image(new Image("res/button-press-game-settings.png"), 0, 0);
-		button_game_settings_->add_press_image(text_game_settings, text_x_offset_, text_y_offset_);
+		button_game_settings_->set_press_text("游 戏 设 置", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 	}
 
 	if (!button_exit_game_)
 	{
-		button_exit_game_ = new ImageButton();
-		Image* text_exit_game = new Image("res/text-exit-game.png");
+		button_exit_game_ = new ImageTextButton();
 		button_exit_game_->add_normal_image(new Image("res/button-exit-game.png"), 0, 0);
-		button_exit_game_->add_normal_image(text_exit_game, text_x_offset_, text_y_offset_);
+		button_exit_game_->set_normal_text("退 出 游 戏", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 		button_exit_game_->add_hover_image(new Image("res/button-hover-exit-game.png"), 0, 0);
-		button_exit_game_->add_hover_image(text_exit_game, text_x_offset_, text_y_offset_);
+		button_exit_game_->set_hover_text("退 出 游 戏", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 		button_exit_game_->add_press_image(new Image("res/button-press-exit-game.png"), 0, 0);
-		button_exit_game_->add_press_image(text_exit_game, text_x_offset_, text_y_offset_);
+		button_exit_game_->set_press_text("退 出 游 戏", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 	}
 	
 	if (!button_special_thanks_)
@@ -138,8 +135,7 @@ void WelcomeInterface::curtain()
 	setbkmode(TRANSPARENT);
 	static Image game_thanks_bg("res/game-special-thanks-bg.png");
 	GradientAnimation::transition_ease_out(&game_thanks_bg);
-	Gobang::load_font_res();
-	Gobang::set_font(Gobang::font_default, 40, true);
+	Gobang::set_font(Gobang::font_llt, 40, true);
 
 	setcolor(WHITE);
 
@@ -167,20 +163,18 @@ void WelcomeInterface::curtain()
 	delay_ms(1000);
 
 	outtextxy(800, 600, "返回");
-
-	Gobang::remove_font_res();
 }
 
 WelcomeInterface::action_type WelcomeInterface::action_judge(int x, int y)
 {
 	const int offset = 10;
-	if (x > 80 - offset && x < 320 + offset && y > 350 - offset && y < 410 + offset)
+	if (button_enter_game_->is_mouse_in_button(x, y))
 		return ACTION_ENTER_GAME;
-	else if (x > 80 - offset && x < 320 + offset && y >450 - offset && y < 510 + offset)
+	else if (button_game_settings_->is_mouse_in_button(x, y))
 		return ACTION_GAME_SETTINGS;
-	else if (x  > 80 - offset && x < 320 + offset && y>550 - offset &&  y < 610 + offset)
+	else if (button_exit_game_->is_mouse_in_button(x, y))
 		return ACTION_EXIT_GAME;
-	else if (x > 1000 - offset && x < 1200 + offset && y > 30 - offset && y < 230 + offset)
+	else if (button_special_thanks_->is_mouse_in_button(x, y))
 		return ACTION_SPECIAL_THANKS;
 	else if (button_net_play_->is_mouse_in_button(x, y))
 		return ACTION_NET_PLAY;

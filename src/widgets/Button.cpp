@@ -164,7 +164,6 @@ void Button::show_button_icon_text(color_t text_color)
 	}
 
 	setcolor(text_color, button_image_);
-	Gobang::load_font_res();
 	Gobang::set_font(font_family_.c_str(), font_size_, false, false, button_image_);
 	setbkmode(TRANSPARENT, button_image_);
 	int text_height = DrawText(button_dc_, text_.c_str(), -1, &text_rect_, text_format | DT_CALCRECT);
@@ -173,7 +172,6 @@ void Button::show_button_icon_text(color_t text_color)
 	//setlinestyle(SOLID_LINE, NULL, 1, button_image_);
 	//rectangle(text_rect_.left, text_rect_.top, text_rect_.right, text_rect_.bottom, button_image_);
 	DrawText(button_dc_, text_.c_str(), -1, &text_rect_, text_format);
-	Gobang::remove_font_res();
 }
 
 void Button::show(HWND parent_window)

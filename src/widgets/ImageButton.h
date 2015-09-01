@@ -5,7 +5,7 @@
 using namespace std;
 class ImageButton : public BaseButton
 {
-private:
+protected:
 	struct ImageInfo
 	{
 		Image* image;
@@ -18,7 +18,7 @@ private:
 	vector<ImageInfo> press_images_;
 	int button_width_;
 	int button_height_;
-
+private:
 	struct BufferImage
 	{
 		int x;

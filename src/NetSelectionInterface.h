@@ -1,17 +1,16 @@
 #pragma once
-#include "widgets/ImageButton.h"
+#include "widgets/ImageTextButton.h"
 class NetSelectionInterface
 {
 private:
-	static ImageButton* button_open_room_;
-	static ImageButton* button_enter_room_;
-	static ImageButton* button_net_settings_;
-	static ImageButton* button_back_;
+	static ImageTextButton* button_open_room_;
+	static ImageTextButton* button_enter_room_;
+	static ImageTextButton* button_net_settings_;
+	static ImageTextButton* button_back_;
 	static Image* bg_img_;
 
 	static const int button_margin_ = 60;
-	static const int text_x_offset_ = 50;
-	static const int text_y_offset_ = 12;
+	static const int button_text_size_ = 35;
 	static const int height_offset_ = 60;
 public:
 	enum ACTION_TYPE

@@ -4,17 +4,18 @@
 #include "Settings.h"
 #include "tools/Image.h"
 #include "widgets/ImageButton.h"
+#include "widgets/ImageTextButton.h"
 
 class WelcomeInterface
 {
 private:
-	static const int text_x_offset_ = 65;
-	static const int text_y_offset_ = 12;
+	static const int button_text_size_ = 28;
+	static const int text_x_offset_ = 75;
 
 	static Image* game_welcome_bg_;
-	static ImageButton* button_enter_game_;
-	static ImageButton* button_game_settings_;
-	static ImageButton* button_exit_game_;
+	static ImageTextButton* button_enter_game_;
+	static ImageTextButton* button_game_settings_;
+	static ImageTextButton* button_exit_game_;
 	static ImageButton* button_special_thanks_;
 	static ImageButton* button_net_play_;
 

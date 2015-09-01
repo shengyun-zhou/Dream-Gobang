@@ -2,57 +2,53 @@
 #include "Gobang.h"
 #include "tools/GradientAnimation.h"
 
-ImageButton* NetSelectionInterface::button_open_room_ = NULL;
-ImageButton* NetSelectionInterface::button_enter_room_ = NULL;
-ImageButton* NetSelectionInterface::button_net_settings_ = NULL;
-ImageButton* NetSelectionInterface::button_back_ = NULL;
+ImageTextButton* NetSelectionInterface::button_open_room_ = NULL;
+ImageTextButton* NetSelectionInterface::button_enter_room_ = NULL;
+ImageTextButton* NetSelectionInterface::button_net_settings_ = NULL;
+ImageTextButton* NetSelectionInterface::button_back_ = NULL;
 Image* NetSelectionInterface::bg_img_ = NULL;
 
 NetSelectionInterface::NetSelectionInterface()
 {
 	if (!button_open_room_)
 	{
-		button_open_room_ = new ImageButton();
-		Image* text_open_room = new Image("res/text-open-room.png");
+		button_open_room_ = new ImageTextButton();
 		button_open_room_->add_normal_image(new Image("res/button-blue.png"), 0, 0);
-		button_open_room_->add_normal_image(text_open_room, text_x_offset_, text_y_offset_);
+		button_open_room_->set_normal_text("开 设 房 间", button_text_size_, -1, -1, Gobang::font_llt);
 		button_open_room_->add_hover_image(new Image("res/button-blue-hover.png"), 0, 0);
-		button_open_room_->add_hover_image(text_open_room, text_x_offset_, text_y_offset_);
+		button_open_room_->set_hover_text("开 设 房 间", button_text_size_, -1, -1, Gobang::font_llt);
 		button_open_room_->add_press_image(new Image("res/button-blue-press.png"), 0, 0);
-		button_open_room_->add_press_image(text_open_room, text_x_offset_, text_y_offset_);
+		button_open_room_->set_press_text("开 设 房 间", button_text_size_, -1, -1, Gobang::font_llt);
 	}
 	if (!button_enter_room_)
 	{
-		button_enter_room_ = new ImageButton();
-		Image* button_text = new Image("res/text-enter-room.png");
+		button_enter_room_ = new ImageTextButton();
 		button_enter_room_->add_normal_image(new Image("res/button-blue.png"), 0, 0);
-		button_enter_room_->add_normal_image(button_text, text_x_offset_, text_y_offset_);
+		button_enter_room_->set_normal_text("进 入 房 间", button_text_size_, -1, -1, Gobang::font_llt);
 		button_enter_room_->add_hover_image(new Image("res/button-blue-hover.png"), 0, 0);
-		button_enter_room_->add_hover_image(button_text, text_x_offset_, text_y_offset_);
+		button_enter_room_->set_hover_text("进 入 房 间", button_text_size_, -1, -1, Gobang::font_llt);
 		button_enter_room_->add_press_image(new Image("res/button-blue-press.png"), 0, 0);
-		button_enter_room_->add_press_image(button_text, text_x_offset_, text_y_offset_);
+		button_enter_room_->set_press_text("进 入 房 间", button_text_size_, -1, -1, Gobang::font_llt);
 	}
 	if (!button_net_settings_)
 	{
-		button_net_settings_ = new ImageButton();
-		Image* button_text = new Image("res/text-net-settings.png");
+		button_net_settings_ = new ImageTextButton();
 		button_net_settings_->add_normal_image(new Image("res/button-blue.png"), 0, 0);
-		button_net_settings_->add_normal_image(button_text, text_x_offset_, text_y_offset_);
+		button_net_settings_->set_normal_text("网 络 设 置", button_text_size_, -1, -1, Gobang::font_llt);
 		button_net_settings_->add_hover_image(new Image("res/button-blue-hover.png"), 0, 0);
-		button_net_settings_->add_hover_image(button_text, text_x_offset_, text_y_offset_);
+		button_net_settings_->set_hover_text("网 络 设 置", button_text_size_, -1, -1, Gobang::font_llt);
 		button_net_settings_->add_press_image(new Image("res/button-blue-press.png"), 0, 0);
-		button_net_settings_->add_press_image(button_text, text_x_offset_, text_y_offset_);
+		button_net_settings_->set_press_text("网 络 设 置", button_text_size_, -1, -1, Gobang::font_llt);
 	}
 	if (!button_back_)
 	{
-		button_back_ = new ImageButton();
-		Image* button_text = new Image("res/text-back.png");
+		button_back_ = new ImageTextButton();
 		button_back_->add_normal_image(new Image("res/button-blue.png"), 0, 0);
-		button_back_->add_normal_image(button_text, text_x_offset_, text_y_offset_);
+		button_back_->set_normal_text("返回主界面", button_text_size_, -1, -1, Gobang::font_llt);
 		button_back_->add_hover_image(new Image("res/button-blue-hover.png"), 0, 0);
-		button_back_->add_hover_image(button_text, text_x_offset_, text_y_offset_);
+		button_back_->set_hover_text("返回主界面", button_text_size_, -1, -1, Gobang::font_llt);
 		button_back_->add_press_image(new Image("res/button-blue-press.png"), 0, 0);
-		button_back_->add_press_image(button_text, text_x_offset_, text_y_offset_);
+		button_back_->set_press_text("返回主界面", button_text_size_, -1, -1, Gobang::font_llt);
 	}
 	if (!bg_img_)
 		bg_img_ = new Image("res/game-network-bg.jpg");
@@ -76,13 +72,11 @@ void NetSelectionInterface::show_interface()
 
 	setbkmode(TRANSPARENT);
 	setcolor(WHITE);
-	Gobang::load_font_res();
 	Gobang::set_font(Gobang::font_llt, 40);
 
 	xyprintf(20, 20, "网 络 对 战");
 	setlinestyle(SOLID_LINE, 0, 5);
 	line(20, 80, Gobang::WINDOW_WIDTH - 20, 80);
-	Gobang::remove_font_res();
 
 	button_open_room_->set_position(Gobang::WINDOW_WIDTH / 2 - button_margin_ / 2 - button_open_room_->get_width(),
 		Gobang::WINDOW_HEIGHT / 2 - button_margin_ / 2 - button_open_room_->get_height() - height_offset_);

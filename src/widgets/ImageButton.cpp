@@ -26,10 +26,10 @@ void ImageButton::add_normal_image(Image* image, int padding_left, int padding_t
 	info.padding_left = padding_left;
 	info.padding_top = padding_top;
 	normal_images_.push_back(info);
-	if (image->get_width() > button_width_)
-		button_width_ = image->get_width();
-	if (image->get_height() > button_height_)
-		button_height_ = image->get_height();
+	if (image->get_width() + padding_left > button_width_)
+		button_width_ = image->get_width() + padding_left;
+	if (image->get_height() + padding_top > button_height_)
+		button_height_ = image->get_height() + padding_top;
 }
 
 void ImageButton::add_hover_image(Image* image, int padding_left, int padding_top)
@@ -39,10 +39,10 @@ void ImageButton::add_hover_image(Image* image, int padding_left, int padding_to
 	info.padding_left = padding_left;
 	info.padding_top = padding_top;
 	hover_images_.push_back(info);
-	if (image->get_width() > button_width_)
-		button_width_ = image->get_width();
-	if (image->get_height() > button_height_)
-		button_height_ = image->get_height();
+	if (image->get_width() + padding_left > button_width_)
+		button_width_ = image->get_width() + padding_left;
+	if (image->get_height() + padding_top > button_height_)
+		button_height_ = image->get_height() + padding_top;
 }
 
 void ImageButton::add_press_image(Image* image, int padding_left, int padding_top)
@@ -52,10 +52,10 @@ void ImageButton::add_press_image(Image* image, int padding_left, int padding_to
 	info.padding_left = padding_left;
 	info.padding_top = padding_top;
 	press_images_.push_back(info);
-	if (image->get_width() > button_width_)
-		button_width_ = image->get_width();
-	if (image->get_height() > button_height_)
-		button_height_ = image->get_height();
+	if (image->get_width() + padding_left > button_width_)
+		button_width_ = image->get_width() + padding_left;
+	if (image->get_height() + padding_top > button_height_)
+		button_height_ = image->get_height() + padding_top;
 }
 
 void ImageButton::show()

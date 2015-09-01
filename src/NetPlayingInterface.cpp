@@ -3,7 +3,7 @@
 #include "tools/GradientAnimation.h"
 #include "widgets/MessageDialog.h"
 
-ImageButton* NetPlayingInterface::button_quit_ = NULL;
+ImageTextButton* NetPlayingInterface::button_quit_ = NULL;
 Image* NetPlayingInterface::game_bg_img_ = NULL;
 
 NetPlayingInterface::NetPlayingInterface(NetPlayerInfoView* self_player, NetPlayerInfoView* opposite_player, const Chess* chess)
@@ -15,14 +15,13 @@ NetPlayingInterface::NetPlayingInterface(NetPlayerInfoView* self_player, NetPlay
 		game_bg_img_ = new Image("res/game-network-bg.jpg");
 	if (!button_quit_)
 	{
-		button_quit_ = new ImageButton();
-		Image* text_game_quit = new Image("res/text-quit.png");
+		button_quit_ = new ImageTextButton();
 		button_quit_->add_normal_image(new Image("res/button-quit.png"), 0, 0);
-		button_quit_->add_normal_image(text_game_quit, text_x_offset_, text_y_offset_);
+		button_quit_->set_normal_text("退 出 对 战", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 		button_quit_->add_hover_image(new Image("res/button-hover-quit.png"), 0, 0);
-		button_quit_->add_hover_image(text_game_quit, text_x_offset_, text_y_offset_);
+		button_quit_->set_hover_text("退 出 对 战", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 		button_quit_->add_press_image(new Image("res/button-press-quit.png"), 0, 0);
-		button_quit_->add_press_image(text_game_quit, text_x_offset_, text_y_offset_);
+		button_quit_->set_press_text("退 出 对 战", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 	}
 }
 

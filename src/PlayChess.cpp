@@ -2,32 +2,30 @@
 #include "tools/GradientAnimation.h"
 
 const int offset = 10;
-ImageButton* PlayChess::button_game_quit_ = NULL;
-ImageButton* PlayChess::button_game_replay_ = NULL;
+ImageTextButton* PlayChess::button_game_quit_ = NULL;
+ImageTextButton* PlayChess::button_game_replay_ = NULL;
 
 PlayChess::PlayChess(Chess& c) : chess_(c)
 {
 	if (!button_game_replay_)
 	{
-		button_game_replay_ = new ImageButton();
-		Image* text_game_replay = new Image("res/text-replay.png");
+		button_game_replay_ = new ImageTextButton();
 		button_game_replay_->add_normal_image(new Image("res/button-replay.png"), 0, 0);
-		button_game_replay_->add_normal_image(text_game_replay, text_x_offset_, text_y_offset_);
+		button_game_replay_->set_normal_text("重 新 开 始", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 		button_game_replay_->add_hover_image(new Image("res/button-hover-replay.png"), 0, 0);
-		button_game_replay_->add_hover_image(text_game_replay, text_x_offset_, text_y_offset_);
+		button_game_replay_->set_hover_text("重 新 开 始", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 		button_game_replay_->add_press_image(new Image("res/button-press-replay.png"), 0, 0);
-		button_game_replay_->add_press_image(text_game_replay, text_x_offset_, text_y_offset_);
+		button_game_replay_->set_press_text("重 新 开 始", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 	}
 	if (!button_game_quit_)
 	{
-		button_game_quit_ = new ImageButton();
-		Image* text_game_quit = new Image("res/text-quit.png");
+		button_game_quit_ = new ImageTextButton();
 		button_game_quit_->add_normal_image(new Image("res/button-quit.png"), 0, 0);
-		button_game_quit_->add_normal_image(text_game_quit, text_x_offset_, text_y_offset_);
+		button_game_quit_->set_normal_text("退 出 游 戏", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 		button_game_quit_->add_hover_image(new Image("res/button-hover-quit.png"), 0, 0);
-		button_game_quit_->add_hover_image(text_game_quit, text_x_offset_, text_y_offset_);
+		button_game_quit_->set_hover_text("退 出 游 戏", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 		button_game_quit_->add_press_image(new Image("res/button-press-quit.png"), 0, 0);
-		button_game_quit_->add_press_image(text_game_quit, text_x_offset_, text_y_offset_);
+		button_game_quit_->set_press_text("退 出 游 戏", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 	}
 }
 

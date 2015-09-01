@@ -1,7 +1,7 @@
 #pragma once
 #include "Chess.h"
 #include "tools/Image.h"
-#include "widgets/ImageButton.h"
+#include "widgets/ImageTextButton.h"
 #include <string>
 
 using namespace std;
@@ -21,13 +21,11 @@ private:
 	static const int margin_ = 10;
 	static const int name_font_size_ = 30;
 	static const int ready_font_size_ = 20;
-	static const int text_x_offset = 25;
-	static const int text_y_offset = 7;
+	static const int button_text_size_ = 22;
 	Image* black_piece_;
 	Image* white_piece_;
 	Image* player_pic_;
-	ImageButton* button_ready_;
-	LOGFONT system_font_;
+	ImageTextButton* button_ready_;
 
 	struct BufferImage
 	{

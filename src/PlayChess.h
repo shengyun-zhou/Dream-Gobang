@@ -2,7 +2,7 @@
 #include "Chess.h"
 #include "graphics.h"
 #include "tools/Image.h"
-#include "widgets/ImageButton.h"
+#include "widgets/ImageTextButton.h"
 #include "ChessSaver.h"
 #include "ChessBoardView.h"
 
@@ -32,11 +32,11 @@ public:
 	void on_mouse_click(PlayChess::ACTION_TYPE action);
 
 private:
-  static ImageButton* button_game_replay_;
-  static ImageButton* button_game_quit_;
+  static ImageTextButton* button_game_replay_;
+  static ImageTextButton* button_game_quit_;
 	ChessBoardView chess_board_;
 	Chess& chess_;
 
-  static const int text_x_offset_ = 65;
-	static const int text_y_offset_ = 12;
+	static const int button_text_size_ = 28;
+	static const int text_x_offset_ = 75;
 };

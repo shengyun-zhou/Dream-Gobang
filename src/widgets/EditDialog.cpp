@@ -52,7 +52,6 @@ bool EditDialog::on_dialog_close()
 
 void EditDialog::on_dialog_init()
 {
-	Gobang::load_font_res();
 	Gobang::set_font(font_family_.c_str(), font_size_, false, false, dialog_image_);
 	setcolor(BLACK, dialog_image_);
 	static UINT text_format = DT_LEFT | DT_TOP | DT_EDITCONTROL | DT_WORDBREAK | DT_WORD_ELLIPSIS;
@@ -66,7 +65,6 @@ void EditDialog::on_dialog_init()
 	text_rect_.top = (padding_ + (height_ - button_area_height_ - edit_margin_bottom_ - edit_text_->get_height() - text_margin_)) / 2 - text_height / 2;
 	text_rect_.bottom = text_rect_.top + text_height + 1;
 	DrawText(dialog_dc_, text_.c_str(), -1, &text_rect_, text_format);
-	Gobang::remove_font_res();
 
 	putimage_withalpha(dialog_image_, dialog_icon_,
 		icon_margin_,

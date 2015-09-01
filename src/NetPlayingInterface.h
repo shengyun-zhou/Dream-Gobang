@@ -1,7 +1,7 @@
 #pragma once
 #include "NetPlayerInfoView.h"
 #include "ChessBoardView.h"
-#include "widgets/ImageButton.h"
+#include "widgets/ImageTextButton.h"
 class NetPlayingInterface
 {
 private:
@@ -9,11 +9,11 @@ private:
 	NetPlayerInfoView* opposite_player_;
 	ChessBoardView chess_board_;
 	const Chess* chess_;
-	static ImageButton* button_quit_;
+	static ImageTextButton* button_quit_;
 	static Image* game_bg_img_;
 
-	static const int text_x_offset_ = 65;
-	static const int text_y_offset_ = 12;
+	static const int button_text_size_ = 28;
+	static const int text_x_offset_ = 75;
 	static const int margin_ = 20;
 public:
 	NetPlayingInterface(NetPlayerInfoView* self_player, NetPlayerInfoView* opposite_player, const Chess* chess);

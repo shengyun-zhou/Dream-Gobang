@@ -8,17 +8,16 @@ NetPlayerInfoView::NetPlayerInfoView(bool is_opposite)
 	black_piece_ = new Image("res/black-piece.png");
 	white_piece_ = new Image("res/white-piece.png");
 
-	button_ready_ = new ImageButton();
-	static Image button_text("res/text-ready.png");
+	button_ready_ = new ImageTextButton();
 	static Image button_img("res/button-blue-middle.png");
 	static Image button_hover_img("res/button-blue-middle-hover.png");
 	static Image button_press_img("res/button-blue-middle-press.png");
 	button_ready_->add_normal_image(&button_img, 0, 0);
-	button_ready_->add_normal_image(&button_text, text_x_offset, text_y_offset);
+	button_ready_->set_normal_text("准 备", button_text_size_);
 	button_ready_->add_hover_image(&button_hover_img, 0, 0);
-	button_ready_->add_hover_image(&button_text, text_x_offset, text_y_offset);
+	button_ready_->set_hover_text("准 备", button_text_size_);
 	button_ready_->add_press_image(&button_press_img, 0, 0);
-	button_ready_->add_press_image(&button_text, text_x_offset, text_y_offset);
+	button_ready_->set_press_text("准 备", button_text_size_);
 	button_ready_->set_recovery_flag(false);
 
 	player_pic_ = NULL;
@@ -27,9 +26,6 @@ NetPlayerInfoView::NetPlayerInfoView(bool is_opposite)
 	pos_x_ = pos_y_ = 0;
 	view_width_ = view_height_ = 0;
 	buffer_img_.img = NULL;
-
-	SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &system_font_, NULL);
-	system_font_.lfQuality = ANTIALIASED_QUALITY;
 }
 
 NetPlayerInfoView::~NetPlayerInfoView()
@@ -49,7 +45,6 @@ void NetPlayerInfoView::calc_view_width_height()
 		height += player_pic_->get_height() + margin_;
 	}
 
-	Gobang::load_font_res();
 	Gobang::set_font(Gobang::font_default, name_font_size_, true);
 	if (player_name_.length() > 0)
 	{
@@ -68,7 +63,6 @@ void NetPlayerInfoView::calc_view_width_height()
 		view_width_ = max(view_width_, button_ready_->get_width());
 		height += button_ready_->get_height() + margin_;
 	}
-	Gobang::remove_font_res();
 	view_height_ = height;
 }
 
@@ -133,7 +127,6 @@ void NetPlayerInfoView::show()
 		target_top += player_pic_->get_width() + margin_;
 	}
 	
-	Gobang::load_font_res();
 	setcolor(WHITE);
 	if (player_name_.length() > 0)
 	{
@@ -152,5 +145,4 @@ void NetPlayerInfoView::show()
 		button_ready_->set_position(pos_x_ + view_width_ / 2 - button_ready_->get_width() / 2, target_top);
 		button_ready_->show();
 	}
-	Gobang::remove_font_res();
 }

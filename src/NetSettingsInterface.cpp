@@ -2,9 +2,9 @@
 #include "Gobang.h"
 
 Image* NetSettingsInterface::bg_img_ = NULL;
-ImageButton* NetSettingsInterface::button_save_ = NULL;
-ImageButton* NetSettingsInterface::button_cancel_ = NULL;
-ImageButton* NetSettingsInterface::button_edit_[NetSettingsInterface::edit_button_num_] = { NULL };
+ImageTextButton* NetSettingsInterface::button_save_ = NULL;
+ImageTextButton* NetSettingsInterface::button_cancel_ = NULL;
+ImageTextButton* NetSettingsInterface::button_edit_[NetSettingsInterface::edit_button_num_] = { NULL };
 
 NetSettingsInterface::NetSettingsInterface(Settings* settings)
 {
@@ -16,26 +16,24 @@ NetSettingsInterface::NetSettingsInterface(Settings* settings)
 		bg_img_ = new Image("res/game-network-bg.jpg");
 	if (!button_save_)
 	{
-		button_save_ = new ImageButton();
-		Image* button_text = new Image("res/text-save.png");
+		button_save_ = new ImageTextButton();
 		button_save_->add_normal_image(button_img, 0, 0);
-		button_save_->add_normal_image(button_text, text_x_offset, text_y_offset);
+		button_save_->set_normal_text("保 存", button_text_size_);
 		button_save_->add_hover_image(button_hover_img, 0, 0);
-		button_save_->add_hover_image(button_text, text_x_offset, text_y_offset);
+		button_save_->set_hover_text("保 存", button_text_size_);
 		button_save_->add_press_image(button_press_img, 0, 0);
-		button_save_->add_press_image(button_text, text_x_offset, text_y_offset);
+		button_save_->set_press_text("保 存", button_text_size_);
 		button_save_->set_recovery_flag(false);
 	}
 	if (!button_cancel_)
 	{
-		button_cancel_ = new ImageButton();
-		Image* button_text = new Image("res/text-cancel.png");
+		button_cancel_ = new ImageTextButton();
 		button_cancel_->add_normal_image(button_img, 0, 0);
-		button_cancel_->add_normal_image(button_text, text_x_offset, text_y_offset);
+		button_cancel_->set_normal_text("取 消", button_text_size_);
 		button_cancel_->add_hover_image(button_hover_img, 0, 0);
-		button_cancel_->add_hover_image(button_text, text_x_offset, text_y_offset);
+		button_cancel_->set_hover_text("取 消", button_text_size_);
 		button_cancel_->add_press_image(button_press_img, 0, 0);
-		button_cancel_->add_press_image(button_text, text_x_offset, text_y_offset);
+		button_cancel_->set_press_text("取 消", button_text_size_);
 		button_cancel_->set_recovery_flag(false);
 	}
 	static Image* text_edit = new Image("res/text-edit.png");
@@ -43,13 +41,13 @@ NetSettingsInterface::NetSettingsInterface(Settings* settings)
 	{
 		if (!button_edit_[i])
 		{
-			button_edit_[i] = new ImageButton();
+			button_edit_[i] = new ImageTextButton();
 			button_edit_[i]->add_normal_image(button_img, 0, 0);
-			button_edit_[i]->add_normal_image(text_edit, text_x_offset, text_y_offset);
+			button_edit_[i]->set_normal_text("更 改", button_text_size_);
 			button_edit_[i]->add_hover_image(button_hover_img, 0, 0);
-			button_edit_[i]->add_hover_image(text_edit, text_x_offset, text_y_offset);
+			button_edit_[i]->set_hover_text("更 改", button_text_size_);
 			button_edit_[i]->add_press_image(button_press_img, 0, 0);
-			button_edit_[i]->add_press_image(text_edit, text_x_offset, text_y_offset);
+			button_edit_[i]->set_press_text("更 改", button_text_size_);
 			button_edit_[i]->set_recovery_flag(false);
 		}
 	}
@@ -69,7 +67,6 @@ void NetSettingsInterface::show_interface()
 										  (float)(Gobang::WINDOW_WIDTH < Gobang::WINDOW_HEIGHT)?Gobang::WINDOW_HEIGHT:Gobang::WINDOW_WIDTH, 0, 130);
 	delimage(black_bg);
 
-	Gobang::load_font_res();
 	Gobang::set_font(Gobang::font_default, 40);
 	setcolor(WHITE);
 
@@ -120,14 +117,13 @@ void NetSettingsInterface::show_interface()
 	button_edit_[2]->show();
 	target_top += text_height_2 + text_margin_;
 
+	Gobang::set_font(Gobang::font_default, font_size_level_2_);
 	xyprintf(text_indent_ * 2, target_top, "连接目标端口号: %s", game_settings_->get_client_connect_port().c_str());
 	text_width = textwidth((game_settings_->get_client_connect_port() + "连接目标端口号: ").c_str());
 	button_edit_[3]->set_position(text_indent_ * 2 + text_width + button_margin_,
 		target_top - (button_edit_[3]->get_height() - text_height_2) / 2);
 	button_edit_[3]->show();
 	target_top += text_height_2 + text_margin_;
-
-	Gobang::remove_font_res();
 
 	button_save_->set_position(Gobang::WINDOW_WIDTH - 20 - button_cancel_->get_width() - button_margin_ -  button_save_->get_width(), 
 														 80 - button_margin_ - button_save_->get_height());

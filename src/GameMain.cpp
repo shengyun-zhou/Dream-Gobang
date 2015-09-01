@@ -22,6 +22,7 @@
 
 Music* game_bgm = NULL;
 Settings* game_settings = NULL;
+LRESULT(CALLBACK *ege_wind_proc)(HWND, UINT, WPARAM, LPARAM lParam);			//指向EGE窗口处理函数的指针
 
 void main_loop();
 void play_chess_interface();
@@ -41,6 +42,32 @@ void play_button_click_audio()
 		audio_button_click.start();
 }
 
+LRESULT CALLBACK wind_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	static bool close_flag = false;
+	if (message == WM_CLOSE)
+	{
+		if (!close_flag)
+		{
+			close_flag = true;
+			QuestionDialog dialog(500, 150);
+			dialog.set_title("Dream-Gobang");
+			dialog.set_text("是否要退出 “梦幻五子棋” 游戏？");
+			dialog.show();
+			if (dialog.get_response_result() == QuestionDialog::response_yes)
+			{
+				DestroyWindow(hWnd);
+				return 0;
+			}
+			close_flag = false;
+		}
+		return 0;
+	}
+	if (message == WM_DESTROY)
+		Gobang::remove_font_res();
+	return ege_wind_proc(hWnd, message, wParam, lParam);
+}
+
 int main()
 {
 	char cwd[1024];
@@ -53,10 +80,13 @@ int main()
 	setcursorstyle("res/cursor.ani");
 
 	initgraph(Gobang::WINDOW_WIDTH, Gobang::WINDOW_HEIGHT);
-	setbkcolor(WHITE);
+	setbkmode(TRANSPARENT);
 	setcaption("梦幻五子棋");
 
 	WelcomeInterface::opening_animation();
+	ege_wind_proc = (LRESULT(CALLBACK *)(HWND, UINT, WPARAM, LPARAM lParam))GetWindowLong(getHWnd(), GWL_WNDPROC);
+	SetWindowLong(getHWnd(), GWL_WNDPROC, (LONG)wind_proc);
+	Gobang::load_font_res();
 
 	game_bgm = new Music("res/game-bgm.wma", -1, 2);
 	game_bgm->set_volume(0.85);
@@ -136,6 +166,7 @@ void main_loop()
 						if (dialog.get_response_result() == QuestionDialog::response_yes)
 						{
 							GradientAnimation::transition_ease_in();
+							Gobang::remove_font_res();
 							closegraph();
 							exit(0);
 						}

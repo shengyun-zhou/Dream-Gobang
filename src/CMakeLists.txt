@@ -99,6 +99,8 @@ set(PROJECT_SOURCE_FILE
 	widgets/Button.cpp
 	widgets/ImageButton.h
 	widgets/ImageButton.cpp
+	widgets/ImageTextButton.h
+	widgets/ImageTextButton.cpp
 	widgets/Dialog.h
 	widgets/Dialog.cpp
 	widgets/MessageDialog.h

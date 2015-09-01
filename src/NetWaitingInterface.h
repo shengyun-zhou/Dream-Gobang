@@ -1,5 +1,6 @@
 #pragma once
 #include "widgets/ImageButton.h"
+#include "widgets/ImageTextButton.h"
 #include "tools/Image.h"
 #include <string>
 
@@ -9,10 +10,9 @@ class NetWaitingInterface
 {
 private:
 	static Image* bg_img_;
-	static ImageButton* button_cancel_;
+	static ImageTextButton* button_cancel_;
 
-	static const int text_x_offset = 25;
-	static const int text_y_offset = 7;
+	static const int button_text_size_ = 22;
 	static const int tip_text_font_size_ = 30;
 	static const int margin_ = 15;
 	string tip_text_;

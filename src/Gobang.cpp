@@ -24,7 +24,7 @@ namespace Gobang
 	void set_font(const char* font_family, int font_size, bool has_underline, bool is_bold, PIMAGE pimg)
 	{
 		LOGFONT font;
-		getfont(&font, pimg);
+		SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &font, NULL);
 		strcpy(font.lfFaceName, font_family);
 		font.lfHeight = -font_size;
 		font.lfWidth = 0;
