@@ -845,11 +845,13 @@ void client_play(ClientPlayer* player, NetPlayerInfoView* self_player, NetPlayer
 					play_interface.on_mouse_click(NetPlayingInterface::ACTION_PLAY_CHESS);
 					chess.set_point(action_info.ex_data.chess_pos[0], action_info.ex_data.chess_pos[1],
 						opposite_player->get_piece_type());
-					play_interface.play_chess_by_opposite(action_info.ex_data.chess_pos[0], action_info.ex_data.chess_pos[1],
-						opposite_player->get_piece_type());
+					is_self_playing = true;
+					opposite_player->set_playing_status(false);
+					self_player->set_playing_status(true);
+					play_interface.update_interface();
+					delay_ms(1);																//更新画面，以免游戏结束时无法看到最后一步的棋子
 					if (play_interface.show_result())
 						break;
-					is_self_playing = true;
 				}
 			}
 			if (mousemsg())
@@ -893,10 +895,13 @@ void client_play(ClientPlayer* player, NetPlayerInfoView* self_player, NetPlayer
 							play_interface.on_mouse_click(NetPlayingInterface::ACTION_PLAY_CHESS);
 							play_interface.mouse_to_coor(msg.x, msg.y, row, col);
 							chess.set_point(row, col, self_player->get_piece_type());
-							play_interface.play_chess_by_self(msg.x, msg.y, self_player->get_piece_type());
 							player->clean_mission_queue();
 							player->send_chess_pos(row, col);
 							is_self_playing = false;
+							opposite_player->set_playing_status(true);
+							self_player->set_playing_status(false);
+							play_interface.update_interface();
+							delay_ms(1);
 							if (play_interface.show_result())
 								goto game_end;
 							break;
@@ -911,9 +916,19 @@ void client_play(ClientPlayer* player, NetPlayerInfoView* self_player, NetPlayer
 			{
 				start_flag = true;
 				if (self_player->get_piece_type() == Chess::BLACK)
+				{
 					is_self_playing = true;
+					opposite_player->set_playing_status(false);
+					self_player->set_playing_status(true);
+					play_interface.update_interface();
+				}
 				else
+				{
 					is_self_playing = false;
+					opposite_player->set_playing_status(true);
+					self_player->set_playing_status(false);
+					play_interface.update_interface();
+				}
 			}
 		}
 	game_end:;
@@ -968,11 +983,13 @@ void server_play(ServerPlayer* player, NetPlayerInfoView* self_player, NetPlayer
 					play_interface.on_mouse_click(NetPlayingInterface::ACTION_PLAY_CHESS);
 					chess.set_point(action_info.ex_data.chess_pos[0], action_info.ex_data.chess_pos[1],
 						opposite_player->get_piece_type());
-					play_interface.play_chess_by_opposite(action_info.ex_data.chess_pos[0], action_info.ex_data.chess_pos[1],
-																								opposite_player->get_piece_type());
+					is_self_playing = true;
+					opposite_player->set_playing_status(false);
+					self_player->set_playing_status(true);
+					play_interface.update_interface();
+					delay_ms(1);
 					if (play_interface.show_result())
 						break;
-					is_self_playing = true;
 				}
 			}
 			if (mousemsg())
@@ -1016,10 +1033,13 @@ void server_play(ServerPlayer* player, NetPlayerInfoView* self_player, NetPlayer
 							play_interface.on_mouse_click(NetPlayingInterface::ACTION_PLAY_CHESS);
 							play_interface.mouse_to_coor(msg.x, msg.y, row, col);
 							chess.set_point(row, col, self_player->get_piece_type());
-							play_interface.play_chess_by_self(msg.x, msg.y, self_player->get_piece_type());
 							player->clean_mission_queue();
 							player->send_chess_pos(row, col);
 							is_self_playing = false;
+							opposite_player->set_playing_status(true);
+							self_player->set_playing_status(false);
+							play_interface.update_interface();
+							delay_ms(1);
 							if (play_interface.show_result())
 								goto game_end;
 							break;
@@ -1034,9 +1054,19 @@ void server_play(ServerPlayer* player, NetPlayerInfoView* self_player, NetPlayer
 			{
 				start_flag = true;
 				if (self_player->get_piece_type() == Chess::BLACK)
+				{
 					is_self_playing = true;
+					opposite_player->set_playing_status(false);
+					self_player->set_playing_status(true);
+					play_interface.update_interface();
+				}
 				else
+				{
 					is_self_playing = false;
+					opposite_player->set_playing_status(true);
+					self_player->set_playing_status(false);
+					play_interface.update_interface();
+				}
 			}
 		}
 	game_end:;

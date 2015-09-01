@@ -7,6 +7,7 @@ NetPlayerInfoView::NetPlayerInfoView(bool is_opposite)
 	is_opposite_ = is_opposite;
 	black_piece_ = new Image("res/black-piece.png");
 	white_piece_ = new Image("res/white-piece.png");
+	playing_indicator_ = new Image("res/object-select.png");
 
 	button_ready_ = new ImageTextButton();
 	static Image button_img("res/button-blue-middle.png");
@@ -22,6 +23,7 @@ NetPlayerInfoView::NetPlayerInfoView(bool is_opposite)
 
 	player_pic_ = NULL;
 	is_ready_ = false;
+	is_playing_ = false;
 	piece_type_ = Chess::EMPTY;
 	pos_x_ = pos_y_ = 0;
 	view_width_ = view_height_ = 0;
@@ -53,10 +55,15 @@ void NetPlayerInfoView::calc_view_width_height()
 	}
 
 	Gobang::set_font(Gobang::font_default, ready_font_size_);
-	if (is_ready_)
+	if(is_ready_)
 	{
 		view_width_ = max(view_width_, textwidth("Ready!"));
 		height += textheight("Ready!") + margin_;
+		if (is_playing_)
+		{
+			view_width_ = max(view_width_, playing_indicator_->get_width());
+			height += playing_indicator_->get_height() + margin_;
+		}
 	}
 	else if (!is_opposite_)
 	{
@@ -139,10 +146,17 @@ void NetPlayerInfoView::show()
 	{
 		Gobang::set_font(Gobang::font_default, ready_font_size_);
 		xyprintf(pos_x_ + view_width_ / 2 - textwidth("Ready!") / 2, target_top, "Ready!");
+		target_top += textheight("Ready!") + margin_;
+		if (is_playing_)
+		{
+			playing_indicator_->show_image_with_alpha(pos_x_ + view_width_ / 2 - playing_indicator_->get_width() / 2, target_top, 1.0);
+			target_top += playing_indicator_->get_height() + margin_;
+		}
 	}
 	else if (!is_opposite_)
 	{
 		button_ready_->set_position(pos_x_ + view_width_ / 2 - button_ready_->get_width() / 2, target_top);
 		button_ready_->show();
+		target_top += button_ready_->get_height() + margin_;
 	}
 }

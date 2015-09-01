@@ -11,6 +11,7 @@ class NetPlayerInfoView
 private:
 	bool is_opposite_;
 	bool is_ready_;
+	bool is_playing_;
 	Chess::PieceType piece_type_;
 	string player_name_;
 	int pos_x_;
@@ -24,6 +25,7 @@ private:
 	static const int button_text_size_ = 22;
 	Image* black_piece_;
 	Image* white_piece_;
+	Image* playing_indicator_;
 	Image* player_pic_;
 	ImageTextButton* button_ready_;
 
@@ -91,6 +93,16 @@ public:
 	Chess::PieceType get_piece_type()
 	{
 		return piece_type_;
+	}
+
+	void set_playing_status(bool is_playing)
+	{
+		is_playing_ = is_playing;
+	}
+
+	bool is_playing()
+	{
+		return is_playing_;
 	}
 
 	void show();
