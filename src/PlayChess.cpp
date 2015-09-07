@@ -1,5 +1,15 @@
 #include "PlayChess.h"
 #include "tools/GradientAnimation.h"
+#include "image_game_main_bg.h"
+#include "image_button_replay.h"
+#include "image_button_hover_replay.h"
+#include "image_button_press_replay.h"
+#include "image_button_quit.h"
+#include "image_button_hover_quit.h"
+#include "image_button_press_quit.h"
+#include "image_result_tie.h"
+#include "image_result_win_black.h"
+#include "image_result_win_white.h"
 
 const int offset = 10;
 ImageTextButton* PlayChess::button_game_quit_ = NULL;
@@ -10,21 +20,21 @@ PlayChess::PlayChess(Chess& c) : chess_(c)
 	if (!button_game_replay_)
 	{
 		button_game_replay_ = new ImageTextButton();
-		button_game_replay_->add_normal_image(new Image("res/button-replay.png"), 0, 0);
+		button_game_replay_->add_normal_image(new Image(binary_button_replay_png, sizeof(binary_button_replay_png)), 0, 0);
 		button_game_replay_->set_normal_text("重 新 开 始", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
-		button_game_replay_->add_hover_image(new Image("res/button-hover-replay.png"), 0, 0);
+		button_game_replay_->add_hover_image(new Image(binary_button_hover_replay_png, sizeof(binary_button_hover_replay_png)), 0, 0);
 		button_game_replay_->set_hover_text("重 新 开 始", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
-		button_game_replay_->add_press_image(new Image("res/button-press-replay.png"), 0, 0);
+		button_game_replay_->add_press_image(new Image(binary_button_press_replay_png, sizeof(binary_button_press_replay_png)), 0, 0);
 		button_game_replay_->set_press_text("重 新 开 始", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 	}
 	if (!button_game_quit_)
 	{
 		button_game_quit_ = new ImageTextButton();
-		button_game_quit_->add_normal_image(new Image("res/button-quit.png"), 0, 0);
+		button_game_quit_->add_normal_image(new Image(binary_button_quit_png, sizeof(binary_button_quit_png)), 0, 0);
 		button_game_quit_->set_normal_text("退 出 游 戏", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
-		button_game_quit_->add_hover_image(new Image("res/button-hover-quit.png"), 0, 0);
+		button_game_quit_->add_hover_image(new Image(binary_button_hover_quit_png, sizeof(binary_button_hover_quit_png)), 0, 0);
 		button_game_quit_->set_hover_text("退 出 游 戏", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
-		button_game_quit_->add_press_image(new Image("res/button-press-quit.png"), 0, 0);
+		button_game_quit_->add_press_image(new Image(binary_button_press_quit_png, sizeof(binary_button_press_quit_png)), 0, 0);
 		button_game_quit_->set_press_text("退 出 游 戏", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 	}
 }
@@ -46,7 +56,7 @@ void PlayChess::show_chessboard()
 	setbkcolor(WHITE);
 
 	//全局背景
-	static Image game_main_bg = Image("res/game-main-bg.jpg");
+	static Image game_main_bg = Image(binary_game_main_bg_jpg, sizeof(binary_game_main_bg_jpg));
 	game_main_bg.show_image(0, 0);
 
 	//棋盘
@@ -82,9 +92,9 @@ PlayChess::ACTION_TYPE PlayChess::action_judge(int x, int y)
 		else
 			return ACTION_NONE;
 	}
-	else if (x >= 930 && y >= 100 && x <= 1170 && y <= 160)
+	else if (button_game_replay_->is_mouse_in_button(x, y))
 		return ACTION_REPLAY;
-	else if (x >= 930 && y >= 200 && x <= 1170 && y <= 260)
+	else if (button_game_quit_->is_mouse_in_button(x, y))
 		return ACTION_QUIT;
 	else
 		return ACTION_NONE;
@@ -99,13 +109,13 @@ void PlayChess::show_last_game(ChessSaver& saver)
 
 bool PlayChess::show_outcome()
 {
-	static Image image_tie("res/result-tie.png");
-	static Image image_win_black("res/result-win-black.png");
-	static Image image_win_white("res/result-win-white.png");
+	static Image image_tie(binary_result_tie_png, sizeof(binary_result_tie_png));
+	static Image image_win_black(binary_result_win_black_png, sizeof(binary_result_win_black_png));
+	static Image image_win_white(binary_result_win_white_png, sizeof(binary_result_win_white_png));
 	if(chess_.judge_win() == Chess::BLACK)
 	{
-	  const int image_width = 454;
-	  const int image_height = 340;
+	  const int image_width = image_win_black.get_width();
+	  const int image_height = image_win_black.get_height();
 	  int i = 0, colorpos = 0, color = 0, deltaAlpha = 12, deltaColor = 4;
 		for (color = 0; color <= 255; color += deltaColor, delay_fps(60))
 		{
@@ -120,8 +130,8 @@ bool PlayChess::show_outcome()
 	}
 	else if(chess_.judge_win() == Chess::WHITE)
 	{
-		const int image_width = 454;
-		const int image_height = 340;
+		const int image_width = image_win_white.get_width();
+		const int image_height = image_win_white.get_height();
 	  int i = 0, colorpos = 0, color = 0, deltaAlpha = 12, deltaColor = 4;
 		for (color = 0; color <= 255; color += deltaColor, delay_fps(60))
 		{
@@ -136,8 +146,8 @@ bool PlayChess::show_outcome()
 	}
 	else if(chess_.judge_win() == Chess::EMPTY && chess_.is_chess_full())
 	{
-	  const int image_width = 500;
-	  const int image_height = 200;
+	  const int image_width = image_tie.get_width();
+	  const int image_height = image_tie.get_height();
 	  int i = 0, colorpos = 0, color = 0, deltaAlpha = 12, deltaColor = 4;
 	  for (color = 0; color <= 255; color += deltaColor, delay_fps(60))
 	  {

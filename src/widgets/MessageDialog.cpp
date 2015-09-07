@@ -1,5 +1,8 @@
 #include "MessageDialog.h"
 #include "../Gobang.h"
+#include "image_dialog_button_ok.h"
+#include "image_dialog_icon_information.h"
+#include "image_dialog_icon_error.h"
 
 PIMAGE MessageDialog::icon_infomation_ = NULL;
 PIMAGE MessageDialog::icon_error_ = NULL;
@@ -10,19 +13,19 @@ MessageDialog::MessageDialog(int width, int height, MessageDialog::IconType type
 	if (!icon_infomation_)
 	{
 		icon_infomation_ = newimage();
-		getimage(icon_infomation_, "res/dialog/dialog-icon-information.png");
+		getimage_mem(icon_infomation_, binary_dialog_icon_information_png, sizeof(binary_dialog_icon_information_png));
 	}
 	if (!icon_error_)
 	{
 		icon_error_ = newimage();
-		getimage(icon_error_, "res/dialog/dialog-icon-error.png");
+		getimage_mem(icon_error_, binary_dialog_icon_error_png, sizeof(binary_dialog_icon_error_png));
 	}
 	if (!ok_button_)
 	{
 		ok_button_ = new Button(button_width_, button_height_);
 		ok_button_->set_text("È·¶¨");
 		static PIMAGE icon_ok = newimage();
-		getimage(icon_ok, "res/dialog/dialog-button-ok.png");
+		getimage_mem(icon_ok, binary_dialog_button_ok_png, sizeof(binary_dialog_button_ok_png));
 		ok_button_->set_icon(icon_ok);
 	}
 

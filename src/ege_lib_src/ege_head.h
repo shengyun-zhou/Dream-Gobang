@@ -220,7 +220,7 @@ public:
 	int  getimage(LPCWSTR pImgFile, int zoomWidth = 0, int zoomHeight = 0);
 	int  getimage(LPCSTR pResType, LPCSTR pResName, int zoomWidth = 0, int zoomHeight = 0);
 	int  getimage(LPCWSTR pResType, LPCWSTR pResName, int zoomWidth = 0, int zoomHeight = 0);
-	int  getimage(void* pMem, long size);
+	int  getimage(const void* pMem, long size);
 	void putimage(int dstX, int dstY, DWORD dwRop = SRCCOPY) const;
 	void putimage(int dstX, int dstY, int dstWidth, int dstHeight, int srcX, int srcY, DWORD dwRop = SRCCOPY) const;
 	void putimage(PIMAGE pDstImg, int dstX, int dstY, DWORD dwRop = SRCCOPY) const;
@@ -229,6 +229,7 @@ public:
 	int  saveimage(LPCSTR  filename);
 	int  saveimage(LPCWSTR filename);
 	int  getpngimg(FILE* fp);
+	int	 getpngimg(const void* pngData, long dataSize);
 	int  savepngimg(FILE* fp, int bAlpha);
 	int
 	putimage_transparent(

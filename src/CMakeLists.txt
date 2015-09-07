@@ -122,6 +122,8 @@ set(PROJECT_SOURCE_FILE
     #Please put the new source files and header files here
     )
 
+add_subdirectory(res)
+INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/res)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/lib)
 	
@@ -137,9 +139,9 @@ if(WIN32)
         set(CMAKE_RC_COMPILER_INIT windres)
         enable_language(RC)
         set(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> -O coff -i <SOURCE> -o <OBJECT>")
-		list(APPEND PROJECT_SOURCE_FILE Dream-Gobang-MinGW.rc)
+		list(APPEND PROJECT_SOURCE_FILE res/Dream-Gobang-MinGW.rc)
 	elseif(MSVC)
-		list(APPEND PROJECT_SOURCE_FILE Dream-Gobang-vs.rc)
+		list(APPEND PROJECT_SOURCE_FILE res/Dream-Gobang-vs.rc)
 	endif()
 endif()
 
@@ -147,13 +149,21 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 add_executable (Dream-Gobang ${PROJECT_SOURCE_FILE})
 target_link_libraries(Dream-Gobang ege)
 
+set(INSTALL_RES
+	${PROJECT_SOURCE_DIR}/res/cursor.ani
+	${PROJECT_SOURCE_DIR}/res/font-llt.ttc
+	${PROJECT_SOURCE_DIR}/res/font-yahei-mono.ttf
+	${PROJECT_SOURCE_DIR}/res/button-click.wav
+	${PROJECT_SOURCE_DIR}/res/game-bgm.wma
+)
+
 if(MINGW)
-	install(DIRECTORY ${PROJECT_SOURCE_DIR}/res  DESTINATION ${EXECUTABLE_OUTPUT_PATH})
+	install(FILES ${INSTALL_RES}  DESTINATION ${EXECUTABLE_OUTPUT_PATH}/res)
 elseif(MSVC)
-	install(DIRECTORY ${PROJECT_SOURCE_DIR}/res  DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Debug)
-	install(DIRECTORY ${PROJECT_SOURCE_DIR}/res  DESTINATION ${EXECUTABLE_OUTPUT_PATH}/MinSizeRel)
-	install(DIRECTORY ${PROJECT_SOURCE_DIR}/res  DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Release)
-	install(DIRECTORY ${PROJECT_SOURCE_DIR}/res  DESTINATION ${EXECUTABLE_OUTPUT_PATH}/RelWithDebInfo)
+	install(FILES ${INSTALL_RES}  DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Debug/res)
+	install(FILES ${INSTALL_RES}  DESTINATION ${EXECUTABLE_OUTPUT_PATH}/MinSizeRel/res)
+	install(FILES ${INSTALL_RES}  DESTINATION ${EXECUTABLE_OUTPUT_PATH}/Release/res)
+	install(FILES ${INSTALL_RES}  DESTINATION ${EXECUTABLE_OUTPUT_PATH}/RelWithDebInfo/res)
 endif()
 
 #project(Gobang-Terminal-Test)
@@ -169,9 +179,3 @@ endif()
 #	set(CMAKE_EXE_LINKER_FLAGS "")
 #endif()
 #add_executable (Gobang-Terminal-Test ${TERMINAL_TEST_SOURCE_FILE})
-
-#set (Socket-Test-SOURCE 
-#	SocketTestMain.cpp
-#	socket/ServerSocket.cpp
-#	socket/ClientSocket.cpp)
-#add_executable(SocketTest ${Socket-Test-SOURCE})

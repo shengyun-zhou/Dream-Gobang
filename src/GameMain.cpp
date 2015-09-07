@@ -159,6 +159,7 @@ void main_loop()
 					}
 					case WelcomeInterface::ACTION_EXIT_GAME:
 					{
+						play_button_click_audio();
 						QuestionDialog dialog(500, 150);
 						dialog.set_title("Dream-Gobang");
 						dialog.set_text("是否要退出 “梦幻五子棋” 游戏？");
@@ -438,6 +439,8 @@ void game_net_select_interface()
 				net_select_interface.on_mouse_click(action_type);
 			else if (msg.is_up() && msg.is_left())
 			{
+				if (action_type != NetSelectionInterface::ACTION_NONE)
+					play_button_click_audio();
 				switch (action_type)
 				{
 					case NetSelectionInterface::ACTION_OPEN_ROOM:
@@ -486,6 +489,8 @@ void game_net_settings_interface()
 			settings_interface.on_mouse_click(action_type);
 		if (msg.is_up() && msg.is_left())
 		{
+			if (action_type != NetSettingsInterface::ACTION_NONE)
+				play_button_click_audio();
 			switch (action_type)
 			{
 				case NetSettingsInterface::ACTION_SAVE:
@@ -677,6 +682,8 @@ bool wait_open_room()
 				wait_interface.on_mouse_click(action_type);
 			else if (msg.is_up() && msg.is_left())
 			{
+				if (action_type != NetWaitingInterface::ACTION_NONE)
+					play_button_click_audio();
 				switch (action_type)
 				{
 					case NetWaitingInterface::ACTION_CANCEL:
@@ -769,6 +776,8 @@ bool wait_enter_room()
 				wait_interface.on_mouse_click(action_type);
 			else if (msg.is_up() && msg.is_left())
 			{
+				if (action_type != NetWaitingInterface::ACTION_NONE)
+					play_button_click_audio();
 				switch (action_type)
 				{
 					case NetWaitingInterface::ACTION_CANCEL:
@@ -863,6 +872,8 @@ void client_play(ClientPlayer* player, NetPlayerInfoView* self_player, NetPlayer
 					play_interface.on_mouse_click(action);
 				else if (msg.is_up() && msg.is_left())
 				{
+					if (action != NetPlayingInterface::ACTION_NONE)
+						play_button_click_audio();
 					switch (action)
 					{
 						case NetPlayingInterface::ACTION_READY:
@@ -1001,6 +1012,8 @@ void server_play(ServerPlayer* player, NetPlayerInfoView* self_player, NetPlayer
 					play_interface.on_mouse_click(action);
 				else if (msg.is_up() && msg.is_left())
 				{
+					if (action != NetPlayingInterface::ACTION_NONE)
+						play_button_click_audio();
 					switch (action)
 					{
 						case NetPlayingInterface::ACTION_READY:

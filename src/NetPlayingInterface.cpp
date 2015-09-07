@@ -2,6 +2,10 @@
 #include "Gobang.h"
 #include "tools/GradientAnimation.h"
 #include "widgets/MessageDialog.h"
+#include "image_game_network_bg.h"
+#include "image_button_quit.h"
+#include "image_button_hover_quit.h"
+#include "image_button_press_quit.h"
 
 ImageTextButton* NetPlayingInterface::button_quit_ = NULL;
 Image* NetPlayingInterface::game_bg_img_ = NULL;
@@ -12,15 +16,15 @@ NetPlayingInterface::NetPlayingInterface(NetPlayerInfoView* self_player, NetPlay
 	opposite_player_ = opposite_player;
 	chess_ = chess;
 	if (!game_bg_img_)
-		game_bg_img_ = new Image("res/game-network-bg.jpg");
+		game_bg_img_ = new Image(binary_game_network_bg_jpg, sizeof(binary_game_network_bg_jpg));
 	if (!button_quit_)
 	{
 		button_quit_ = new ImageTextButton();
-		button_quit_->add_normal_image(new Image("res/button-quit.png"), 0, 0);
+		button_quit_->add_normal_image(new Image(binary_button_quit_png, sizeof(binary_button_quit_png)), 0, 0);
 		button_quit_->set_normal_text("退 出 对 战", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
-		button_quit_->add_hover_image(new Image("res/button-hover-quit.png"), 0, 0);
+		button_quit_->add_hover_image(new Image(binary_button_hover_quit_png, sizeof(binary_button_hover_quit_png)), 0, 0);
 		button_quit_->set_hover_text("退 出 对 战", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
-		button_quit_->add_press_image(new Image("res/button-press-quit.png"), 0, 0);
+		button_quit_->add_press_image(new Image(binary_button_press_quit_png, sizeof(binary_button_press_quit_png)), 0, 0);
 		button_quit_->set_press_text("退 出 对 战", button_text_size_, text_x_offset_, -1, Gobang::font_llt);
 	}
 }
@@ -48,7 +52,7 @@ void NetPlayingInterface::show_interface()
 
 	chess_board_.set_position((Gobang::WINDOW_WIDTH - chess_board_.get_view_width()) / 2, 30);
 	chess_board_.show_empty_board();
-	button_quit_->set_position(Gobang::WINDOW_WIDTH - margin_ - button_quit_->get_width(), 
+	button_quit_->set_position(Gobang::WINDOW_WIDTH - margin_ - button_quit_->get_width(),
 														 Gobang::WINDOW_HEIGHT - 80 - button_quit_->get_height());
 	button_quit_->show();
 	self_player_->set_position(Gobang::WINDOW_WIDTH - margin_ - self_player_->get_view_width(),

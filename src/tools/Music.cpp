@@ -29,7 +29,6 @@ DWORD WINAPI Music::on_player_running(LPVOID data)
 	bool is_window_iconic = false;
 	BOOL window_iconic_status;
 	clock_t start_time;
-	HWND active_window;
 	while (num_play == -1 || num_play > 0)
 	{
 		//printf("start_playing %d times...\n", num_play);
@@ -39,14 +38,13 @@ DWORD WINAPI Music::on_player_running(LPVOID data)
 		while (music_player.GetPlayStatus() != MUSIC_MODE_STOP)
 		{
 			window_iconic_status = IsIconic(Music::win32_handle_);
-			active_window = GetForegroundWindow();
-			if ((window_iconic_status || active_window != Music::win32_handle_) && is_window_iconic == false)
+			if (window_iconic_status && is_window_iconic == false)
 			{
 				is_window_iconic = true;
 				//printf("on_window_iconic.\n");
 				music_player.Pause();
 			}
-			else if ((!window_iconic_status && active_window == Music::win32_handle_) && is_window_iconic)
+			else if (!window_iconic_status && is_window_iconic)
 			{
 				music_player.Play();
 				is_window_iconic = false;
@@ -58,7 +56,7 @@ DWORD WINAPI Music::on_player_running(LPVOID data)
 			}
 			if (music_data->resume_mission_)
 			{
-				if (!window_iconic_status && active_window == Music::win32_handle_)
+				if (!window_iconic_status)
 					music_player.Play();
 				music_data->resume_mission_ = false;
 			}

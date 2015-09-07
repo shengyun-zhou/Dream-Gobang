@@ -1,5 +1,9 @@
 #include "NetWaitingInterface.h"
 #include "Gobang.h"
+#include "image_button_blue_middle.h"
+#include "image_button_blue_middle_hover.h"
+#include "image_button_blue_middle_press.h"
+#include "image_game_network_bg.h"
 
 Image* NetWaitingInterface::bg_img_ = NULL;
 ImageTextButton* NetWaitingInterface::button_cancel_ = NULL;
@@ -7,10 +11,10 @@ ImageTextButton* NetWaitingInterface::button_cancel_ = NULL;
 NetWaitingInterface::NetWaitingInterface()
 {
 	if (!bg_img_)
-		bg_img_ = new Image("res/game-network-bg.jpg");
-	static Image* button_img = new Image("res/button-blue-middle.png");
-	static Image* button_hover_img = new Image("res/button-blue-middle-hover.png");
-	static Image* button_press_img = new Image("res/button-blue-middle-press.png");
+		bg_img_ = new Image(binary_game_network_bg_jpg, sizeof(binary_game_network_bg_jpg));
+	static Image* button_img = new Image(binary_button_blue_middle_png, sizeof(binary_button_blue_middle_png));
+	static Image* button_hover_img = new Image(binary_button_blue_middle_hover_png, sizeof(binary_button_blue_middle_hover_png));
+	static Image* button_press_img = new Image(binary_button_blue_middle_press_png, sizeof(binary_button_blue_middle_press_png));
 	if (!button_cancel_)
 	{
 		button_cancel_ = new ImageTextButton();

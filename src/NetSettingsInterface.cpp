@@ -1,5 +1,9 @@
 #include "NetSettingsInterface.h"
 #include "Gobang.h"
+#include "image_button_blue_middle.h"
+#include "image_button_blue_middle_hover.h"
+#include "image_button_blue_middle_press.h"
+#include "image_game_network_bg.h"
 
 Image* NetSettingsInterface::bg_img_ = NULL;
 ImageTextButton* NetSettingsInterface::button_save_ = NULL;
@@ -9,11 +13,11 @@ ImageTextButton* NetSettingsInterface::button_edit_[NetSettingsInterface::edit_b
 NetSettingsInterface::NetSettingsInterface(Settings* settings)
 {
 	game_settings_ = settings;
-	static Image* button_img = new Image("res/button-blue-middle.png");
-	static Image* button_hover_img = new Image("res/button-blue-middle-hover.png");
-	static Image* button_press_img = new Image("res/button-blue-middle-press.png");
+	static Image* button_img = new Image(binary_button_blue_middle_png, sizeof(binary_button_blue_middle_png));
+	static Image* button_hover_img = new Image(binary_button_blue_middle_hover_png, sizeof(binary_button_blue_middle_hover_png));
+	static Image* button_press_img = new Image(binary_button_blue_middle_press_png, sizeof(binary_button_blue_middle_press_png));
 	if (!bg_img_)
-		bg_img_ = new Image("res/game-network-bg.jpg");
+		bg_img_ = new Image(binary_game_network_bg_jpg, sizeof(binary_game_network_bg_jpg));
 	if (!button_save_)
 	{
 		button_save_ = new ImageTextButton();
@@ -36,7 +40,6 @@ NetSettingsInterface::NetSettingsInterface(Settings* settings)
 		button_cancel_->set_press_text("È¡ Ïû", button_text_size_);
 		button_cancel_->set_recovery_flag(false);
 	}
-	static Image* text_edit = new Image("res/text-edit.png");
 	for (int i = 0; i < edit_button_num_; i++)
 	{
 		if (!button_edit_[i])
@@ -63,7 +66,7 @@ void NetSettingsInterface::show_interface()
 	PIMAGE black_bg = newimage(1, 1);
 	setbkcolor(BLACK, black_bg);
 	cleardevice(black_bg);
-	putimage_rotatezoom(NULL, black_bg, 0, 0, 0, 0, 0, 
+	putimage_rotatezoom(NULL, black_bg, 0, 0, 0, 0, 0,
 										  (float)(Gobang::WINDOW_WIDTH < Gobang::WINDOW_HEIGHT)?Gobang::WINDOW_HEIGHT:Gobang::WINDOW_WIDTH, 0, 130);
 	delimage(black_bg);
 
@@ -125,7 +128,7 @@ void NetSettingsInterface::show_interface()
 	button_edit_[3]->show();
 	target_top += text_height_2 + text_margin_;
 
-	button_save_->set_position(Gobang::WINDOW_WIDTH - 20 - button_cancel_->get_width() - button_margin_ -  button_save_->get_width(), 
+	button_save_->set_position(Gobang::WINDOW_WIDTH - 20 - button_cancel_->get_width() - button_margin_ -  button_save_->get_width(),
 														 80 - button_margin_ - button_save_->get_height());
 	button_save_->show();
 

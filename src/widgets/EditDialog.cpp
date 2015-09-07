@@ -1,5 +1,8 @@
 #include "EditDialog.h"
 #include "../Gobang.h"
+#include "image_dialog_button_cancel.h"
+#include "image_dialog_button_ok.h"
+#include "image_dialog_icon_edit.h"
 
 PIMAGE EditDialog::dialog_icon_ = NULL;
 Button* EditDialog::ok_button_ = NULL;
@@ -14,7 +17,7 @@ edit_listener_(this)
 		ok_button_ = new Button(button_width_, button_height_);
 		ok_button_->set_text("确定");
 		static PIMAGE icon_ok = newimage();
-		getimage(icon_ok, "res/dialog/dialog-button-ok.png");
+		getimage_mem(icon_ok, binary_dialog_button_ok_png, sizeof(binary_dialog_button_ok_png));
 		ok_button_->set_icon(icon_ok);
 	}
 	if (!cancel_button_)
@@ -22,13 +25,13 @@ edit_listener_(this)
 		cancel_button_ = new Button(button_width_, button_height_);
 		cancel_button_->set_text("取消");
 		static PIMAGE icon_cancel = newimage();
-		getimage(icon_cancel, "res/dialog/dialog-button-cancle.png");
+		getimage_mem(icon_cancel, binary_dialog_button_cancel_png, sizeof(binary_dialog_button_cancel_png));
 		cancel_button_->set_icon(icon_cancel);
 	}
 	if (!dialog_icon_)
 	{
 		dialog_icon_ = newimage();
-		getimage(dialog_icon_, "res/dialog/dialog-icon-edit.png");
+		getimage_mem(dialog_icon_, binary_dialog_icon_edit_png, sizeof(binary_dialog_icon_edit_png));
 	}
 
 	cancel_button_->set_position(width_ - button_margin_ - button_width_, height_ - button_margin_ - button_height_);

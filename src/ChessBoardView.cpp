@@ -1,14 +1,16 @@
 #include "ChessBoardView.h"
 #include "graphics.h"
+#include "image_black_piece.h"
+#include "image_white_piece.h"
 Image* ChessBoardView::black_piece_image_ = NULL;
 Image* ChessBoardView::white_piece_image_ = NULL;
 
 ChessBoardView::ChessBoardView()
 {
 	if (!black_piece_image_)
-		black_piece_image_ = new Image("res/black-piece.png");
+		black_piece_image_ = new Image(binary_black_piece_png, sizeof(binary_black_piece_png));
 	if (!white_piece_image_)
-		white_piece_image_ = new Image("res/white-piece.png");
+		white_piece_image_ = new Image(binary_white_piece_png, sizeof(binary_white_piece_png));
 	pos_x_ = pos_y_ = 10;
 	buffer_img_.x = -width_each_row_col_;
 	buffer_img_.y = -width_each_row_col_;
@@ -54,7 +56,7 @@ void ChessBoardView::show_board(const Chess& chess)
 
 bool ChessBoardView::is_mouse_in_board(int x, int y)
 {
-	if (x >= pos_x_ + width_each_row_col_ - offset_ && x <= pos_x_ + Chess::SIZE * width_each_row_col_ + offset_ && 
+	if (x >= pos_x_ + width_each_row_col_ - offset_ && x <= pos_x_ + Chess::SIZE * width_each_row_col_ + offset_ &&
 			y >= pos_y_ + width_each_row_col_ - offset_ && y <= pos_x_ + Chess::SIZE * width_each_row_col_ + offset_)
 		return true;
 	else
@@ -74,7 +76,7 @@ void ChessBoardView::mouse_to_coor(int mouse_x, int mouse_y, int& target_row, in
 				target_col = i / width_each_row_col_ - 1;
 		}
 	}
-} 
+}
 
 void ChessBoardView::draw_piece_by_mouse(int x, int y, Chess::PieceType piece_type)
 {

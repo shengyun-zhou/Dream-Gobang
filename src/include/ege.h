@@ -905,11 +905,11 @@ int EGEAPI getx(PIMAGE pimg = NULL);               // 获取当前 x 坐标
 int EGEAPI gety(PIMAGE pimg = NULL);               // 获取当前 y 坐标
 
 PIMAGE      EGEAPI newimage(); // 创建PIMAGE
-PIMAGE      EGEAPI newimage(int width, int height); // 创建PIMAGE
-PIMAGE	   EGEAPI newimage(HWND hwnd, int width, int height);
+PIMAGE      EGEAPI newimage(int width, int height); // 创建PIMAG
+PIMAGE			EGEAPI newimage(HWND hwnd, int width, int height);
 void        EGEAPI delimage(PIMAGE pImg); // 创建PIMAGE
 color_t*    EGEAPI getbuffer(PIMAGE pImg);
-HDC			EGEAPI getimage_dc(PIMAGE pImg);
+HDC					EGEAPI getimage_dc(PIMAGE pImg);
 
 int  EGEAPI resize(PIMAGE pDstImg, int width, int height); //重设尺寸
 void EGEAPI getimage(PIMAGE pDstImg, int srcX, int srcY, int srcWidth, int srcHeight);             // 从屏幕获取图像
@@ -918,6 +918,7 @@ int  EGEAPI getimage(PIMAGE pDstImg, LPCSTR  pImgFile, int zoomWidth = 0, int zo
 int  EGEAPI getimage(PIMAGE pDstImg, LPCWSTR pImgFile, int zoomWidth = 0, int zoomHeight = 0);     // 从图片文件获取图像(bmp/jpg/gif/emf/wmf)
 int  EGEAPI getimage(PIMAGE pDstImg, LPCSTR  pResType, LPCSTR  pResName, int zoomWidth = 0, int zoomHeight = 0);   // 从资源文件获取图像(bmp/jpg/gif/emf/wmf)
 int  EGEAPI getimage(PIMAGE pDstImg, LPCWSTR pResType, LPCWSTR pResName, int zoomWidth = 0, int zoomHeight = 0);   // 从资源文件获取图像(bmp/jpg/gif/emf/wmf)
+void EGEAPI getimage_mem(PIMAGE pDstImg, const void* memData, long dataSize);											//从内存中的数据获取图像
 void EGEAPI putimage(int dstX, int dstY, const PIMAGE pSrcImg, DWORD dwRop = SRCCOPY);                         // 绘制图像到屏幕
 void EGEAPI putimage(int dstX, int dstY, int dstWidth, int dstHeight, const PIMAGE pSrcImg, int srcX, int srcY, DWORD dwRop = SRCCOPY);    // 绘制图像到屏幕(指定宽高)
 void EGEAPI putimage(int dstX, int dstY, int dstWidth, int dstHeight, const PIMAGE pSrcImg, int srcX, int srcY, int srcWidth, int srcHeight, DWORD dwRop = SRCCOPY);   // 绘制图像到屏幕(指定源宽高和目标宽高进行拉伸)

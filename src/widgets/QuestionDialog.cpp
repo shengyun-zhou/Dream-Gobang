@@ -1,5 +1,9 @@
 #include "QuestionDialog.h"
 #include "../Gobang.h"
+#include "image_dialog_button_cancel.h"
+#include "image_dialog_button_ok.h"
+#include "image_dialog_icon_question.h"
+#include "image_dialog_icon_warning.h"
 
 PIMAGE QuestionDialog::icon_question_ = NULL;
 PIMAGE QuestionDialog::icon_warning_ = NULL;
@@ -12,12 +16,12 @@ yes_button_listener_(NULL, NULL, response_none), no_button_listener_(NULL, NULL,
 	if (!icon_question_)
 	{
 		icon_question_ = newimage();
-		getimage(icon_question_, "res/dialog/dialog-icon-question.png");
+		getimage_mem(icon_question_, binary_dialog_icon_question_png, sizeof(binary_dialog_icon_question_png));
 	}
 	if (!icon_warning_)
 	{
 		icon_warning_ = newimage();
-		getimage(icon_warning_, "res/dialog/dialog-icon-warning.png");
+		getimage_mem(icon_warning_, binary_dialog_icon_warning_png, sizeof(binary_dialog_icon_warning_png));
 	}
 	switch (type)
 	{
@@ -34,7 +38,7 @@ yes_button_listener_(NULL, NULL, response_none), no_button_listener_(NULL, NULL,
 		yes_button_ = new Button(button_width_, button_height_);
 		yes_button_->set_text("确定");
 		static PIMAGE icon_ok = newimage();
-		getimage(icon_ok, "res/dialog/dialog-button-ok.png");
+		getimage_mem(icon_ok, binary_dialog_button_ok_png, sizeof(binary_dialog_button_ok_png));
 		yes_button_->set_icon(icon_ok);
 	}
 	if (!no_button_)
@@ -42,7 +46,7 @@ yes_button_listener_(NULL, NULL, response_none), no_button_listener_(NULL, NULL,
 		no_button_ = new Button(button_width_, button_height_);
 		no_button_->set_text("取消");
 		static PIMAGE icon_cancel = newimage();
-		getimage(icon_cancel, "res/dialog/dialog-button-cancle.png");
+		getimage_mem(icon_cancel, binary_dialog_button_cancel_png, sizeof(binary_dialog_button_cancel_png));
 		no_button_->set_icon(icon_cancel);
 	}
 

@@ -1,6 +1,10 @@
 #include "NetSelectionInterface.h"
 #include "Gobang.h"
 #include "tools/GradientAnimation.h"
+#include "image_game_network_bg.h"
+#include "image_button_blue.h"
+#include "image_button_blue_hover.h"
+#include "image_button_blue_press.h"
 
 ImageTextButton* NetSelectionInterface::button_open_room_ = NULL;
 ImageTextButton* NetSelectionInterface::button_enter_room_ = NULL;
@@ -10,54 +14,56 @@ Image* NetSelectionInterface::bg_img_ = NULL;
 
 NetSelectionInterface::NetSelectionInterface()
 {
+  static Image* button_img = new Image(binary_button_blue_png, sizeof(binary_button_blue_png));
+	static Image* button_hover_img = new Image(binary_button_blue_hover_png, sizeof(binary_button_blue_hover_png));
+	static Image* button_press_img = new Image(binary_button_blue_press_png, sizeof(binary_button_blue_press_png));
 	if (!button_open_room_)
 	{
 		button_open_room_ = new ImageTextButton();
-		button_open_room_->add_normal_image(new Image("res/button-blue.png"), 0, 0);
+		button_open_room_->add_normal_image(button_img, 0, 0);
 		button_open_room_->set_normal_text("开 设 房 间", button_text_size_, -1, -1, Gobang::font_llt);
-		button_open_room_->add_hover_image(new Image("res/button-blue-hover.png"), 0, 0);
+		button_open_room_->add_hover_image(button_hover_img, 0, 0);
 		button_open_room_->set_hover_text("开 设 房 间", button_text_size_, -1, -1, Gobang::font_llt);
-		button_open_room_->add_press_image(new Image("res/button-blue-press.png"), 0, 0);
+		button_open_room_->add_press_image(button_press_img, 0, 0);
 		button_open_room_->set_press_text("开 设 房 间", button_text_size_, -1, -1, Gobang::font_llt);
 	}
 	if (!button_enter_room_)
 	{
 		button_enter_room_ = new ImageTextButton();
-		button_enter_room_->add_normal_image(new Image("res/button-blue.png"), 0, 0);
+		button_enter_room_->add_normal_image(button_img, 0, 0);
 		button_enter_room_->set_normal_text("进 入 房 间", button_text_size_, -1, -1, Gobang::font_llt);
-		button_enter_room_->add_hover_image(new Image("res/button-blue-hover.png"), 0, 0);
+		button_enter_room_->add_hover_image(button_hover_img, 0, 0);
 		button_enter_room_->set_hover_text("进 入 房 间", button_text_size_, -1, -1, Gobang::font_llt);
-		button_enter_room_->add_press_image(new Image("res/button-blue-press.png"), 0, 0);
+		button_enter_room_->add_press_image(button_press_img, 0, 0);
 		button_enter_room_->set_press_text("进 入 房 间", button_text_size_, -1, -1, Gobang::font_llt);
 	}
 	if (!button_net_settings_)
 	{
 		button_net_settings_ = new ImageTextButton();
-		button_net_settings_->add_normal_image(new Image("res/button-blue.png"), 0, 0);
+		button_net_settings_->add_normal_image(button_img, 0, 0);
 		button_net_settings_->set_normal_text("网 络 设 置", button_text_size_, -1, -1, Gobang::font_llt);
-		button_net_settings_->add_hover_image(new Image("res/button-blue-hover.png"), 0, 0);
+		button_net_settings_->add_hover_image(button_hover_img, 0, 0);
 		button_net_settings_->set_hover_text("网 络 设 置", button_text_size_, -1, -1, Gobang::font_llt);
-		button_net_settings_->add_press_image(new Image("res/button-blue-press.png"), 0, 0);
+		button_net_settings_->add_press_image(button_press_img, 0, 0);
 		button_net_settings_->set_press_text("网 络 设 置", button_text_size_, -1, -1, Gobang::font_llt);
 	}
 	if (!button_back_)
 	{
 		button_back_ = new ImageTextButton();
-		button_back_->add_normal_image(new Image("res/button-blue.png"), 0, 0);
+		button_back_->add_normal_image(button_img, 0, 0);
 		button_back_->set_normal_text("返回主界面", button_text_size_, -1, -1, Gobang::font_llt);
-		button_back_->add_hover_image(new Image("res/button-blue-hover.png"), 0, 0);
+		button_back_->add_hover_image(button_hover_img, 0, 0);
 		button_back_->set_hover_text("返回主界面", button_text_size_, -1, -1, Gobang::font_llt);
-		button_back_->add_press_image(new Image("res/button-blue-press.png"), 0, 0);
+		button_back_->add_press_image(button_press_img, 0, 0);
 		button_back_->set_press_text("返回主界面", button_text_size_, -1, -1, Gobang::font_llt);
 	}
 	if (!bg_img_)
-		bg_img_ = new Image("res/game-network-bg.jpg");
+		bg_img_ = new Image(binary_game_network_bg_jpg, sizeof(binary_game_network_bg_jpg));
 }
 
 
 NetSelectionInterface::~NetSelectionInterface()
 {
-	RemoveFontResource("res/font-llt.ttc");
 }
 
 void NetSelectionInterface::enter_interface()

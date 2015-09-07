@@ -13,7 +13,6 @@ public:
 		ACTION_BACK
 	};
 
-
 	SettingsInterface(Settings* settings);
 	action_type action_judge(int x, int y);
 

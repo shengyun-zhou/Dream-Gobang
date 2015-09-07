@@ -1,6 +1,12 @@
 #include "SettingsInterface.h"
 #include "tools/Image.h"
 #include "Chess.h"
+#include "image_game_welcome_bg.h"
+#include "image_game_settings_audio.h"
+#include "image_game_settings_back.h"
+#include "image_game_settings_select_black.h"
+#include "image_game_settings_select_white.h"
+#include "image_object_select.h"
 
 SettingsInterface::SettingsInterface(Settings* settings)
 {
@@ -9,27 +15,27 @@ SettingsInterface::SettingsInterface(Settings* settings)
 
 void SettingsInterface::update_interface()
 {
-	static Image object_select("res/object-select.png");
-	static Image game_settings_bg("res/game-welcom-bg.jpg");
+	static Image object_select(binary_object_select_png, sizeof(binary_object_select_png));
+	static Image game_settings_bg(binary_game_welcome_bg_jpg, sizeof(binary_game_welcome_bg_jpg));
 
 	game_settings_bg.show_image(0, 0);
 
-	static Image settings_select_black("res/game-settings-select-black.png");
+	static Image settings_select_black(binary_game_settings_select_black_png, sizeof(binary_game_settings_select_black_png));
 	settings_select_black.show_image_with_alpha(30, 350, 0.9);
 	if (settings_->get_piece_color() == Chess::BLACK)
 		object_select.show_image_with_alpha(90, 480, 1.0);
 
-	static Image settings_select_white("res/game-settings-select-white.png");
+	static Image settings_select_white(binary_game_settings_select_white_png, sizeof(binary_game_settings_select_white_png));
 	settings_select_white.show_image_with_alpha(260, 350, 0.9);
 	if (settings_->get_piece_color() == Chess::WHITE)
 		object_select.show_image_with_alpha(320, 480, 1.0);
 
-	static Image settings_audio("res/game-settings-audio.png");
+	static Image settings_audio(binary_game_settings_audio_png, sizeof(binary_game_settings_audio_png));
 	settings_audio.show_image_with_alpha(30, 520, 0.9);
 	if (settings_->is_audio_on())
 		object_select.show_image_with_alpha(90, 630, 1.0);
 
-	static Image settings_back("res/game-settings-back.png");
+	static Image settings_back(binary_game_settings_back_png, sizeof(binary_game_settings_back_png));
 	settings_back.show_image_with_alpha(260, 500, 0.9);
 }
 

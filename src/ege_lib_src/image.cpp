@@ -601,6 +601,90 @@ IMAGE::getpngimg(FILE* fp) {
 	return 0;
 }
 
+typedef struct
+{
+	const unsigned char* data;
+	int size;
+	int offset;
+}ImageSource;
+
+static void pngReadCallback(png_structp png_ptr, png_bytep data, png_size_t length)
+{
+	ImageSource* isource = (ImageSource*)png_get_io_ptr(png_ptr);
+
+	if (isource->offset + length <= isource->size)
+	{
+		memcpy(data, isource->data + isource->offset, length);
+		isource->offset += length;
+	}
+	else
+		png_error(png_ptr, "pngReaderCallback failed");
+}
+
+int
+IMAGE::getpngimg(const void* pngData, long dataSize) {
+	png_structp png_ptr;
+	png_infop info_ptr;
+	uint32 width, height, depth;
+	if (!pngData)
+		return grNullPointer;
+
+	{
+		char header[16];
+		uint32 number = 8;
+
+		memcpy(header, pngData, number);
+		int isn_png = png_sig_cmp((png_const_bytep)header, 0, number);
+
+		if (isn_png) {
+			return grIOerror;
+		}
+	}
+
+	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	if (png_ptr == NULL) {
+		return -1;
+	}
+	info_ptr = png_create_info_struct(png_ptr);
+	if (info_ptr == NULL) {
+		png_destroy_write_struct(&png_ptr, NULL);
+		return -1;
+	}
+
+	ImageSource imgsource;
+	imgsource.data = (const unsigned char*)pngData;
+	imgsource.size = dataSize;
+	imgsource.offset = 0;
+	png_set_read_fn(png_ptr, &imgsource, pngReadCallback);
+	png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_BGR | PNG_TRANSFORM_EXPAND, NULL);
+	png_set_expand(png_ptr);
+
+	newimage(NULL, (int)(info_ptr->width), (int)(info_ptr->height)); //png_get_IHDR
+	width = info_ptr->width;
+	height = info_ptr->height;
+	depth = info_ptr->pixel_depth;
+
+	png_bytepp row_pointers = png_get_rows(png_ptr, info_ptr);
+	for (uint32 i = 0; i < height; ++i) {
+		if (depth == 24) {
+			for (uint32 j = 0; j < width; ++j) {
+				m_pBuffer[i * width + j] = 0xFFFFFF & (DWORD&)row_pointers[i][j * 3];
+			}
+		}
+		else if (depth == 32) {
+			for (uint32 j = 0; j < width; ++j) {
+				m_pBuffer[i * width + j] = ((DWORD*)(row_pointers[i]))[j];
+				if ((m_pBuffer[i * width + j] & 0xFF000000) == 0) {
+					m_pBuffer[i * width + j] = 0;
+				}
+			}
+		}
+	}
+	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+	return 0;
+}
+
+
 int
 IMAGE::savepngimg(FILE* fp, int bAlpha) {
 	unsigned long i, j;
@@ -822,8 +906,10 @@ IMAGE::getimage(LPCWSTR pResType, LPCWSTR pResName, int zoomWidth, int zoomHeigh
 	return grIOerror;
 }
 int
-IMAGE::getimage(void* pMem, long size) {
+IMAGE::getimage(const void* pMem, long size) {
 	inittest(L"IMAGE::getimage");
+	if (getpngimg(pMem, size) == 0)
+		return grOk;
 
 	if (pMem) {
 		DWORD           dwSize = size;
@@ -2885,6 +2971,11 @@ getimage(PIMAGE pDstImg, int srcX, int srcY, int srcWidth, int srcHeight) {
 void
 getimage(PIMAGE pDstImg, const PIMAGE pSrcImg, int srcX, int srcY, int srcWidth, int srcHeight) {
 	pDstImg->getimage(pSrcImg, srcX, srcY, srcWidth, srcHeight);
+}
+
+void getimage_mem(PIMAGE pDstImg, const void* memData, long dataSize) {
+	PIMAGE img = CONVERT_IMAGE_CONST(pDstImg);
+	img->getimage(memData, dataSize);
 }
 
 HDC

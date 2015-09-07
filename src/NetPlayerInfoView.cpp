@@ -1,23 +1,29 @@
 #include "NetPlayerInfoView.h"
 #include "Gobang.h"
 #include <windef.h>
+#include "image_object_select.h"
+#include "image_black_piece.h"
+#include "image_white_piece.h"
+#include "image_button_blue_middle.h"
+#include "image_button_blue_middle_hover.h"
+#include "image_button_blue_middle_press.h"
 
 NetPlayerInfoView::NetPlayerInfoView(bool is_opposite)
 {
 	is_opposite_ = is_opposite;
-	black_piece_ = new Image("res/black-piece.png");
-	white_piece_ = new Image("res/white-piece.png");
-	playing_indicator_ = new Image("res/object-select.png");
+	black_piece_ = new Image(binary_black_piece_png, sizeof(binary_black_piece_png));
+	white_piece_ = new Image(binary_white_piece_png, sizeof(binary_white_piece_png));
+	playing_indicator_ = new Image(binary_object_select_png, sizeof(binary_object_select_png));
 
 	button_ready_ = new ImageTextButton();
-	static Image button_img("res/button-blue-middle.png");
-	static Image button_hover_img("res/button-blue-middle-hover.png");
-	static Image button_press_img("res/button-blue-middle-press.png");
-	button_ready_->add_normal_image(&button_img, 0, 0);
+	static Image* button_img = new Image(binary_button_blue_middle_png, sizeof(binary_button_blue_middle_png));
+	static Image* button_hover_img = new Image(binary_button_blue_middle_hover_png, sizeof(binary_button_blue_middle_hover_png));
+	static Image* button_press_img = new Image(binary_button_blue_middle_press_png, sizeof(binary_button_blue_middle_press_png));
+	button_ready_->add_normal_image(button_img, 0, 0);
 	button_ready_->set_normal_text("准 备", button_text_size_);
-	button_ready_->add_hover_image(&button_hover_img, 0, 0);
+	button_ready_->add_hover_image(button_hover_img, 0, 0);
 	button_ready_->set_hover_text("准 备", button_text_size_);
-	button_ready_->add_press_image(&button_press_img, 0, 0);
+	button_ready_->add_press_image(button_press_img, 0, 0);
 	button_ready_->set_press_text("准 备", button_text_size_);
 	button_ready_->set_recovery_flag(false);
 
@@ -133,7 +139,7 @@ void NetPlayerInfoView::show()
 		player_pic_->show_image_with_alpha(pos_x_ + view_width_ / 2 - player_pic_->get_width() / 2, target_top, 1.0);
 		target_top += player_pic_->get_width() + margin_;
 	}
-	
+
 	setcolor(WHITE);
 	if (player_name_.length() > 0)
 	{
@@ -141,7 +147,7 @@ void NetPlayerInfoView::show()
 		xyprintf(pos_x_ + view_width_ / 2 - textwidth(player_name_.c_str()) / 2, target_top, player_name_.c_str());
 		target_top += textheight(player_name_.c_str()) + margin_;
 	}
-	
+
 	if (is_ready_)
 	{
 		Gobang::set_font(Gobang::font_default, ready_font_size_);

@@ -15,6 +15,13 @@ class Image
 		* @brief 从当前的窗口图像构造Image对象
 		*/
 		Image();
+
+		/**
+		* @brief 从内存中的图像数据构造Image对象
+		* @param mem_data 存储图像数据的数组
+		* @param data_size 数组数据的总大小
+		*/
+		Image(const void* mem_data, long data_size);
 		~Image();
 
 		/**

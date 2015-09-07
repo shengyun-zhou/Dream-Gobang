@@ -1,6 +1,8 @@
 #include "Gobang.h"
 #include <windows.h>
 #include <string.h>
+#include "image_game_welcome_bg.h"
+
 #ifdef _MSC_VER
 #pragma warning(disable:4996)
 #endif
