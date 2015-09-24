@@ -2,7 +2,7 @@
 ![game-logo](https://raw.githubusercontent.com/BUPTSSE-Zero/Dream-Gobang/master/src/res/game-logo.png "Game-Logo")
 
 ## 简介
-`Dream Gobang`（梦幻五子棋）是一款基于WindowsGDI引擎的简易五子棋游戏，目前该游戏可以进行单机人机对战。
+`Dream Gobang`（梦幻五子棋）是一款基于WindowsGDI引擎的简易五子棋游戏，目前该游戏可以进行单机人机对战和局域网联机对战。
 
 ## 构建状态
 
@@ -38,7 +38,12 @@ Dream-Gobang Team 五人小组
 ③点击“Generate”按钮，根据所用编译器生成相应的工程文件。
 （注意：如果打算使用MinGW编译器构建，请先将MinGW编译器所在的路径添加到系统环境的`PATH`变量中）
 
+#### 注意：在生成工程文件的过程中需要用到`src\res`目录中的`BinaryConvert.exe`为所有图片生成头文件，如果该程序不存在或者无法运行，请自行编译该目录下的`BinaryConvert.c`源代码生成`BinaryConvert.exe`后再重新生成工程文件。
+
 ### （3）开始构建
+
+#### 注意：如果修改了图片文件请用`CMake`重新生成工程文件后再构建。
+
 #### 使用Visual Studio构建
 
 生成工程文件后，进入`%BUILD%`目录，打开`Dream-Gobang.sln`解决方案文件。
@@ -60,8 +65,4 @@ mingw32-make install
 构建完成后，生成的`Dream-Gobang.exe`可执行文件位于`%BUILD%\bin`目录里.
 
 ## To Do
-1.优化界面效果及用户交互效果。
-
-2.加入联机对战。
-
-3.优化人机对战算法。
++ 优化人机对战算法。
