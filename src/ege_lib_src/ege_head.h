@@ -39,15 +39,7 @@
 #define EGE_GDIPLUS // 使用gdi+函数扩展
 
 #ifdef EGE_GDIPLUS
-#ifdef _MSC_VER
-	#include <gdiplus.h>
-#else
-	#if __GNUC__ == 3
-		#include "gdiplus3/gdiplus.h"
-	#elif __GNUC__ == 4
-		#include "gdiplus4/gdiplus.h"
-	#endif
-#endif
+#include <gdiplus.h>
 #endif
 
 #define QUEUE_LEN           1024
