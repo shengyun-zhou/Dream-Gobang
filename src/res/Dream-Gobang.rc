@@ -1,0 +1,25 @@
+#include <windows.h>
+
+1 VERSIONINFO
+ FILEVERSION 1, 0, 0, 0
+ PRODUCTVERSION 1, 0, 0, 0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "080404B0"
+    BEGIN
+      VALUE "CompanyName", "School of Software Engineering of BUPT"
+      VALUE "FileDescription", "Dream Gobang"
+      VALUE "FileVersion", "1.0.0.0"
+      VALUE "InternalName", "Dream-Gobang.exe"
+      VALUE "LegalCopyright", "Copyright (C) 2015"
+      VALUE "OriginalFilename", "Simple-GoBang.exe"
+      VALUE "ProductName", "Dream Gobang"
+      VALUE "ProductVersion", "1.0.0.0"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x804, 1200
+  END
+END

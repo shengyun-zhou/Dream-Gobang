@@ -38,7 +38,8 @@ Dialog::Dialog(int width, int height)
 
 LRESULT CALLBACK Dialog::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	Dialog* dialog_data = (Dialog*)GetWindowLong(hWnd, GWL_USERDATA);
+	Dialog* dialog_data = NULL;
+	dialog_data = (Dialog*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
 	switch (message)
 	{
@@ -118,7 +119,7 @@ void Dialog::show()
 
 	on_dialog_init();
 
-	SetWindowLong(dialog_handle_, GWL_USERDATA, (LONG)this);
+	SetWindowLongPtr(dialog_handle_, GWLP_USERDATA, (LONG_PTR)this);
 	SetForegroundWindow(dialog_handle_);
 	SetFocus(dialog_handle_);
 	ShowWindow(dialog_handle_, SW_SHOW);

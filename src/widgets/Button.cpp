@@ -43,7 +43,7 @@ Button::~Button()
 
 LRESULT CALLBACK Button::button_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	Button* button_data = (Button*)GetWindowLong(hWnd, GWL_USERDATA);
+	Button* button_data = (Button*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
 	switch (message)
 	{
@@ -183,7 +183,7 @@ void Button::show(HWND parent_window)
 	button_rect_.left = button_rect_.top = 0;
 	button_rect_.bottom = height_ - 1;
 	button_rect_.right = width_ - 1;
-	SetWindowLong(button_handle_, GWL_USERDATA, (LONG)this);
+	SetWindowLongPtr(button_handle_, GWLP_USERDATA, (LONG_PTR)this);
 	ShowWindow(button_handle_, SW_SHOW);
 
 	if (button_image_)

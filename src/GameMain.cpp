@@ -84,8 +84,8 @@ int main()
 	setcaption("ÃÎ»ÃÎå×ÓÆå");
 
 	WelcomeInterface::opening_animation();
-	ege_wind_proc = (LRESULT(CALLBACK *)(HWND, UINT, WPARAM, LPARAM lParam))GetWindowLong(getHWnd(), GWL_WNDPROC);
-	SetWindowLong(getHWnd(), GWL_WNDPROC, (LONG)wind_proc);
+	ege_wind_proc = (LRESULT(CALLBACK *)(HWND, UINT, WPARAM, LPARAM lParam))GetWindowLongPtr(getHWnd(), GWLP_WNDPROC);
+	SetWindowLongPtr(getHWnd(), GWLP_WNDPROC, (LONG_PTR)wind_proc);
 	Gobang::load_font_res();
 
 	game_bgm = new Music("res/game-bgm.wma", -1, 2);

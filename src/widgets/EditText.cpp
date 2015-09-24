@@ -82,7 +82,7 @@ void EditText::set_focus()
 
 LRESULT CALLBACK EditText::edit_frame_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	EditText* edit_data = (EditText*)GetWindowLong(hWnd, GWL_USERDATA);
+	EditText* edit_data = (EditText*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 	switch (message)
 	{
 		case WM_SETCURSOR:
@@ -101,10 +101,10 @@ LRESULT CALLBACK EditText::edit_frame_proc(HWND hWnd, UINT message, WPARAM wPara
 					hWnd, NULL, NULL, NULL);
 
 				if (!EditText::origin_proc)
-					EditText::origin_proc = (LRESULT(WINAPI *)(HWND, UINT, WPARAM, LPARAM))GetWindowLong(edit_data->edit_handle_, GWL_WNDPROC);
+					EditText::origin_proc = (LRESULT(WINAPI *)(HWND, UINT, WPARAM, LPARAM))GetWindowLongPtr(edit_data->edit_handle_, GWLP_WNDPROC);
 
-				SetWindowLong(edit_data->edit_handle_, GWL_USERDATA, (LONG)edit_data);
-				SetWindowLong(edit_data->edit_handle_, GWL_WNDPROC, (LONG)EditText::edit_proc);
+				SetWindowLongPtr(edit_data->edit_handle_, GWLP_USERDATA, (LONG_PTR)edit_data);
+				SetWindowLongPtr(edit_data->edit_handle_, GWLP_WNDPROC, (LONG_PTR)EditText::edit_proc);
 
 				HFONT hfont = CreateFontIndirect(&edit_data->font_);
 				if (hfont)
@@ -133,7 +133,7 @@ LRESULT CALLBACK EditText::edit_frame_proc(HWND hWnd, UINT message, WPARAM wPara
 
 LRESULT CALLBACK EditText::edit_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	EditText* edit_data = (EditText*)GetWindowLong(hWnd, GWL_USERDATA);
+	EditText* edit_data = (EditText*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 	switch (message)
 	{
 		case WM_SETCURSOR:
@@ -187,7 +187,7 @@ void EditText::show(HWND parent_window)
 	edit_frame_rect_.bottom = height_ - 1;
 	edit_frame_rect_.right = width_ - 1;
 
-	SetWindowLong(edit_frame_handle_, GWL_USERDATA, (LONG)this);
+	SetWindowLongPtr(edit_frame_handle_, GWLP_USERDATA, (LONG_PTR)this);
 
 	if (edit_frame_image_)
 		delimage(edit_frame_image_);
